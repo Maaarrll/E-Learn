@@ -15925,3 +15925,153 @@ button.cs-node:hover .cs-node-card {
     background: #e8f1ff;
     color: #2a5f9e;
 }
+
+/* =========================================
+   Phones: small (320px) to big (430px)
+   ========================================= */
+
+/* Quiz card: the "?" mark sat on the timer */
+.study-page .fc-timer:not([hidden]) ~ .fc-card-mark {
+    display: none;
+}
+
+@media screen and (max-width: 768px) {
+    /* Top bar: leave room for the whole profile group (avatar, bell, log out) */
+    .sidebar-header {
+        padding-right: 132px;
+    }
+
+    .sidebar-brand {
+        min-width: 0;
+        overflow: hidden;
+    }
+
+    /* While answering, the page banner just pushes the question down */
+    .case-studies-wrapper:has(#scenarioView[style*="block"]) .cs-header-section,
+    .case-studies-wrapper:has(#scenarioView[style*="block"]) .cs-divider,
+    .case-studies-wrapper:has(#quizView[style*="block"]) .sc-hero {
+        display: none;
+    }
+
+    /* Sound button lives in the top bar, left of the profile, so it never
+       floats over answers (!important: sfx.js sets inline styles) */
+    #sfxToggle {
+        top: 11px !important;
+        right: 144px !important;
+        bottom: auto !important;
+        width: 40px !important;
+        height: 40px !important;
+        font-size: 15px !important;
+    }
+
+    .menu-open #sfxToggle {
+        display: none !important;
+    }
+
+    body:has(#sfxToggle) .sidebar-header {
+        padding-right: 184px;
+    }
+
+    body:has(#sfxToggle) .to-top-global {
+        bottom: 16px;
+    }
+}
+
+/* Sound button pages: the name doesn't fit beside it, so just the logo badge */
+@media screen and (max-width: 429px) {
+    html:not(.menu-open) body:has(#sfxToggle) .sidebar .logo-text {
+        display: none;
+    }
+}
+
+@media screen and (max-width: 480px) {
+    /* Situation Quizzes banner: full-width buttons instead of a squeezed column */
+    .case-page .cs-hero .cs-header-side > * {
+        flex: 1 1 100%;
+        justify-content: center;
+    }
+
+    .case-page .cs-hero .cs-icon-box {
+        width: 48px;
+        height: 48px;
+        font-size: 20px;
+    }
+
+    /* Dashboard recent activity: time drops under the text when it doesn't fit */
+    .dashboard-page .recent-item {
+        flex-wrap: wrap;
+        row-gap: 6px;
+    }
+
+    .recent-icon {
+        flex-shrink: 0;
+    }
+
+    .dashboard-page .recent-info {
+        flex: 1 1 150px;
+        min-width: 0;
+    }
+
+    .dashboard-page .recent-item .time {
+        margin-left: 55px;
+    }
+
+    /* Level map: smaller dots so cards get the width */
+    .cs-node,
+    .cs-node.is-right {
+        grid-template-columns: 60px minmax(0, 1fr);
+    }
+
+    .cs-node::before {
+        left: 30px;
+    }
+
+    .cs-node-dot {
+        width: 52px;
+        height: 52px;
+        font-size: 18px;
+    }
+
+    .cs-node.is-next .cs-node-dot {
+        width: 60px;
+        height: 60px;
+    }
+
+    .cs-node-card,
+    .cs-node.is-right .cs-node-card {
+        padding: 12px 14px;
+    }
+
+    /* Answer tiles: a bit tighter so long answers fit */
+    .tq-choice {
+        gap: 10px;
+        padding: 12px;
+        font-size: 15px;
+    }
+
+    .tq-shape {
+        width: 34px;
+        height: 34px;
+        font-size: 15px;
+    }
+}
+
+/* Small phones (iPhone SE / 320-360px) */
+@media screen and (max-width: 374px) {
+    /* Only the logo badge in the top bar; the name still shows in the open menu */
+    html:not(.menu-open) .sidebar .logo-text {
+        display: none;
+    }
+
+    .case-page .cs-hero .cs-header-text h2 {
+        font-size: 22px;
+    }
+
+    .case-page .cs-play .scenario-box {
+        padding: 56px 14px 14px;
+    }
+
+    .case-page .cs-play .question-text {
+        font-size: 18px;
+    }
+}
