@@ -850,6 +850,22 @@ async function init() {
             'ALTER TABLE public.announcements ADD COLUMN IF NOT EXISTS target_sections JSONB'
         );
 
+        /* Quiz time frame: students can only take it between opens_at and
+           closes_at (both optional). Not taken by closes_at = 0. */
+        await client.query(
+            'ALTER TABLE public.quizzes ADD COLUMN IF NOT EXISTS opens_at TIMESTAMPTZ'
+        );
+
+        await client.query(
+            'ALTER TABLE public.quizzes ADD COLUMN IF NOT EXISTS closes_at TIMESTAMPTZ'
+        );
+
+        /* Which sections may take a quiz: NULL = everyone, otherwise a list
+           of year_section names, e.g. ["Grade 7 - Section A"]. */
+        await client.query(
+            'ALTER TABLE public.quizzes ADD COLUMN IF NOT EXISTS target_sections JSONB'
+        );
+
 
         /* ----------------------------------------------
            Backfill first_name / last_name.

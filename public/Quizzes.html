@@ -8,8 +8,8 @@
     <link rel="icon" href="favicon-32.png?v=2" type="image/png" sizes="32x32">
     <link rel="apple-touch-icon" href="apple-touch-icon.png?v=2">
     <meta name="theme-color" content="#02473d">
-    <link rel="stylesheet" href="style.css?v=78">
-    <link rel="stylesheet" href="dark.css?v=42">
+    <link rel="stylesheet" href="style.css?v=83">
+    <link rel="stylesheet" href="dark.css?v=47">
     <script src="js/theme.js?v=3"></script>
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
 </head>
@@ -137,7 +137,7 @@
         </main>
     </div>
 
-    <script src="js/api.js?v=11"></script>
+    <script src="js/api.js?v=12"></script>
     <script src="js/notifications.js?v=2"></script>
     <script src="js/sfx.js?v=8"></script>
     <script src="js/search.js?v=3"></script>
@@ -163,13 +163,15 @@
         }
 
         const minutes = (secs) => secs < 60 ? `${secs} sec` : `about ${Math.round(secs / 60)} min`;
+        const when = (iso) => new Date(iso).toLocaleString(undefined, { weekday: 'short', month: 'short', day: 'numeric', hour: 'numeric', minute: '2-digit' });
+        const dueSoon = (iso) => new Date(iso).getTime() - Date.now() < 24 * 60 * 60 * 1000;
 
         async function loadList() {
             show('list');
             try {
                 const { quizzes } = await api.get('/quizzes');
-                const toTake = quizzes.filter(q => q.status !== 'done');
-                const done = quizzes.filter(q => q.status === 'done')
+                const toTake = quizzes.filter(q => q.status !== 'done' && q.status !== 'missed');
+                const done = quizzes.filter(q => q.status === 'done' || q.status === 'missed')
                     .sort((a, b) => new Date(b.finishedAt) - new Date(a.finishedAt));
 
                 $('quizList').innerHTML = toTake.length ? toTake.map(q => `
@@ -179,9 +181,12 @@
                             <h3>${esc(q.title)}</h3>
                             ${q.description ? `<p>${esc(q.description)}</p>` : ''}
                             <small>${q.questionCount} question${q.questionCount === 1 ? '' : 's'} · ${minutes(q.totalSeconds)}</small>
+                            ${q.closesAt ? `<span class="tq-due ${dueSoon(q.closesAt) ? 'is-soon' : ''}"><i class="fa-solid fa-calendar-days"></i> Due ${esc(when(q.closesAt))}</span>` : ''}
                         </div>
-                        <button type="button" class="tool-btn tq-start" data-open="${q.id}" data-new="${q.status === 'new' ? 1 : ''}">
-                            <i class="fa-solid fa-play"></i> ${q.status === 'started' ? 'Continue' : 'Start'}</button>
+                        ${q.status === 'upcoming'
+                            ? `<span class="tool-btn tq-locked"><i class="fa-solid fa-lock"></i> Opens ${esc(when(q.opensAt))}</span>`
+                            : `<button type="button" class="tool-btn tq-start" data-open="${q.id}" data-new="${q.status === 'new' ? 1 : ''}">
+                            <i class="fa-solid fa-play"></i> ${q.status === 'started' ? 'Continue' : 'Start'}</button>`}
                     </article>`).join('')
                     : `<div class="saved-empty">
                         <div class="saved-empty-icon"><i class="fa-solid fa-stopwatch"></i></div>
@@ -192,10 +197,11 @@
                 $('scoresSection').hidden = !done.length;
                 $('scoreList').innerHTML = done.map(q => {
                     const pct = Math.round((q.score / q.questionCount) * 100);
+                    const day = esc(new Date(q.finishedAt).toLocaleDateString(undefined, { month: 'short', day: 'numeric', year: 'numeric' }));
                     return `<button type="button" class="tq-score-row" data-open="${q.id}">
                         <span class="tq-score-badge ${pct >= 75 ? 'is-high' : pct >= 50 ? 'is-mid' : 'is-low'}">${q.score}/${q.questionCount}</span>
                         <span class="tq-score-text"><strong>${esc(q.title)}</strong>
-                            <small>${pct}% · finished ${esc(new Date(q.finishedAt).toLocaleDateString(undefined, { month: 'short', day: 'numeric', year: 'numeric' }))}</small></span>
+                            <small>${q.status === 'missed' ? `Missed · the deadline was ${day}` : `${pct}% · finished ${day}`}</small></span>
                         <span class="tq-score-link">View <i class="fa-solid fa-chevron-right"></i></span>
                     </button>`;
                 }).join('');
@@ -295,7 +301,8 @@
             show('result');
             const pct = state.total ? Math.round((state.score / state.total) * 100) : 0;
             $('resultScore').textContent = `${state.score}/${state.total}`;
-            $('resultLabel').textContent = pct >= 75 ? `${pct}% · Great job!` : pct >= 50 ? `${pct}% · Nice try!` : `${pct}% · Keep studying!`;
+            $('resultLabel').textContent = state.missed ? 'Missed · the deadline passed before you took it'
+                : pct >= 75 ? `${pct}% · Great job!` : pct >= 50 ? `${pct}% · Nice try!` : `${pct}% · Keep studying!`;
         }
 
         $('backToList').addEventListener('click', loadList);

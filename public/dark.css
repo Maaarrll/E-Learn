@@ -4572,9 +4572,6 @@
     background: var(--book, var(--sb-c0));
     color: #fff;
 }
-:root[data-theme="dark"] .qz-import-hint {
-    color: hsl(165 12% 74%);
-}
 :root[data-theme="dark"] .qz-import-report {
     background: hsl(142 45% 21%);
     color: hsl(146 52% 83%);
@@ -4582,6 +4579,207 @@
 :root[data-theme="dark"] .qz-import-report.has-warnings {
     background: hsl(44 45% 22%);
     color: hsl(41 75% 84%);
+}
+:root[data-theme="dark"] .qz-window-hint {
+    color: hsl(165 12% 67%);
+}
+:root[data-theme="dark"] .qz-results .qz-missed td {
+    background: hsl(0 45% 19%);
+    color: hsl(4 75% 74%);
+}
+:root[data-theme="dark"] .tq-due {
+    background: hsl(166 45% 22%);
+    color: hsl(171 75% 82%);
+}
+:root[data-theme="dark"] .tq-due.is-soon {
+    background: hsl(0 45% 20%);
+    color: hsl(4 75% 74%);
+}
+:root[data-theme="dark"] .qz-scores {
+    background: hsl(144 38% 19%);
+}
+:root[data-theme="dark"] .qz-scores-sum {
+    color: hsl(165 12% 78%);
+}
+:root[data-theme="dark"] .qz-scores-table td small {
+    color: hsl(165 12% 67%);
+}
+:root[data-theme="dark"] .qz-score.is-high {
+    background: hsl(142 45% 21%);
+    color: hsl(144 62% 79%);
+}
+:root[data-theme="dark"] .qz-score.is-mid {
+    background: hsl(44 45% 22%);
+    color: hsl(46 75% 81%);
+}
+:root[data-theme="dark"] .qz-score.is-low {
+    background: hsl(0 45% 19%);
+    color: hsl(4 75% 74%);
+}
+:root[data-theme="dark"] .qz-scores-table .qz-missed td {
+    color: hsl(4 75% 74%);
+}
+:root[data-theme="dark"] .qz-help {
+    border: 2px solid hsl(134 36% 23%);
+    background: hsl(165 14% 17%);
+}
+:root[data-theme="dark"] .qz-help summary {
+    color: hsl(171 75% 82%);
+}
+:root[data-theme="dark"] .qz-help summary:focus-visible {
+    outline: 3px solid var(--fun-pink);
+}
+:root[data-theme="dark"] .qz-help p {
+    color: hsl(165 12% 78%);
+}
+:root[data-theme="dark"] .qz-help pre {
+    background: hsl(144 38% 19%);
+}
+:root[data-theme="dark"] .qz-rules {
+    color: hsl(165 12% 74%);
+}
+:root[data-theme="dark"] .qz-rules i {
+    color: hsl(171 75% 82%);
+}
+:root[data-theme="dark"] .qz-filter {
+    border: 2px solid hsl(134 36% 23%);
+    background: hsl(165 14% 17%);
+    color: hsl(142 75% 92%);
+}
+:root[data-theme="dark"] .qz-filter span {
+    background: hsl(135 31% 20%);
+}
+:root[data-theme="dark"] .qz-filter.is-on {
+    border-color: transparent;
+    background: linear-gradient(135deg, var(--fun-mint), var(--fun-sky));
+    color: #fff;
+}
+:root[data-theme="dark"] .qz-filter.is-on span {
+    background: rgba(255, 255, 255, 0.25);
+}
+:root[data-theme="dark"] .qz-filter:focus-visible {
+    outline: 3px solid var(--fun-pink);
+}
+:root[data-theme="dark"] .qz-card {
+    border: 2px solid hsl(134 36% 23%);
+    border-left: 6px solid var(--qz-color, hsl(155 16% 37%));
+    background: hsl(165 14% 17%);
+    box-shadow: 0 6px 16px rgba(0, 112, 55, 0.06);
+}
+:root[data-theme="dark"] .qz-card.is-open {
+    --qz-color: #1e9e55;
+}
+:root[data-theme="dark"] .qz-card.is-upcoming {
+    --qz-color: #e0a100;
+}
+:root[data-theme="dark"] .qz-card.is-closed {
+    --qz-color: #c0392b;
+}
+:root[data-theme="dark"] .qz-card.is-draft,
+:root[data-theme="dark"] .qz-card.is-hidden {
+    --qz-color: hsl(155 16% 37%);
+}
+:root[data-theme="dark"] .qz-card-icon {
+    background: color-mix(in srgb, var(--qz-color) 14%, hsl(165 14% 17%));
+    color: var(--qz-color);
+}
+:root[data-theme="dark"] .qz-card-title h4 {
+    color: hsl(142 75% 92%);
+}
+:root[data-theme="dark"] .qz-card-title small {
+    color: hsl(165 12% 67%);
+}
+:root[data-theme="dark"] .qz-chip {
+    background: color-mix(in srgb, var(--qz-color) 14%, hsl(165 14% 17%));
+    color: color-mix(in srgb, var(--qz-color) 75%, hsl(165 12% 96%));
+}
+:root[data-theme="dark"] .qz-card-when {
+    color: hsl(165 12% 78%);
+}
+:root[data-theme="dark"] .qz-card-when.is-closed {
+    color: hsl(4 75% 74%);
+}
+:root[data-theme="dark"] .qz-card-when.is-upcoming {
+    color: hsl(46 75% 81%);
+}
+:root[data-theme="dark"] .qz-numbers span {
+    background: hsl(144 38% 19%);
+}
+:root[data-theme="dark"] .qz-numbers b {
+    color: hsl(142 75% 92%);
+}
+:root[data-theme="dark"] .qz-numbers small {
+    color: hsl(165 12% 70%);
+}
+:root[data-theme="dark"] .qz-numbers .is-bad {
+    background: hsl(0 45% 19%);
+}
+:root[data-theme="dark"] .qz-numbers .is-bad b {
+    color: hsl(4 75% 74%);
+}
+:root[data-theme="dark"] .qz-numbers .is-live {
+    background: hsl(44 45% 22%);
+}
+:root[data-theme="dark"] .qz-menu {
+    border: 2px solid hsl(134 36% 23%);
+    background: hsl(165 14% 17%);
+    box-shadow: 0 14px 30px rgba(0, 38, 14, 0.16);
+}
+:root[data-theme="dark"] .qz-menu button {
+    border: none;
+    background: none;
+    color: hsl(142 75% 92%);
+}
+:root[data-theme="dark"] .qz-menu button:hover:not(:disabled),
+:root[data-theme="dark"] .qz-menu button:focus-visible {
+    background: hsl(137 33% 19%);
+    outline: none;
+}
+:root[data-theme="dark"] .qz-menu button i {
+    color: hsl(171 75% 82%);
+}
+:root[data-theme="dark"] .qz-menu button small {
+    color: #999;
+}
+:root[data-theme="dark"] .qz-menu .is-danger,
+:root[data-theme="dark"] .qz-menu .is-danger i {
+    color: hsl(6 63% 71%);
+}
+:root[data-theme="dark"] .qz-empty {
+    border: 2px dashed hsl(138 32% 26%);
+    background: hsl(165 14% 17%);
+}
+:root[data-theme="dark"] .qz-empty-icon {
+    background: linear-gradient(135deg, var(--fun-mint), var(--fun-sky));
+    color: #fff;
+}
+:root[data-theme="dark"] .qz-empty h4 {
+    color: hsl(142 75% 92%);
+}
+:root[data-theme="dark"] .qz-empty ol {
+    color: hsl(165 12% 78%);
+}
+:root[data-theme="dark"] .qz-section {
+    border: 2px solid hsl(134 36% 23%);
+    background: hsl(165 14% 17%);
+    color: hsl(171 75% 82%);
+}
+:root[data-theme="dark"] .qz-section select {
+    border: none;
+    background: none;
+    color: hsl(142 75% 92%);
+}
+:root[data-theme="dark"] .qz-section:focus-within {
+    outline: 3px solid var(--fun-pink);
+}
+:root[data-theme="dark"] .qz-audience {
+    border: 2px solid hsl(134 36% 23%);
+}
+:root[data-theme="dark"] .qz-audience legend {
+    color: hsl(142 75% 92%);
+}
+:root[data-theme="dark"] .qz-card-for {
+    color: hsl(211 61% 70%);
 }
 
 /* ---------- from update-password.html ---------- */
