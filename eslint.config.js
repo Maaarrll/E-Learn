@@ -15,6 +15,10 @@ module.exports = [
     languageOptions: { sourceType: 'commonjs', globals: globals.node },
   },
   {
+    files: ['scripts/**/*.mjs'],
+    languageOptions: { sourceType: 'module', globals: globals.node },
+  },
+  {
     // Plain global scripts that share variables across files (api, requireAuth, ...)
     files: ['public/js/**/*.js'],
     languageOptions: { sourceType: 'script', globals: globals.browser },

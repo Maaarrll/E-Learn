@@ -4017,6 +4017,45 @@
         color: hsl(167 19% 88%) !important;
     }
 }
+:root[data-theme="dark"] .login-page .login-section::before {
+    background: radial-gradient(rgba(6, 153, 78, 0.14) 2px, transparent 2.5px) 0 0 / 22px 22px,
+        radial-gradient(circle at 10% 15%, rgba(255, 111, 165, 0.35), transparent 28%),
+        radial-gradient(circle at 90% 85%, rgba(1, 198, 171, 0.35), transparent 30%),
+        radial-gradient(circle at 88% 12%, rgba(255, 201, 60, 0.4), transparent 24%),
+        radial-gradient(circle at 12% 88%, rgba(255, 138, 92, 0.25), transparent 26%),
+        var(--fun-bg);
+}
+:root[data-theme="dark"] .login-page .login-section::after {
+    background: none;
+    border: 14px solid rgba(255, 111, 165, 0.35);
+}
+:root[data-theme="dark"] .login-page .glass-panel {
+    border: 4px solid transparent;
+    background: linear-gradient(hsl(165 14% 17%), hsl(165 14% 17%)) padding-box, var(--fun-rainbow) border-box;
+    box-shadow: 0 24px 60px rgba(2, 71, 61, 0.18), 0 0 0 10px hsl(165 14% 17% / 0.55);
+}
+:root[data-theme="dark"] .login-page .glass-panel.is-admin-mode {
+    background: linear-gradient(hsl(165 14% 17%), hsl(165 14% 17%)) padding-box, linear-gradient(135deg, var(--fun-mint), var(--fun-sky)) border-box;
+}
+:root[data-theme="dark"] .login-page .glass-panel h1 {
+    color: var(--fun-navy);
+}
+:root[data-theme="dark"] .login-page .input-wrapper input {
+    border: 2px solid rgba(2, 71, 61, 0.12);
+    background: hsl(132 38% 19%);
+}
+:root[data-theme="dark"] .login-page .input-wrapper input:focus {
+    border-color: var(--fun-pink);
+    box-shadow: 0 0 0 4px rgba(255, 111, 165, 0.2);
+}
+:root[data-theme="dark"] .login-page .input-wrapper:focus-within > i {
+    color: var(--fun-pink);
+}
+@media (max-width: 768px) {
+    :root[data-theme="dark"] .login-page .glass-panel {
+        background: linear-gradient(hsl(165 14% 17%), hsl(165 14% 17%)) padding-box, var(--fun-rainbow) border-box;
+    }
+}
 
 /* ---------- from update-password.html ---------- */
 :root[data-theme="dark"] body.update-password-page {
