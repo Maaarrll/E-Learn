@@ -82,7 +82,8 @@ const HCIQuizAdmin = (function () {
     });
   }
 
-  async function openEditor(id) {
+  // imported = parsed file from js/quiz-import.js; it opens as a new quiz to check before saving
+  async function openEditor(id, imported = null) {
     let quiz = null;
     if (id) {
       try {
@@ -92,14 +93,21 @@ const HCIQuizAdmin = (function () {
         return;
       }
     }
+    const start = quiz || imported;
+    const report = imported ? `<div class="qz-import-report ${imported.warnings.length ? 'has-warnings' : ''}" role="status">
+        <strong><i class="fa-solid fa-file-import"></i> Found ${plural(imported.questions.length, 'question')} in ${esc(imported.fileName)}.</strong>
+        ${imported.warnings.length
+          ? `<span>Please fix these before saving:</span><ul>${imported.warnings.map(w => `<li>${esc(w)}</li>`).join('')}</ul>`
+          : '<span>Check the questions, answers and timers below, then save.</span>'}
+      </div>` : '';
     const form = formModal({
-      title: quiz ? 'Edit quiz' : 'New quiz',
+      title: quiz ? 'Edit quiz' : imported ? 'Check imported quiz' : 'New quiz',
       subtitle: 'Multiple choice. Each question has its own timer; students get one try.',
       submitLabel: 'Save quiz',
-      body: `<label class="ce-field"><span>Title</span><input type="text" name="title" maxlength="120" placeholder="Lesson 1 quiz" value="${esc(quiz ? quiz.title : '')}"></label>
+      body: `${report}<label class="ce-field"><span>Title</span><input type="text" name="title" maxlength="120" placeholder="Lesson 1 quiz" value="${esc(start ? start.title : '')}"></label>
         <label class="ce-field"><span>Instructions <small>(optional)</small></span>
           <textarea name="description" rows="2" maxlength="1000" placeholder="Read each question carefully.">${esc(quiz ? quiz.description : '')}</textarea></label>
-        <div class="qz-questions">${(quiz ? quiz.questions : [blankQuestion()]).map(questionHtml).join('')}</div>
+        <div class="qz-questions">${(start ? start.questions : [blankQuestion()]).map(questionHtml).join('')}</div>
         <button type="button" class="tool-btn" data-add-q><i class="fa-solid fa-plus"></i> Add question</button>
         <label class="ce-check qz-publish"><input type="checkbox" name="published" ${quiz && quiz.published ? 'checked' : ''}> Publish now (students can take it right away)</label>`,
       onSubmit: async (f) => {
@@ -207,7 +215,14 @@ const HCIQuizAdmin = (function () {
     root.innerHTML = `<div class="admin-card">
         <h3><i class="fa-solid fa-stopwatch"></i> Timed quizzes</h3>
         <p class="admin-card-note">Separate from the quiz cards. Each question has its own timer, and every student gets one try. You can't change a quiz's questions after a student has started it.</p>
-        <button type="button" class="tool-btn ce-publish" data-new><i class="fa-solid fa-plus"></i> New quiz</button>
+        <div class="qz-create">
+          <button type="button" class="tool-btn ce-publish" data-new><i class="fa-solid fa-plus"></i> New quiz</button>
+          <button type="button" class="tool-btn" data-import><i class="fa-solid fa-file-import"></i> Import from file</button>
+          <button type="button" class="tool-btn" data-sample><i class="fa-solid fa-download"></i> Download sample</button>
+          <input type="file" accept=".docx,.pdf,.txt" hidden data-import-file>
+        </div>
+        <p class="qz-import-hint">Import a Word, PDF or text file written like the sample: numbered questions, A/B/C choices,
+          and <b>Answer: B</b> (or a <b>*</b> on the right choice). <b>Time: 20</b> sets the seconds for a question.</p>
         <div class="admin-list qz-list"></div>
       </div>`;
 
@@ -215,6 +230,8 @@ const HCIQuizAdmin = (function () {
       const b = e.target.closest('button');
       if (!b) return;
       if (b.hasAttribute('data-new')) openEditor(null);
+      else if (b.hasAttribute('data-import')) root.querySelector('[data-import-file]').click();
+      else if (b.hasAttribute('data-sample')) HCIQuizImport.downloadSample();
       else if (b.dataset.edit) openEditor(Number(b.dataset.edit));
       else if (b.dataset.results) openResults(Number(b.dataset.results));
       else if (b.dataset.publish) {
@@ -236,7 +253,32 @@ const HCIQuizAdmin = (function () {
         });
       }
     });
+    root.querySelector('[data-import-file]').addEventListener('change', async (e) => {
+      const file = e.target.files[0];
+      e.target.value = '';      // picking the same file again still works
+      if (file) importFile(file);
+    });
     load();
+  }
+
+  async function importFile(file) {
+    const btn = root.querySelector('[data-import]');
+    btn.disabled = true;
+    btn.innerHTML = '<span class="btn-spinner"></span> Reading file...';
+    try {
+      const result = await HCIQuizImport.readFile(file);
+      if (!result.questions.length) {
+        throw new Error('No questions were found. Make sure the file is written like the sample (1. question, A. choice, Answer: A).');
+      }
+      result.questions.forEach(q => {
+        while (q.choices.length < 2) q.choices.push('');   // room to type the missing choices
+      });
+      openEditor(null, { ...result, fileName: file.name });
+    } catch (err) {
+      adminToast(err.message, true);
+    }
+    btn.disabled = false;
+    btn.innerHTML = '<i class="fa-solid fa-file-import"></i> Import from file';
   }
 
   return { mount };
