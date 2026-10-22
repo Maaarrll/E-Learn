@@ -474,7 +474,8 @@
      "Magsipilyo na lamang isang beses sa isang linggo",
      "Gumamit ng mineral water sa pagsisipilyo"
     ],
-    "answer": 1
+    "answer": 1,
+    "lesson": "1"
    }
   },
   {
@@ -489,7 +490,8 @@
      "Lakasan ang gripo para mapansin ng iba",
      "Magpost tungkol dito sa social media"
     ],
-    "answer": 1
+    "answer": 1,
+    "lesson": "1"
    }
   },
   {
@@ -504,7 +506,8 @@
      "Mag-charge na lamang sa paaralan",
      "Huwag nang gumamit ng cellphone kailanman"
     ],
-    "answer": 0
+    "answer": 0,
+    "lesson": "1"
    }
   },
   {
@@ -519,7 +522,8 @@
      "Kumuha ng litrato bilang patunay",
      "Umalis agad sa lugar"
     ],
-    "answer": 1
+    "answer": 1,
+    "lesson": "1"
    }
   },
   {
@@ -534,7 +538,8 @@
      "Maligo nang mas matagal habang may tubig pa",
      "Walang magagawa ang isang bata"
     ],
-    "answer": 1
+    "answer": 1,
+    "lesson": "1"
    }
   },
   {
@@ -549,7 +554,8 @@
      "Words of Affirmation",
      "Acts of Service"
     ],
-    "answer": 2
+    "answer": 2,
+    "lesson": "2"
    }
   },
   {
@@ -564,7 +570,8 @@
      "Words of Affirmation",
      "Physical Touch"
     ],
-    "answer": 0
+    "answer": 0,
+    "lesson": "2"
    }
   },
   {
@@ -579,7 +586,8 @@
      "Quality Time",
      "Receiving Gifts"
     ],
-    "answer": 1
+    "answer": 1,
+    "lesson": "2"
    }
   },
   {
@@ -594,7 +602,8 @@
      "Physical Touch",
      "Receiving Gifts"
     ],
-    "answer": 2
+    "answer": 2,
+    "lesson": "2"
    }
   },
   {
@@ -609,7 +618,8 @@
      "Magdagdag ng sariling detalye para mas kapani-paniwala",
      "I-like lang para hindi maging responsable"
     ],
-    "answer": 1
+    "answer": 1,
+    "lesson": "3"
    }
   },
   {
@@ -624,7 +634,8 @@
      "I-post pero burahin pagkalipas ng isang araw",
      "Ipadala sa lahat ng kaibigan sa group chat"
     ],
-    "answer": 1
+    "answer": 1,
+    "lesson": "3"
    }
   },
   {
@@ -639,7 +650,8 @@
      "Mag-screenshot at i-post sa publiko",
      "Umalis sa group chat at kalimutan na"
     ],
-    "answer": 1
+    "answer": 1,
+    "lesson": "3"
    }
   },
   {
@@ -654,7 +666,8 @@
      "Uminom ng kape para tumagal pa",
      "Mag-scroll hanggang antukin"
     ],
-    "answer": 0
+    "answer": 0,
+    "lesson": "3"
    }
   }
  ],
@@ -665,7 +678,8 @@
     "position": 1,
     "title": "Pagtitipid ng Tubig at Enerhiya",
     "icon": "fa-droplet",
-    "color": "video-icon"
+    "color": "video-icon",
+    "lesson": "1"
    }
   },
   {
@@ -674,7 +688,8 @@
     "position": 2,
     "title": "Limang Wika ng Pag-ibig",
     "icon": "fa-heart",
-    "color": "check-icon"
+    "color": "check-icon",
+    "lesson": "2"
    }
   },
   {
@@ -683,7 +698,8 @@
     "position": 3,
     "title": "Mapanagutang Paggamit ng Social Media",
     "icon": "fa-share-nodes",
-    "color": "read-icon"
+    "color": "read-icon",
+    "lesson": "3"
    }
   }
  ],

@@ -3,7 +3,7 @@ const express = require('express');
 const { pool } = require('../db');
 const { requireAuth } = require('../middleware/authGuard');
 
-const { getContent, unlockedKeys } = require('../contentStore');
+const { getContent, unlockedKeys, lessonLock } = require('../contentStore');
 
 const router = express.Router();
 router.use(requireAuth);
@@ -41,6 +41,21 @@ async function getLessonRow(userId) {
   }
   return rows[0];
 }
+
+async function getReadTopics(userId) {
+  const { rows } = await pool.query('SELECT topic_key FROM topic_reads WHERE user_id = $1', [userId]);
+  return new Set(rows.map(r => r.topic_key));
+}
+
+// Situation quizzes / decks still waiting on their lesson: [{ key, lesson, title }]
+function lessonLocks(content, items, readTopics) {
+  return items.flatMap(item => {
+    const mod = lessonLock(content, item, readTopics);
+    return mod ? [{ key: Number(item.key), lesson: mod.number, title: mod.title }] : [];
+  });
+}
+
+const lessonFirst = (mod) => ({ error: `Read Lesson ${mod.number} first.`, lesson: mod.number });
 
 // ---------- Dashboard summary ----------
 // GET /api/progress/summary
@@ -101,7 +116,10 @@ router.get('/case-studies', async (req, res, next) => {
   try {
     const content = await getContent();
     const row = await getCaseStudyRow(req.userId);
-    res.json(caseProgress(content, JSON.parse(row.solved_ids)));
+    res.json({
+      ...caseProgress(content, JSON.parse(row.solved_ids)),
+      lessonLocks: lessonLocks(content, content.cases, await getReadTopics(req.userId)),
+    });
   } catch (err) {
     next(err);
   }
@@ -117,6 +135,8 @@ router.post('/case-studies/submit', async (req, res, next) => {
     if (!scenario) {
       return res.status(400).json({ error: 'Invalid scenario id.' });
     }
+    const mod = lessonLock(content, scenario, await getReadTopics(req.userId));
+    if (mod) return res.status(403).json(lessonFirst(mod));
 
     const row = await getCaseStudyRow(req.userId);
     const solvedIds = JSON.parse(row.solved_ids).map(Number);
@@ -151,7 +171,10 @@ router.get('/study-cards', async (req, res, next) => {
   try {
     const content = await getContent();
     const row = await getStudyCardRow(req.userId);
-    res.json(deckProgress(content, JSON.parse(row.completed_ids)));
+    res.json({
+      ...deckProgress(content, JSON.parse(row.completed_ids)),
+      lessonLocks: lessonLocks(content, content.decks, await getReadTopics(req.userId)),
+    });
   } catch (err) {
     next(err);
   }
@@ -167,6 +190,8 @@ router.post('/study-cards/complete', async (req, res, next) => {
     if (!deck) {
       return res.status(400).json({ error: 'Invalid lesson id.' });
     }
+    const mod = lessonLock(content, deck, await getReadTopics(req.userId));
+    if (mod) return res.status(403).json(lessonFirst(mod));
 
     const row = await getStudyCardRow(req.userId);
     const completedIds = JSON.parse(row.completed_ids).map(Number);
@@ -270,24 +295,38 @@ router.post('/videos/watch', async (req, res, next) => {
 router.get('/lesson', async (req, res, next) => {
   try {
     const row = await getLessonRow(req.userId);
-    res.json({ completed: !!row.completed, completedAt: row.completed_at });
+    res.json({ completed: !!row.completed, completedAt: row.completed_at, readTopics: [...await getReadTopics(req.userId)] });
   } catch (err) {
     next(err);
   }
 });
 
-// POST /api/progress/lesson/complete
-router.post('/lesson/complete', async (req, res, next) => {
+// POST /api/progress/lesson/read  { topicKeys: [...] }  — pages read (also uploads
+// ones read before this was saved on the server); all read = lessons completed
+router.post('/lesson/read', async (req, res, next) => {
   try {
+    const { topicKeys } = req.body || {};
+    const content = await getContent();
+    if (!Array.isArray(topicKeys) || topicKeys.length > 500) return res.status(400).json({ error: 'Invalid topics.' });
+    const keys = [...new Set(topicKeys)].filter(k => typeof k === 'string' && content.topicByKey.has(k));
+    if (keys.length) {
+      await pool.query(
+        `INSERT INTO topic_reads (user_id, topic_key)
+         SELECT $1, unnest($2::text[]) ON CONFLICT DO NOTHING`,
+        [req.userId, keys]
+      );
+    }
+    const read = await getReadTopics(req.userId);
+    const allRead = content.topics.length > 0 && content.topics.every(t => read.has(t.key));
     const row = await getLessonRow(req.userId);
-    if (!row.completed) {
+    if (allRead && !row.completed) {
       await pool.query(
         "UPDATE lesson_progress SET completed = 1, completed_at = NOW() WHERE user_id = $1",
         [req.userId]
       );
       await logActivity(req.userId, 'lesson', 'Completed reading: Values Education 7 lessons');
     }
-    res.json({ completed: true });
+    res.json({ completed: allRead || !!row.completed, readTopics: [...read] });
   } catch (err) {
     next(err);
   }
@@ -332,9 +371,13 @@ router.get('/mistakes', async (req, res, next) => {
 router.post('/mistakes', async (req, res, next) => {
   try {
     const { source, itemKey } = req.body || {};
-    if (!isValidMistakeKey(await getContent(), source, itemKey)) {
+    const content = await getContent();
+    if (!isValidMistakeKey(content, source, itemKey)) {
       return res.status(400).json({ error: 'Invalid question.' });
     }
+    const item = source === 'case_study' ? content.caseByKey.get(Number(itemKey)) : content.deckByKey.get(content.deckOfCard.get(itemKey));
+    const mod = lessonLock(content, item, await getReadTopics(req.userId));
+    if (mod) return res.status(403).json(lessonFirst(mod));
     await pool.query(
       `INSERT INTO mistakes (user_id, source, item_key) VALUES ($1, $2, $3)
        ON CONFLICT (user_id, source, item_key)

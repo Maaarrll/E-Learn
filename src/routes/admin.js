@@ -359,7 +359,7 @@ router.post('/students/:id/remind', async (req, res, next) => {
 });
 
 // Start over: clears learning progress (keeps the account, profile and saved items)
-const PROGRESS_TABLES = ['case_study_progress', 'study_card_progress', 'lesson_progress', 'video_progress',
+const PROGRESS_TABLES = ['case_study_progress', 'study_card_progress', 'lesson_progress', 'topic_reads', 'video_progress',
   'video_positions', 'mistakes', 'daily_activity', 'user_badges', 'activity_log'];
 router.post('/students/:id/reset', studentAction('reset_progress', async (s) => {
   const client = await pool.connect();

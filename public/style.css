@@ -15194,7 +15194,7 @@ body.sb-reading .main-content {
 }
 
 .tq-play.is-new .tq-choice {
-    animation: tqTileIn 0.45s var(--fun-bounce) both;
+    animation: tqTileIn 0.45s var(--fun-bounce) backwards;
     animation-delay: calc(var(--i) * 70ms);
 }
 
@@ -15353,4 +15353,575 @@ body.sb-reading .main-content {
     .tq-countdown span.is-pop {
         animation: none;
     }
+}
+
+/* =========================================
+   Situation Quizzes: game-show answer tiles
+   (reuses the teacher quiz tiles and rocket track;
+   unlike there, right and wrong are shown)
+   ========================================= */
+.case-page .options-group.tq-choices {
+    display: grid;
+    gap: 12px;
+}
+
+.case-page .cs-choice {
+    margin: 0;
+}
+
+/* Picked, not yet submitted */
+.case-page .hidden-radio:checked + .cs-choice {
+    transform: scale(1.03);
+    box-shadow: 0 0 0 4px #fff, 0 0 0 8px var(--tile);
+}
+
+.case-page .cs-choice.correct-answer,
+.case-page .cs-choice.wrong-answer {
+    transform: none;
+}
+
+.case-page .options-group .cs-choice.correct-answer {
+    box-shadow: 0 0 0 4px #fff, 0 0 0 8px #1e9e55;
+    animation: funPop 0.45s var(--fun-bounce);
+}
+
+.case-page .options-group .cs-choice.wrong-answer {
+    filter: grayscale(0.6);
+    opacity: 0.7;
+    box-shadow: 0 0 0 4px #fff, 0 0 0 8px #d6336c;
+    animation: funShake 0.45s ease;
+}
+
+/* Right/wrong mark in the corner (colour alone isn't enough) */
+.case-page .cs-choice.correct-answer::after,
+.case-page .cs-choice.wrong-answer::after {
+    position: absolute;
+    top: -10px;
+    right: -10px;
+    width: 30px;
+    height: 30px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    border: 3px solid #fff;
+    border-radius: 50%;
+    font-family: "Font Awesome 6 Free";
+    font-weight: 900;
+    font-size: 13px;
+    color: #fff;
+}
+
+.case-page .cs-choice.correct-answer::after {
+    content: "\f00c";
+    background: #1e9e55;
+}
+
+.case-page .cs-choice.wrong-answer::after {
+    content: "\f00d";
+    background: #d6336c;
+}
+
+/* Solved: the other tiles step back */
+.case-page .options-group.is-locked .cs-choice {
+    cursor: default;
+}
+
+.case-page .options-group.is-locked .cs-choice:not(.correct-answer) {
+    opacity: 0.35;
+    filter: grayscale(0.5);
+}
+
+.case-page .options-group.is-locked .cs-choice:hover {
+    transform: none;
+}
+
+/* New scenario slides in */
+.cs-play.is-new .scenario-box,
+.cs-play.is-new .question-text {
+    animation: tqSlideIn 0.4s var(--fun-bounce) both;
+}
+
+.cs-play.is-new .cs-choice {
+    animation: tqTileIn 0.45s var(--fun-bounce) backwards;
+    animation-delay: calc(var(--i) * 70ms);
+}
+
+@media screen and (max-width: 768px) {
+    .case-page .options-group.tq-choices {
+        grid-template-columns: 1fr;
+    }
+
+    .case-page .tq-keys {
+        display: none;
+    }
+}
+
+@media (prefers-reduced-motion: reduce) {
+    .case-page .options-group .cs-choice.correct-answer,
+    .case-page .options-group .cs-choice.wrong-answer,
+    .cs-play.is-new .scenario-box,
+    .cs-play.is-new .question-text,
+    .cs-play.is-new .cs-choice {
+        animation: none;
+    }
+}
+
+/* =========================================
+   Situation Quizzes: game look for the whole page
+   (hero bar, level map, story card)
+   ========================================= */
+
+/* Hero: dark arcade banner with a progress bar */
+.case-page .cs-header-section.cs-hero {
+    padding: 28px 30px;
+    border: none;
+    background: radial-gradient(circle at 85% 20%, rgba(255, 201, 60, 0.25), transparent 45%),
+                linear-gradient(135deg, #02473d, #06994e);
+    box-shadow: 0 14px 30px rgba(2, 71, 61, 0.25);
+}
+
+.case-page .cs-hero::after {
+    opacity: 0.35;
+}
+
+.case-page .cs-hero .cs-header-text h2 {
+    color: #fff;
+    font-size: 30px;
+    font-weight: 900;
+}
+
+.case-page .cs-hero .cs-header-text p {
+    color: rgba(255, 255, 255, 0.8);
+}
+
+.case-page .cs-hero .cs-icon-box {
+    width: 60px;
+    height: 60px;
+    background: var(--fun-sun);
+    color: #00260e;
+    box-shadow: 0 6px 0 #c99a12;
+}
+
+.cs-hero-bar {
+    width: min(320px, 100%);
+    height: 10px;
+    margin-top: 12px;
+    border-radius: 999px;
+    background: rgba(255, 255, 255, 0.2);
+    overflow: hidden;
+}
+
+.cs-hero-bar div {
+    width: 0;
+    height: 100%;
+    border-radius: inherit;
+    background: linear-gradient(90deg, var(--fun-sun), var(--fun-coral));
+    transition: width 0.6s var(--fun-bounce);
+}
+
+.case-page .cs-hero .cs-solved-chip {
+    border: none;
+    background: rgba(255, 255, 255, 0.15);
+    color: #fff;
+}
+
+.case-page .cs-hero .cs-solved-chip strong,
+.case-page .cs-hero .cs-solved-chip i {
+    color: var(--fun-sun);
+}
+
+/* Chunky "press me" buttons */
+.case-page .cs-hero .cs-continue-btn {
+    padding: 12px 22px;
+    border-radius: 16px;
+    background: var(--fun-sun);
+    color: #00260e;
+    font-size: 15px;
+    font-weight: 900;
+    box-shadow: 0 5px 0 #c99a12;
+}
+
+.case-page .cs-hero .cs-continue-btn:hover {
+    background: #ffd457;
+    transform: translateY(-2px);
+}
+
+.case-page .cs-hero .cs-continue-btn:active {
+    transform: translateY(3px);
+    box-shadow: 0 2px 0 #c99a12;
+}
+
+.case-page .cs-hero .review-btn {
+    border: none;
+    border-radius: 16px;
+    background: #fff;
+    box-shadow: 0 5px 0 #ffc2a6;
+}
+
+/* Level map: a path down the middle, cards on alternating sides */
+.case-page .scenarios-list.cs-map {
+    display: flex;
+    flex-direction: column;
+    gap: 0;
+    padding: 6px 0 20px;
+}
+
+.cs-node {
+    position: relative;
+    display: grid;
+    grid-template-columns: minmax(0, 1fr) 84px minmax(0, 1fr);
+    align-items: center;
+    width: 100%;
+    min-height: 104px;
+    padding: 0;
+    border: none;
+    background: none;
+    font: inherit;
+    color: inherit;
+    text-align: left;
+    animation: fadeUp 0.45s ease both;
+}
+
+button.cs-node {
+    cursor: pointer;
+}
+
+/* Path segment behind each dot (green once solved) */
+.cs-node::before {
+    content: "";
+    position: absolute;
+    left: 50%;
+    top: 0;
+    bottom: 0;
+    width: 8px;
+    margin-left: -4px;
+    background: repeating-linear-gradient(180deg, #d5e6dc 0 12px, transparent 12px 20px);
+}
+
+.cs-node.is-solved::before {
+    background: linear-gradient(180deg, var(--fun-mint), var(--fun-sky));
+}
+
+.cs-node:first-child::before { top: 50%; }
+.cs-node:last-child::before { bottom: 50%; }
+
+.cs-node-dot {
+    position: relative;
+    grid-column: 2;
+    grid-row: 1;
+    justify-self: center;
+    width: 64px;
+    height: 64px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    border-radius: 50%;
+    background: #fff;
+    color: #02473d;
+    border: 4px solid #cfe3d8;
+    font-size: 22px;
+    font-weight: 900;
+    box-shadow: 0 5px 0 #cfe3d8;
+    transition: transform 0.3s var(--fun-bounce);
+}
+
+.cs-node.is-solved .cs-node-dot {
+    background: var(--fun-sun);
+    border-color: #fff;
+    color: #fff;
+    box-shadow: 0 5px 0 #c99a12, 0 0 0 4px #ffe9a8;
+}
+
+.cs-node.is-next .cs-node-dot {
+    width: 76px;
+    height: 76px;
+    background: var(--fun-pink);
+    border-color: #fff;
+    color: #fff;
+    box-shadow: 0 6px 0 #c8467a, 0 0 0 6px rgba(255, 111, 165, 0.25);
+    animation: funPulse 1.6s ease-in-out infinite;
+}
+
+.cs-node.is-locked .cs-node-dot {
+    background: #eef2f0;
+    color: #9aaba3;
+    border-color: #e1e8e4;
+    box-shadow: 0 5px 0 #dbe3df;
+    font-size: 18px;
+}
+
+.cs-node.is-missed .cs-node-dot {
+    border-color: #ffb08f;
+}
+
+button.cs-node:hover .cs-node-dot {
+    transform: scale(1.1);
+}
+
+.cs-node-go {
+    position: absolute;
+    bottom: calc(100% + 8px);
+    left: 50%;
+    padding: 4px 10px;
+    border-radius: 10px;
+    background: #00260e;
+    color: #fff;
+    font-size: 12px;
+    font-weight: 900;
+    white-space: nowrap;
+    transform: translateX(-50%);
+}
+
+.cs-node-go::after {
+    content: "";
+    position: absolute;
+    top: 100%;
+    left: 50%;
+    margin-left: -6px;
+    border: 6px solid transparent;
+    border-top-color: #00260e;
+}
+
+.cs-node-card {
+    grid-column: 1;
+    grid-row: 1;
+    display: flex;
+    flex-direction: column;
+    gap: 6px;
+    margin: 10px 14px 10px 0;
+    padding: 14px 16px;
+    border: 2px solid #e0eee6;
+    border-radius: 18px;
+    background: #fff;
+    box-shadow: 0 6px 16px rgba(2, 71, 61, 0.06);
+    transition: transform 0.25s var(--fun-bounce), border-color 0.2s;
+}
+
+.cs-node.is-right .cs-node-card {
+    grid-column: 3;
+    margin: 10px 0 10px 14px;
+}
+
+button.cs-node:hover .cs-node-card {
+    transform: translateY(-3px);
+    border-color: #b9dcc9;
+}
+
+.cs-node.is-next .cs-node-card {
+    border-color: var(--fun-pink);
+}
+
+.cs-node.is-locked .cs-node-card {
+    opacity: 0.55;
+    box-shadow: none;
+}
+
+.cs-node-head {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    flex-wrap: wrap;
+    color: #00260e;
+}
+
+.cs-node-status {
+    padding: 2px 9px;
+    border-radius: 999px;
+    background: #eef6f1;
+    color: #3d6b55;
+    font-size: 11px;
+    font-weight: 800;
+}
+
+.cs-node.is-solved .cs-node-status { background: #fff4d1; color: #8a6200; }
+.cs-node.is-next .cs-node-status   { background: #ffe3ee; color: #b0305f; }
+
+.cs-node .missed-chip {
+    margin: 0;
+}
+
+.cs-node-q {
+    display: -webkit-box;
+    -webkit-line-clamp: 2;
+    -webkit-box-orient: vertical;
+    overflow: hidden;
+    font-size: 13px;
+    color: #555;
+}
+
+.cs-node:focus-visible {
+    outline: none;
+}
+
+.cs-node:focus-visible .cs-node-dot {
+    outline: 4px solid #ffe66b;
+    outline-offset: 3px;
+}
+
+.cs-node.is-highlighted .cs-node-card {
+    animation: funGlow 1s ease-in-out 2;
+    border-color: var(--fun-grape);
+}
+
+/* Quiz screen: game card + storybook situation */
+.case-page .quiz-container.cs-play {
+    border: 2px solid #dff0e3;
+    border-radius: 26px;
+    box-shadow: 0 12px 30px rgba(0, 112, 55, 0.08);
+}
+
+.case-page .cs-play .scenario-title {
+    display: inline-block;
+    padding: 6px 16px;
+    border-radius: 999px;
+    background: #00260e;
+    color: #fff;
+    font-size: 16px;
+    font-weight: 900;
+}
+
+.case-page .cs-play .scenario-box {
+    position: relative;
+    padding: 20px 22px 20px 80px;
+    border: none;
+    border-radius: 22px;
+    background: linear-gradient(135deg, #fff6e0, #ffeef3);
+    box-shadow: inset 0 0 0 2px #ffe2b8;
+}
+
+.case-page .cs-play .scenario-box::before {
+    content: "\1F575\FE0F";
+    position: absolute;
+    left: 18px;
+    top: 16px;
+    font-size: 42px;
+    line-height: 1;
+}
+
+.case-page .cs-play .scenario-box-label {
+    color: #b0305f;
+}
+
+.case-page .cs-play .scenario-text {
+    font-size: 16px;
+    line-height: 1.6;
+    color: #3a2a1a;
+}
+
+.case-page .cs-play .question-text {
+    font-size: 20px;
+    font-weight: 900;
+    color: #00260e;
+}
+
+.case-page .cs-play .quiz-feedback {
+    border-radius: 16px;
+    font-size: 16px;
+    font-weight: 800;
+    animation: funPop 0.4s var(--fun-bounce);
+}
+
+.case-page .cs-play .btn-submit {
+    padding: 14px 28px;
+    border-radius: 16px;
+    background: #06994e;
+    font-size: 16px;
+    font-weight: 900;
+    box-shadow: 0 5px 0 #02473d;
+}
+
+.case-page .cs-play .btn-submit:active {
+    transform: translateY(3px);
+    box-shadow: 0 2px 0 #02473d;
+}
+
+.case-page .cs-play .btn-back {
+    border-radius: 16px;
+}
+
+@media screen and (max-width: 768px) {
+    .case-page .cs-header-section.cs-hero {
+        padding: 22px 18px;
+    }
+
+    .case-page .cs-hero .cs-header-text h2 {
+        font-size: 24px;
+    }
+
+    /* Map: path on the left, every card on the right */
+    .cs-node,
+    .cs-node.is-right {
+        grid-template-columns: 72px minmax(0, 1fr);
+    }
+
+    .cs-node::before {
+        left: 36px;
+    }
+
+    .cs-node-dot {
+        grid-column: 1;
+    }
+
+    .cs-node-card,
+    .cs-node.is-right .cs-node-card {
+        grid-column: 2;
+        margin: 10px 0 10px 10px;
+    }
+
+    .cs-node-go {
+        bottom: auto;
+        top: calc(100% + 6px);
+    }
+
+    .cs-node-go::after {
+        top: auto;
+        bottom: 100%;
+        border-top-color: transparent;
+        border-bottom-color: #00260e;
+    }
+
+    .case-page .cs-play .scenario-box {
+        padding: 64px 16px 16px;
+    }
+
+    .case-page .cs-play .scenario-box::before {
+        top: 14px;
+        font-size: 36px;
+    }
+}
+
+@media (prefers-reduced-motion: reduce) {
+    .cs-node,
+    .cs-node.is-next .cs-node-dot,
+    .case-page .cs-play .quiz-feedback {
+        animation: none;
+    }
+}
+
+/* Waiting on its lesson: tap to see which lesson to read */
+.cs-node.is-lesson .cs-node-dot {
+    background: #e8f1ff;
+    color: #2f74c0;
+    border-color: #fff;
+    box-shadow: 0 5px 0 #bcd3f0, 0 0 0 4px #d6e6fb;
+    font-size: 20px;
+}
+
+.cs-node.is-lesson .cs-node-card {
+    border-style: dashed;
+    border-color: #bcd3f0;
+}
+
+.cs-node.is-lesson .cs-node-status {
+    background: #e8f1ff;
+    color: #2a5f9e;
+}
+
+.study-page .deck.is-lesson {
+    cursor: pointer;
+}
+
+.study-page .deck.is-lesson .deck-status {
+    background: #e8f1ff;
+    color: #2a5f9e;
 }

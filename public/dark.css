@@ -4846,6 +4846,213 @@
     background: var(--fun-sun);
     color: #00260e;
 }
+:root[data-theme="dark"] .case-page .hidden-radio:checked + .cs-choice {
+    box-shadow: 0 0 0 4px hsl(165 14% 17%), 0 0 0 8px var(--tile);
+}
+:root[data-theme="dark"] .case-page .options-group .cs-choice.correct-answer {
+    box-shadow: 0 0 0 4px hsl(165 14% 17%), 0 0 0 8px #1e9e55;
+}
+:root[data-theme="dark"] .case-page .options-group .cs-choice.wrong-answer {
+    box-shadow: 0 0 0 4px hsl(165 14% 17%), 0 0 0 8px #d6336c;
+}
+:root[data-theme="dark"] .case-page .cs-choice.correct-answer::after,
+:root[data-theme="dark"] .case-page .cs-choice.wrong-answer::after {
+    border: 3px solid hsl(165 14% 17%);
+    color: #fff;
+}
+:root[data-theme="dark"] .case-page .cs-choice.correct-answer::after {
+    background: #1e9e55;
+}
+:root[data-theme="dark"] .case-page .cs-choice.wrong-answer::after {
+    background: #d6336c;
+}
+:root[data-theme="dark"] .case-page .cs-header-section.cs-hero {
+    border: none;
+    background: radial-gradient(circle at 85% 20%, rgba(255, 201, 60, 0.25), transparent 45%),
+                linear-gradient(135deg, #02473d, #06994e);
+    box-shadow: 0 14px 30px rgba(2, 71, 61, 0.25);
+}
+:root[data-theme="dark"] .case-page .cs-hero .cs-header-text h2 {
+    color: #fff;
+}
+:root[data-theme="dark"] .case-page .cs-hero .cs-header-text p {
+    color: rgba(255, 255, 255, 0.8);
+}
+:root[data-theme="dark"] .case-page .cs-hero .cs-icon-box {
+    background: var(--fun-sun);
+    color: #00260e;
+    box-shadow: 0 6px 0 #c99a12;
+}
+:root[data-theme="dark"] .cs-hero-bar {
+    background: rgba(255, 255, 255, 0.2);
+}
+:root[data-theme="dark"] .cs-hero-bar div {
+    background: linear-gradient(90deg, var(--fun-sun), var(--fun-coral));
+}
+:root[data-theme="dark"] .case-page .cs-hero .cs-solved-chip {
+    border: none;
+    background: rgba(255, 255, 255, 0.15);
+    color: #fff;
+}
+:root[data-theme="dark"] .case-page .cs-hero .cs-solved-chip strong,
+:root[data-theme="dark"] .case-page .cs-hero .cs-solved-chip i {
+    color: var(--fun-sun);
+}
+:root[data-theme="dark"] .case-page .cs-hero .cs-continue-btn {
+    background: var(--fun-sun);
+    color: #00260e;
+    box-shadow: 0 5px 0 #c99a12;
+}
+:root[data-theme="dark"] .case-page .cs-hero .cs-continue-btn:hover {
+    background: #ffd457;
+}
+:root[data-theme="dark"] .case-page .cs-hero .cs-continue-btn:active {
+    box-shadow: 0 2px 0 #c99a12;
+}
+:root[data-theme="dark"] .case-page .cs-hero .review-btn {
+    border: none;
+    background: hsl(165 14% 17%);
+    box-shadow: 0 5px 0 #ffc2a6;
+}
+:root[data-theme="dark"] .cs-node {
+    border: none;
+    background: none;
+    color: inherit;
+}
+:root[data-theme="dark"] .cs-node::before {
+    background: repeating-linear-gradient(180deg, hsl(145 25% 25%) 0 12px, transparent 12px 20px);
+}
+:root[data-theme="dark"] .cs-node.is-solved::before {
+    background: linear-gradient(180deg, var(--fun-mint), var(--fun-sky));
+}
+:root[data-theme="dark"] .cs-node-dot {
+    background: hsl(165 14% 17%);
+    color: hsl(171 75% 88%);
+    border: 4px solid hsl(147 26% 26%);
+    box-shadow: 0 5px 0 hsl(147 26% 26%);
+}
+:root[data-theme="dark"] .cs-node.is-solved .cs-node-dot {
+    background: var(--fun-sun);
+    border-color: hsl(165 14% 17%);
+    color: #fff;
+    box-shadow: 0 5px 0 #c99a12, 0 0 0 4px #ffe9a8;
+}
+:root[data-theme="dark"] .cs-node.is-next .cs-node-dot {
+    background: var(--fun-pink);
+    border-color: hsl(165 14% 17%);
+    color: #fff;
+    box-shadow: 0 6px 0 #c8467a, 0 0 0 6px rgba(255, 111, 165, 0.25);
+}
+:root[data-theme="dark"] .cs-node.is-locked .cs-node-dot {
+    background: hsl(150 13% 21%);
+    color: #9aaba3;
+    border-color: hsl(146 13% 23%);
+    box-shadow: 0 5px 0 hsl(150 12% 25%);
+}
+:root[data-theme="dark"] .cs-node.is-missed .cs-node-dot {
+    border-color: #ffb08f;
+}
+:root[data-theme="dark"] .cs-node-go {
+    background: #00260e;
+    color: #fff;
+}
+:root[data-theme="dark"] .cs-node-go::after {
+    border: 6px solid transparent;
+    border-top-color: #00260e;
+}
+:root[data-theme="dark"] .cs-node-card {
+    border: 2px solid hsl(146 29% 23%);
+    background: hsl(165 14% 17%);
+    box-shadow: 0 6px 16px rgba(2, 71, 61, 0.06);
+}
+:root[data-theme="dark"] button.cs-node:hover .cs-node-card {
+    border-color: hsl(147 33% 29%);
+}
+:root[data-theme="dark"] .cs-node.is-next .cs-node-card {
+    border-color: var(--fun-pink);
+}
+:root[data-theme="dark"] .cs-node.is-locked .cs-node-card {
+    box-shadow: none;
+}
+:root[data-theme="dark"] .cs-node-head {
+    color: hsl(142 75% 92%);
+}
+:root[data-theme="dark"] .cs-node-status {
+    background: hsl(142 31% 20%);
+    color: hsl(151 27% 78%);
+}
+:root[data-theme="dark"] .cs-node.is-solved .cs-node-status {
+    background: hsl(46 45% 22%);
+    color: hsl(43 75% 81%);
+}
+:root[data-theme="dark"] .cs-node.is-next .cs-node-status {
+    background: hsl(336 45% 20%);
+    color: hsl(338 57% 72%);
+}
+:root[data-theme="dark"] .cs-node-q {
+    color: hsl(165 12% 78%);
+}
+:root[data-theme="dark"] .cs-node:focus-visible {
+    outline: none;
+}
+:root[data-theme="dark"] .cs-node:focus-visible .cs-node-dot {
+    outline: 4px solid #ffe66b;
+}
+:root[data-theme="dark"] .cs-node.is-highlighted .cs-node-card {
+    border-color: var(--fun-grape);
+}
+:root[data-theme="dark"] .case-page .quiz-container.cs-play {
+    border: 2px solid hsl(134 36% 23%);
+    box-shadow: 0 12px 30px rgba(0, 112, 55, 0.08);
+}
+:root[data-theme="dark"] .case-page .cs-play .scenario-title {
+    background: #00260e;
+    color: #fff;
+}
+:root[data-theme="dark"] .case-page .cs-play .scenario-box {
+    border: none;
+    background: linear-gradient(135deg, hsl(43 45% 21%), hsl(342 45% 19%));
+    box-shadow: inset 0 0 0 2px hsl(35 45% 25%);
+}
+:root[data-theme="dark"] .case-page .cs-play .scenario-box-label {
+    color: hsl(338 57% 72%);
+}
+:root[data-theme="dark"] .case-page .cs-play .scenario-text {
+    color: hsl(30 38% 87%);
+}
+:root[data-theme="dark"] .case-page .cs-play .question-text {
+    color: hsl(142 75% 92%);
+}
+:root[data-theme="dark"] .case-page .cs-play .btn-submit {
+    background: #06994e;
+    box-shadow: 0 5px 0 #02473d;
+}
+:root[data-theme="dark"] .case-page .cs-play .btn-submit:active {
+    box-shadow: 0 2px 0 #02473d;
+}
+@media screen and (max-width: 768px) {
+    :root[data-theme="dark"] .cs-node-go::after {
+        border-top-color: transparent;
+        border-bottom-color: #00260e;
+    }
+}
+:root[data-theme="dark"] .cs-node.is-lesson .cs-node-dot {
+    background: hsl(217 45% 20%);
+    color: hsl(211 61% 70%);
+    border-color: hsl(165 14% 17%);
+    box-shadow: 0 5px 0 #bcd3f0, 0 0 0 4px hsl(214 45% 22%);
+}
+:root[data-theme="dark"] .cs-node.is-lesson .cs-node-card {
+    border-color: #bcd3f0;
+}
+:root[data-theme="dark"] .cs-node.is-lesson .cs-node-status {
+    background: hsl(217 45% 20%);
+    color: hsl(213 58% 74%);
+}
+:root[data-theme="dark"] .study-page .deck.is-lesson .deck-status {
+    background: hsl(217 45% 20%);
+    color: hsl(213 58% 74%);
+}
 
 /* ---------- from update-password.html ---------- */
 :root[data-theme="dark"] body.update-password-page {

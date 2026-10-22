@@ -20,7 +20,7 @@
         <div class="noscript-note">ValuesLearn needs JavaScript to work. Please turn it on in your browser settings.</div>
     </noscript>
 
-    <script src="js/api.js?v=12"></script>
+    <script src="js/api.js?v=13"></script>
     <script src="js/notifications.js?v=2"></script>
     <script src="js/richtext.js?v=1"></script>
     <script src="js/bookmarks.js?v=2"></script>
@@ -226,12 +226,21 @@
             const searchText = topics.map(t => normalizeText(`${t.title} ${t.sections.map(s => `${s.heading || ''} ${s.body || ''}`).join(' ')}`));
             const bookPages = (m) => topics.filter(t => t.lesson === m);
 
-            // Pages read are kept per student in this browser.
-            // shortcut: browser-only, so they don't follow a student to another device; move to the server if that matters
-            const readKey = `readTopics:${user ? user.id : 'me'}`;
+            // Pages read are saved on the server: reading a lesson unlocks its quizzes.
             let read = new Set();
-            try { read = new Set(JSON.parse(localStorage.getItem(readKey) || '[]')); } catch (e) { /* storage blocked */ }
-            const saveRead = () => { try { localStorage.setItem(readKey, JSON.stringify([...read])); } catch (e) { /* storage blocked */ } };
+            try { read = new Set((await api.get('/progress/lesson')).readTopics); } catch (e) { /* offline: pages show as unread */ }
+            const saveRead = (keys) => api.post('/progress/lesson/read', { topicKeys: keys });
+
+            // Pages read before that were kept in this browser: upload them once
+            const readKey = `readTopics:${user ? user.id : 'me'}`;
+            try {
+                const local = JSON.parse(localStorage.getItem(readKey) || '[]');
+                const missing = Array.isArray(local) ? local.filter(k => !read.has(k)) : [];
+                missing.forEach(k => read.add(k));
+                (missing.length ? saveRead(missing) : Promise.resolve())
+                    .then(() => localStorage.removeItem(readKey))
+                    .catch(() => { /* try again next visit */ });
+            } catch (e) { /* storage blocked */ }
 
             // ---------------- Bookshelf + all pages ----------------
             function renderShelf() {
@@ -311,8 +320,7 @@
                 }
                 if (read.has(t.key)) return;
                 read.add(t.key);
-                saveRead();
-                if (read.size === topics.length) api.post('/progress/lesson/complete').catch(() => {});
+                saveRead([t.key]).catch(() => {});
             }
 
             function renderBookmark() {

@@ -287,6 +287,11 @@ const HCIContentEditor = (function () {
   const field = (label, input, hint = '') => `<label class="ce-field"><span>${label}</span>${input}${hint ? `<small>${hint}</small>` : ''}</label>`;
   const inputBox = (name, value, attrs = '') => `<input type="text" name="${name}" value="${esc(value)}" ${attrs}>`;
   const textBox = (name, value, rows = 3, attrs = '') => `<textarea name="${name}" rows="${rows}" ${attrs}>${esc(value)}</textarea>`;
+  // Students must read this lesson before the situation quiz / deck opens
+  const lessonBox = (value) => field('Lesson to read first', `<select name="lesson">
+      <option value="">None (always open)</option>
+      ${ofKind('module').filter(m => m.status !== 'deleted').map((m, i) => `<option value="${esc(m.key)}" ${value === m.key ? 'selected' : ''}>Lesson ${i + 1}: ${esc(view(m).title)}</option>`).join('')}
+    </select>`, 'Locked until the student reads every page of this lesson');
   const iconBox = (name, value) => `<span class="ce-icon-input"><i class="fa-solid ${HCIRichText.safeIcon(value)}"></i>${inputBox(name, value, 'placeholder="fa-book-open" list="ceIconIdeas"')}</span>`;
 
   function choiceFields(d) {
@@ -330,9 +335,10 @@ const HCIContentEditor = (function () {
       case 'deck':
         return field('Deck title', inputBox('title', d.title))
           + `<div class="ce-row2">${field('Icon', iconBox('icon', d.icon || 'fa-clone'))}
-             ${field('Color', `<select name="color">${data.deckColors.map(c => `<option value="${c}" ${d.color === c ? 'selected' : ''}>${c.replace('-icon', '')}</option>`).join('')}</select>`)}</div>`;
+             ${field('Color', `<select name="color">${data.deckColors.map(c => `<option value="${c}" ${d.color === c ? 'selected' : ''}>${c.replace('-icon', '')}</option>`).join('')}</select>`)}</div>`
+          + lessonBox(d.lesson || '');
       case 'case':
-        return field('Scenario', textBox('text', d.text, 4)) + field('Question', inputBox('question', d.question)) + choiceFields(d);
+        return field('Scenario', textBox('text', d.text, 4)) + field('Question', inputBox('question', d.question)) + choiceFields(d) + lessonBox(d.lesson || '');
       case 'card':
         return field('Question', textBox('question', d.question, 2)) + choiceFields(d);
       case 'topic':
@@ -351,8 +357,8 @@ const HCIContentEditor = (function () {
   const EMPTY = {
     video: { title: '', topic: 'pagtitipid', duration: '' },
     module: { title: '', icon: 'fa-book-open' },
-    deck: { title: '', icon: 'fa-clone', color: 'video-icon' },
-    case: { text: '', question: '', options: ['', '', '', ''], answer: 0 },
+    deck: { title: '', icon: 'fa-clone', color: 'video-icon', lesson: '' },
+    case: { text: '', question: '', options: ['', '', '', ''], answer: 0, lesson: '' },
     card: { question: '', options: ['', '', '', ''], answer: 0 },
     topic: { title: '', sections: [{ icon: 'fa-book-open', heading: '', body: '' }] },
   };
@@ -362,12 +368,12 @@ const HCIContentEditor = (function () {
     switch (kind) {
       case 'video': return { youtubeId: v('youtubeId'), title: v('title'), topic: v('topic'), duration: v('duration') };
       case 'module': return { title: v('title'), icon: v('icon') };
-      case 'deck': return { title: v('title'), icon: v('icon'), color: v('color') };
+      case 'deck': return { title: v('title'), icon: v('icon'), color: v('color'), lesson: v('lesson') };
       case 'case':
       case 'card': {
         const checked = form.querySelector('input[name="answer"]:checked');
         const base = { question: v('question'), options: [0, 1, 2, 3].map(i => v(`option${i}`)), answer: checked ? Number(checked.value) : -1 };
-        return kind === 'case' ? { text: v('text'), ...base } : base;
+        return kind === 'case' ? { text: v('text'), ...base, lesson: v('lesson') } : base;
       }
       case 'topic': return { title: v('title'), sections: readSections(form) };
       default: return {};
