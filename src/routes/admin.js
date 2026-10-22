@@ -508,3 +508,4 @@ router.delete('/audit/:id', requireAdminRole, async (req, res, next) => {
 });
 
 module.exports = router;
+module.exports.canSee = canSee; // used by the quiz results

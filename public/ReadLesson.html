@@ -8,8 +8,8 @@
     <link rel="icon" href="favicon-32.png?v=2" type="image/png" sizes="32x32">
     <link rel="apple-touch-icon" href="apple-touch-icon.png?v=2">
     <meta name="theme-color" content="#02473d">
-    <link rel="stylesheet" href="style.css?v=73">
-    <link rel="stylesheet" href="dark.css?v=37">
+    <link rel="stylesheet" href="style.css?v=80">
+    <link rel="stylesheet" href="dark.css?v=44">
     <script src="js/theme.js?v=3"></script>
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
 </head>
@@ -26,7 +26,7 @@
     <script src="js/gamify.js?v=3"></script>
     <script src="js/search.js?v=3"></script>
     <script>
-        requireAuth();
+        const authReady = requireAuth();
         document.addEventListener('DOMContentLoaded', function() {
             let currentPageName = window.location.pathname.split('/').pop();
             if (currentPageName && currentPageName !== '') {
@@ -66,6 +66,9 @@
                 <a href="StudyCards.html" class="nav-item">
                     <i class="fa-solid fa-rotate"></i> <span class="nav-text">Quiz Cards</span>
                 </a>
+                <a href="Quizzes.html" class="nav-item">
+                    <i class="fa-solid fa-stopwatch"></i> <span class="nav-text">Teacher Quizzes</span>
+                </a>
                 <span class="sidebar-label sidebar-label-group">You</span>
                 <a href="Saved.html" class="nav-item">
                     <i class="fa-solid fa-bookmark"></i> <span class="nav-text">Saved</span>
@@ -95,102 +98,52 @@
 
         <!-- Main Content Area -->
         <main class="main-content">
-            
-            <!-- Page Header + Search -->
-            <div class="video-header">
-                <div class="video-header-text">
-                    <h2><i class="fa-solid fa-book"></i> Read Lesson</h2>
-                    <p>Values Education 7 lessons from the MATATAG curriculum.</p>
+
+            <div class="jr-wrap">
+
+                <!-- Hero: progress + search -->
+                <header class="jr-hero">
+                    <div class="jr-hero-text">
+                        <span class="jr-kicker"><i class="fa-solid fa-map-location-dot"></i> Your reading journey</span>
+                        <h2>Read Lesson</h2>
+                        <p id="jrGreeting">Follow the trail, one stop at a time. Every topic you read gets a stamp!</p>
+                        <div class="jr-search">
+                            <i class="fa-solid fa-magnifying-glass" aria-hidden="true"></i>
+                            <input type="search" id="searchInput" placeholder="Find a topic..." aria-label="Find a topic">
+                        </div>
+                    </div>
+                    <div class="jr-ring" id="jrRing" role="img" aria-label="Topics read">
+                        <svg viewBox="0 0 120 120" aria-hidden="true">
+                            <circle cx="60" cy="60" r="52" class="jr-ring-track"></circle>
+                            <circle cx="60" cy="60" r="52" class="jr-ring-fill" id="jrRingFill"></circle>
+                        </svg>
+                        <div class="jr-ring-text"><b id="jrReadCount">0</b><small>of <span id="jrTotal">0</span> stamps</small></div>
+                    </div>
+                </header>
+
+                <!-- Objectives (short on purpose; the trail below is the outline) -->
+                <details class="jr-goals">
+                    <summary><i class="fa-solid fa-bullseye"></i> What you will learn <i class="fa-solid fa-chevron-down jr-goals-arrow" aria-hidden="true"></i></summary>
+                    <ol>
+                        <li>Natutukoy ang mga pang-araw-araw na gawain na may kinalaman sa pagtitipid.</li>
+                        <li>Naipahahayag at naisasakilos ang wastong paraan ng paggamit ng tubig at enerhiya katuwang ang kapuwa.</li>
+                        <li>Nakabubuo ng plano sa pagtitipid ng tubig at enerhiya sa tahanan, paaralan o lugar na pinupuntahan.</li>
+                        <li>Naipaliliwanag ang limang wika ng pag-ibig bilang paraan ng pagpapakita ng pagmamahalan ng pamilya.</li>
+                        <li>Nakikilala ang pamilya bilang likas na institusyon ng pagmamahalan.</li>
+                        <li>Nakagagawa ng presentasyon gamit ang limang wika ng pag-ibig.</li>
+                        <li>Nakikilala ang mga paraan ng mapanagutang paggamit ng social media bilang mamamayan.</li>
+                        <li>Naisasakilos ang mga paraan ng mapanagutang paggamit ng social media upang malinang ang disiplina.</li>
+                    </ol>
+                </details>
+
+                <!-- The trail: one island per lesson, one stop per topic -->
+                <div class="jr-map" id="jrMap" aria-live="polite">
+                    <p class="jr-loading"><span class="btn-spinner"></span> Loading lessons...</p>
                 </div>
-                <div class="search-container">
-                    <i class="fa-solid fa-magnifying-glass"></i>
-                    <!-- DITO YUNG NAGING PROBLEMA: Kailangan may id="searchInput" -->
-                    <input type="text" id="searchInput" placeholder="Search lessons...">
-                    <button type="button" class="clear-search" id="clearSearchBtn" aria-label="Clear search" hidden>
-                        <i class="fa-solid fa-xmark"></i>
-                    </button>
-                </div>
+                <p class="jr-empty" id="lessonEmpty" hidden><i class="fa-solid fa-book-open"></i> No topics found. Try a different word.</p>
+
             </div>
 
-                <!-- Top Cards Grid -->
-               <!-- Top Cards Grid -->
-                <div class="lesson-top-grid">
-                    
-                    <!-- Learning Objectives Card -->
-                    <div class="info-card">
-                        <div class="card-header">
-                            <i class="fa-solid fa-bullseye icon-purple"></i>
-                            <h3>Learning Objectives</h3>
-                        </div>
-                        <div class="card-body" id="learningObjectivesList">
-                            <div class="pill-box">Natutukoy ang mga pang-araw-araw na gawain na may kinalaman sa pagtitipid.</div>
-                            <div class="pill-box">Naipahahayag at naisasakilos ang wastong paraan ng paggamit ng tubig at enerhiya katuwang ang kapuwa.</div>
-                            <div class="pill-box">Nakabubuo ng plano sa pagtitipid ng tubig at enerhiya sa tahanan, paaralan o lugar na pinupuntahan.</div>
-                            <div class="pill-box">Naipaliliwanag ang limang wika ng pag-ibig bilang paraan ng pagpapakita ng pagmamahalan ng pamilya.</div>
-                            <div class="pill-box">Nakikilala ang pamilya bilang likas na institusyon ng pagmamahalan.</div>
-                            <div class="pill-box">Nakagagawa ng presentasyon gamit ang limang wika ng pag-ibig.</div>
-                            <div class="pill-box">Nakikilala ang mga paraan ng mapanagutang paggamit ng social media bilang mamamayan.</div>
-                            <div class="pill-box">Naisasakilos ang mga paraan ng mapanagutang paggamit ng social media upang malinang ang disiplina.</div>
-                        </div>
-                    </div>
-
-                    <!-- Lesson Outline Card -->
-                    <div class="info-card">
-                        <div class="card-header">
-                            <i class="fa-regular fa-file-lines icon-purple"></i>
-                            <h3>Lesson Outline</h3>
-                        </div>
-                        <div class="card-body">
-                            <ul class="custom-bullet-list">
-                                <li>Aralin 1: Wastong Paggamit ng Tubig at Enerhiya (Pagtitipid)</li>
-                                <li>Mga susing salita: Enerhiya, Pagtitipid, Tubig</li>
-                                <li>Mga paraan ng pagtitipid ng tubig</li>
-                                <li>Mahusay na paggamit ng enerhiya</li>
-                                <li>SDG #6: Clean Water and Sanitation</li>
-                                <li>Aralin 2: Limang Wika ng Pag-ibig sa Pamilya</li>
-                                <li>Ang pamilya bilang likas na institusyon</li>
-                                <li>Words of Affirmation, Quality Time, Physical Touch, Acts of Service, Receiving Gifts</li>
-                                <li>Aralin 3: Mapanagutang Paggamit ng Social Media</li>
-                                <li>Mga salita at plataporma ng social media</li>
-                                <li>Mga paalala sa tamang paggamit ng social media</li>
-                            </ul>
-                        </div>
-                    </div>
-
-                </div>
-                
-                <!-- Reading progress + controls -->
-                <div class="lesson-toolbar">
-                    <div class="topic-select module-jump">
-                        <i class="fa-solid fa-list-ul"></i>
-                        <select id="moduleSelect" aria-label="Jump to lesson">
-                            <option value="">Jump to a lesson...</option>
-                        </select>
-                        <i class="fa-solid fa-chevron-down select-arrow"></i>
-                    </div>
-                    <div class="lesson-actions">
-                        <span class="search-count" id="searchCount" hidden></span>
-                        <button type="button" class="filter-btn" id="expandAllBtn"><i class="fa-solid fa-angles-down"></i> Expand all</button>
-                        <button type="button" class="filter-btn" id="collapseAllBtn"><i class="fa-solid fa-angles-up"></i> Collapse all</button>
-                    </div>
-                </div>
-
-                <!-- Accordion Lesson List -->
-                <!-- Topics are loaded from the server (edited in the Admin Dashboard) -->
-                <div class="accordion-container">
-                    <p class="lesson-loading"><span class="btn-spinner"></span> Loading lessons...</p>
-                </div>
-
-            </div>
-            <!-- Empty state kapag walang tugma sa search -->
-            <div class="video-empty" id="lessonEmpty" hidden>
-                <i class="fa-solid fa-book-open"></i>
-                <p>No topics found. Try a different keyword.</p>
-            </div>
-
-            <button type="button" class="to-top-btn" id="toTopBtn" aria-label="Back to top">
-                <i class="fa-solid fa-arrow-up"></i>
-            </button>
             <!-- Footer -->
             <footer class="site-footer">
                 <span><strong>ValuesLearn</strong></span>
@@ -200,334 +153,286 @@
         </main>
     </div>
 
-    <!-- KUMPLETONG JAVASCRIPT PARA SA ACCORDION, SMART SEARCH BAR AT READING PROGRESS -->
+    <!-- Reader: one topic per "page" -->
+    <div class="jr-reader" id="jrReader" role="dialog" aria-modal="true" aria-labelledby="jrTopicTitle" hidden>
+        <div class="jr-reader-top">
+            <button type="button" class="jr-icon-btn" id="jrClose" aria-label="Back to the map"><i class="fa-solid fa-xmark"></i></button>
+            <div class="jr-reader-where">
+                <small id="jrLessonName"></small>
+                <div class="jr-steps" id="jrSteps" aria-hidden="true"></div>
+            </div>
+            <span class="jr-page" id="jrPage"></span>
+        </div>
+        <article class="jr-sheet" id="jrSheet" tabindex="-1">
+            <div class="jr-sheet-head">
+                <span class="jr-sheet-num" id="jrTopicNum"></span>
+                <h3 id="jrTopicTitle"></h3>
+            </div>
+            <div class="jr-note" id="jrNote" hidden><strong><i class="fa-solid fa-note-sticky"></i> My note</strong><p></p></div>
+            <div class="jr-content" id="jrContent"></div>
+        </article>
+        <div class="jr-reader-bottom">
+            <button type="button" class="jr-nav-btn" id="jrPrev"><i class="fa-solid fa-arrow-left"></i> <span>Back</span></button>
+            <div class="jr-tools">
+                <button type="button" class="jr-icon-btn" id="jrSave" aria-pressed="false" aria-label="Save topic"><i class="fa-regular fa-bookmark"></i></button>
+                <button type="button" class="jr-icon-btn" id="jrNoteBtn" aria-label="Add note"><i class="fa-regular fa-pen-to-square"></i></button>
+            </div>
+            <button type="button" class="jr-nav-btn is-next" id="jrNext"><span>Next</span> <i class="fa-solid fa-arrow-right"></i></button>
+        </div>
+    </div>
+
     <script>
-        document.addEventListener('DOMContentLoaded', async function() {
+        document.addEventListener('DOMContentLoaded', async function () {
 
-            // PAG-TRACK NG LAST VISITED LESSON PARA SA DASHBOARD
-            let currentPageName = window.location.pathname.split('/').pop();
-            if (!currentPageName || currentPageName === '') {
-                // Palitan ng tamang pangalan depende sa file (e.g. 'ReadLesson.html')
-                currentPageName = 'ReadLesson.html';
-            }
-            localStorage.setItem('lastLessonVisited', currentPageName);
+            const $ = (id) => document.getElementById(id);
+            const map = $('jrMap');
 
-            // FUNCTION: Tagasalin ng words pa-number (e.g. "four" -> "4")
+            // "four" -> "4" so typing numbers as words still finds topics
             function normalizeText(text) {
-                const numberMap = {
-                    'one': '1', 'two': '2', 'three': '3', 'four': '4',
-                    'five': '5', 'six': '6', 'seven': '7', 'eight': '8', 'nine': '9', 'zero': '0'
-                };
+                const numberMap = { one: '1', two: '2', three: '3', four: '4', five: '5', six: '6', seven: '7', eight: '8', nine: '9', zero: '0' };
                 let normalized = text.toLowerCase();
                 for (const [word, digit] of Object.entries(numberMap)) {
-                    // Hinahanap ang buong salita at pinapalitan ng numero
                     normalized = normalized.replace(new RegExp(`\\b${word}\\b`, 'g'), digit);
                 }
                 return normalized;
             }
 
-            // ========================================================
-            // 0. LESSONS (modules + topics) galing sa server
-            // ========================================================
-            const container = document.querySelector('.accordion-container');
-            const moduleSelect = document.getElementById('moduleSelect');
-            const moduleHeaders = [];
-
             let modules = [];
+            let user = null;
             try {
-                ({ modules } = await api.get('/content/lessons'));
+                [{ modules }, user] = await Promise.all([api.get('/content/lessons'), authReady]);
             } catch (err) {
-                container.innerHTML = '<p class="lesson-loading"><i class="fa-solid fa-circle-exclamation"></i> Could not load the lessons. Please refresh the page.</p>';
+                map.innerHTML = '<p class="jr-loading"><i class="fa-solid fa-circle-exclamation"></i> Could not load the lessons. Please refresh the page.</p>';
                 return;
             }
-            container.innerHTML = '';
 
-            modules.forEach((mod, m) => {
-                const header = document.createElement('div');
-                header.className = 'module-header';
-                header.id = `module-${m + 1}`;
-                header.innerHTML = `
-                    <div class="module-icon"><i class="fa-solid ${HCIRichText.safeIcon(mod.icon)}"></i></div>
-                    <div class="module-text">
-                        <small>Lesson ${m + 1}</small>
-                        <h3></h3>
-                    </div>
-                    <span class="module-count">${mod.topics.length} topic${mod.topics.length === 1 ? '' : 's'}</span>`;
-                header.querySelector('h3').textContent = mod.title;
-                container.appendChild(header);
-                moduleHeaders.push(header);
+            // Every topic in reading order, with its lesson
+            const topics = [];
+            modules.forEach((mod, m) => mod.topics.forEach(t => topics.push({ ...t, lesson: m, lessonTitle: mod.title })));
+            const searchText = topics.map(t => normalizeText(`${t.title} ${t.sections.map(s => `${s.heading || ''} ${s.body || ''}`).join(' ')}`));
 
-                const option = document.createElement('option');
-                option.value = m + 1;
-                option.textContent = `Lesson ${m + 1}: ${mod.title}`;
-                moduleSelect.appendChild(option);
+            // Stamps (topics read) are kept per student in this browser.
+            // shortcut: browser-only, so they don't follow a student to another device; move to the server if that matters
+            const stampKey = `readTopics:${user ? user.id : 'me'}`;
+            let stamps = new Set();
+            try { stamps = new Set(JSON.parse(localStorage.getItem(stampKey) || '[]')); } catch (e) { /* storage blocked */ }
+            const saveStamps = () => { try { localStorage.setItem(stampKey, JSON.stringify([...stamps])); } catch (e) { /* storage blocked */ } };
 
-                // Topics (key = permanent id for links/bookmarks, number = shown)
-                mod.topics.forEach(topic => {
-                    const item = document.createElement('div');
-                    item.className = 'accordion-item';
-                    item.dataset.module = m + 1;
-                    item.dataset.key = topic.key;
-                    item.dataset.number = topic.number;
-                    item.innerHTML = `
-                        <button class="accordion-button">
-                            <span class="topic-title"></span>
-                            <i class="fa-solid fa-chevron-down chevron-icon"></i>
-                        </button>
-                        <div class="accordion-collapse">
-                            <div class="accordion-content">${topic.sections.map(HCIRichText.renderSection).join('')}</div>
-                        </div>`;
-                    item.querySelector('.topic-title').textContent = topic.title;
-                    container.appendChild(item);
-                });
-            });
+            // ---------------- Map ----------------
+            function renderMap(filter = '') {
+                const q = normalizeText(filter.trim());
+                const nextUp = topics.find(t => !stamps.has(t.key));
+                let shown = 0;
+                map.innerHTML = modules.map((mod, m) => {
+                    const stops = topics
+                        .map((t, i) => ({ t, i }))
+                        .filter(({ t, i }) => t.lesson === m && (!q || searchText[i].includes(q)));
+                    if (!stops.length) return '';
+                    shown += stops.length;
+                    const done = topics.filter(t => t.lesson === m && stamps.has(t.key)).length;
+                    const all = topics.filter(t => t.lesson === m).length;
+                    return `<section class="jr-island" style="--island: var(--jr-c${m % 4})" id="module-${m + 1}">
+                        <div class="jr-island-head">
+                            <span class="jr-island-icon"><i class="fa-solid ${HCIRichText.safeIcon(mod.icon)}"></i></span>
+                            <span class="jr-island-text"><small>Lesson ${m + 1}</small><b>${HCIRichText.escapeHtml(mod.title)}</b></span>
+                            <span class="jr-island-count ${done === all ? 'is-done' : ''}">${done === all ? '<i class="fa-solid fa-trophy"></i> Done' : `${done}/${all}`}</span>
+                        </div>
+                        <ol class="jr-trail">${stops.map(({ t, i }) => {
+                            const read = stamps.has(t.key);
+                            const here = !q && nextUp && nextUp.key === t.key;
+                            return `<li class="jr-stop ${read ? 'is-read' : ''} ${here ? 'is-here' : ''}">
+                                <button type="button" data-open="${i}" id="topic-${HCIRichText.escapeHtml(t.key)}">
+                                    <span class="jr-dot">${read ? '<i class="fa-solid fa-check"></i>' : HCIRichText.escapeHtml(String(t.number))}</span>
+                                    <span class="jr-stop-label">${here ? '<small>You are here</small>' : ''}${HCIRichText.escapeHtml(t.title)}</span>
+                                </button>
+                            </li>`;
+                        }).join('')}</ol>
+                    </section>`;
+                }).join('');
+                $('lessonEmpty').hidden = shown > 0;
 
-            const accordionItems = document.querySelectorAll('.accordion-item');
-
-            // Jump to module
-            moduleSelect.addEventListener('change', function () {
-                if (!this.value) return;
-                const target = document.getElementById(`module-${this.value}`);
-                if (target) target.scrollIntoView({ behavior: 'smooth', block: 'start' });
-                this.value = '';
-            });
-
-
-            // ========================================================
-            // 1. NUMBERS SA BAWAT TOPIC
-            // ========================================================
-            accordionItems.forEach((item) => {
-                const button = item.querySelector('.accordion-button');
-
-                // Original title (para sa search highlight)
-                const titleSpan = button.querySelector('.topic-title');
-                titleSpan.dataset.original = titleSpan.textContent;
-
-                const num = document.createElement('span');
-                num.className = 'topic-num';
-                num.textContent = item.dataset.number;
-                button.prepend(num);
-            });
-
-            // Linisin ang lumang "read topics" data na hindi na ginagamit
-            try { localStorage.removeItem('readLessonTopics'); } catch (e) { }
-
-            // Search text ng bawat topic (kinuha bago idagdag ang bookmark buttons,
-            // para hindi lumabas sa search ang "Save topic" / "Add note")
-            const searchTexts = [...accordionItems].map(item => normalizeText(item.textContent));
-
-
-            // ========================================================
-            // 1b. BOOKMARKS + NOTES SA BAWAT TOPIC
-            // ========================================================
-            accordionItems.forEach((item) => {
-                const topicNum = item.dataset.key;
-                const title = item.querySelector('.topic-title').dataset.original;
-                item.id = `topic-${topicNum}`;
-
-                // Maliit na bookmark icon sa title kapag naka-save
-                const mark = document.createElement('i');
-                mark.className = 'fa-solid fa-bookmark topic-saved-mark';
-                mark.hidden = true;
-                mark.setAttribute('aria-label', 'Saved');
-                item.querySelector('.topic-title').after(mark);
-
-                const tools = document.createElement('div');
-                tools.className = 'topic-tools';
-                tools.innerHTML = `
-                    <div class="player-tool-buttons">
-                        <button type="button" class="tool-btn bm-toggle" aria-pressed="false"></button>
-                        <button type="button" class="tool-btn bm-note"></button>
-                    </div>
-                    <div class="saved-note" hidden>
-                        <strong><i class="fa-solid fa-note-sticky"></i> My note</strong>
-                        <p></p>
-                    </div>`;
-                item.querySelector('.accordion-content').prepend(tools);
-
-                const toggleBtn = tools.querySelector('.bm-toggle');
-                const noteBtn = tools.querySelector('.bm-note');
-
-                const render = () => {
-                    const saved = HCIBookmarks.get('lesson', topicNum);
-                    mark.hidden = !saved;
-                    toggleBtn.classList.toggle('is-active', !!saved);
-                    toggleBtn.setAttribute('aria-pressed', saved ? 'true' : 'false');
-                    toggleBtn.innerHTML = saved
-                        ? '<i class="fa-solid fa-bookmark"></i> <span>Saved</span>'
-                        : '<i class="fa-regular fa-bookmark"></i> <span>Save topic</span>';
-                    const note = saved ? saved.note : '';
-                    noteBtn.innerHTML = `<i class="fa-regular fa-pen-to-square"></i> <span>${note ? 'Edit note' : 'Add note'}</span>`;
-                    tools.querySelector('.saved-note').hidden = !note;
-                    tools.querySelector('.saved-note p').textContent = note;
-                };
-                item._renderBookmark = render;
-                render();
-
-                toggleBtn.addEventListener('click', async () => {
-                    toggleBtn.disabled = true;
-                    try {
-                        const saved = await HCIBookmarks.toggle('lesson', topicNum, title);
-                        HCIBookmarks.toast(saved ? 'Topic saved' : 'Removed from Saved');
-                    } catch (err) {
-                        HCIBookmarks.toast(err.message, 'fa-circle-exclamation');
-                    } finally {
-                        toggleBtn.disabled = false;
-                        render();
-                    }
-                });
-
-                noteBtn.addEventListener('click', async () => {
-                    try {
-                        const saved = await HCIBookmarks.editNote('lesson', topicNum, title);
-                        if (saved) HCIBookmarks.toast('Note saved', 'fa-pen-to-square');
-                    } catch (err) {
-                        HCIBookmarks.toast(err.message, 'fa-circle-exclamation');
-                    }
-                    render();
-                });
-            });
-
-            HCIBookmarks.load()
-                .then(() => accordionItems.forEach(item => item._renderBookmark()))
-                .catch(() => {});
-
-
-            // ========================================================
-            // 2. LOGIC PARA SA ACCORDION (Pampabuka ng mga Lessons)
-            // ========================================================
-            function setOpen(item, open) {
-                item.classList.toggle('active', open);
-                item.querySelector('.accordion-button').setAttribute('aria-expanded', open);
+                $('jrReadCount').textContent = stamps.size;
+                $('jrTotal').textContent = topics.length;
+                const pct = topics.length ? stamps.size / topics.length : 0;
+                $('jrRingFill').style.strokeDashoffset = String(327 * (1 - pct));
+                $('jrRing').setAttribute('aria-label', `${stamps.size} of ${topics.length} topics read`);
+                $('jrGreeting').textContent = stamps.size === 0
+                    ? 'Follow the trail, one stop at a time. Every topic you read gets a stamp!'
+                    : stamps.size === topics.length
+                        ? 'You collected every stamp. Amazing! Read again anytime.'
+                        : `Nice! ${topics.length - stamps.size} more stop${topics.length - stamps.size === 1 ? '' : 's'} to go.`;
             }
 
-            // Study streak: bilangin ang topic na binuksan mismo ng user
-            // (isang beses lang bawat topic; hindi kasama ang "Expand all")
-            const topicsCounted = new Set();
-            function countRead(item) {
-                if (topicsCounted.has(item.id)) return;
-                topicsCounted.add(item.id);
-                HCIGamify.record('read');
+            map.addEventListener('click', (e) => {
+                const b = e.target.closest('[data-open]');
+                if (b) openReader(Number(b.dataset.open));
+            });
+            $('searchInput').addEventListener('input', (e) => renderMap(e.target.value));
+
+            // ---------------- Reader ----------------
+            const reader = $('jrReader');
+            let current = -1;
+            let lastFocus = null;
+            const countedThisVisit = new Set();
+
+            function stamp(t) {
+                if (!countedThisVisit.has(t.key)) {
+                    countedThisVisit.add(t.key);
+                    HCIGamify.record('read');      // daily goal / streak, once per topic per visit
+                }
+                if (stamps.has(t.key)) return;
+                stamps.add(t.key);
+                saveStamps();
+                if (stamps.size === topics.length) api.post('/progress/lesson/complete').catch(() => {});
             }
 
-            accordionItems.forEach(item => {
-                const button = item.querySelector('.accordion-button');
-                button.setAttribute('aria-expanded', 'false');
-
-                button.addEventListener('click', function() {
-                    const opening = !item.classList.contains('active');
-                    setOpen(item, opening);
-                    if (opening) countRead(item);
-                });
-            });
-
-            // Expand all / Collapse all (para lang sa mga nakikitang topics)
-            document.getElementById('expandAllBtn').addEventListener('click', () => {
-                accordionItems.forEach(item => { if (item.style.display !== 'none') setOpen(item, true); });
-            });
-            document.getElementById('collapseAllBtn').addEventListener('click', () => {
-                accordionItems.forEach(item => setOpen(item, false));
-            });
-
-
-            // ========================================================
-            // 3. LOGIC PARA SA SEARCH BAR (title at laman ng topic)
-            // ========================================================
-            const searchInput = document.getElementById('searchInput');
-            const searchCount = document.getElementById('searchCount');
-            const clearSearchBtn = document.getElementById('clearSearchBtn');
-
-            function escapeHtml(text) {
-                return text.replace(/[&<>"']/g, c => ({ '&': '&amp;', '<': '&lt;', '>': '&gt;', '"': '&quot;', "'": '&#39;' }[c]));
+            function renderBookmark() {
+                const t = topics[current];
+                const saved = HCIBookmarks.get('lesson', t.key);
+                $('jrSave').classList.toggle('is-on', !!saved);
+                $('jrSave').setAttribute('aria-pressed', saved ? 'true' : 'false');
+                $('jrSave').setAttribute('aria-label', saved ? 'Saved (tap to remove)' : 'Save topic');
+                $('jrSave').innerHTML = `<i class="fa-${saved ? 'solid' : 'regular'} fa-bookmark"></i>`;
+                const note = saved ? saved.note : '';
+                $('jrNote').hidden = !note;
+                $('jrNote').querySelector('p').textContent = note;
+                $('jrNoteBtn').setAttribute('aria-label', note ? 'Edit note' : 'Add note');
             }
 
-            // I-highlight ang tinype na salita sa title
-            function highlightTitle(span, query) {
-                const original = span.dataset.original;
-                if (!query) { span.textContent = original; return; }
-                const escapedQuery = query.replace(/[.*+?^${}()|[\]\\]/g, '\\$&');
-                span.innerHTML = escapeHtml(original).replace(
-                    new RegExp(`(${escapeHtml(escapedQuery)})`, 'gi'),
-                    '<mark>$1</mark>'
-                );
+            function openReader(i, dir = 0) {
+                const t = topics[i];
+                if (!t) return;
+                if (reader.hidden) {
+                    lastFocus = document.activeElement;
+                    reader.hidden = false;
+                    document.body.classList.add('jr-reading');
+                    $('jrClose').focus();
+                }
+                current = i;
+                const inLesson = topics.filter(x => x.lesson === t.lesson);
+                const pos = inLesson.indexOf(t);
+                $('jrLessonName').textContent = `Lesson ${t.lesson + 1} · ${t.lessonTitle}`;
+                $('jrPage').textContent = `${pos + 1}/${inLesson.length}`;
+                $('jrSteps').innerHTML = inLesson.map((x, k) => `<span class="${k < pos ? 'is-past' : k === pos ? 'is-now' : ''}"></span>`).join('');
+                $('jrTopicNum').textContent = t.number;
+                $('jrTopicTitle').textContent = t.title;
+                $('jrContent').innerHTML = t.sections.map(HCIRichText.renderSection).join('');
+                const sheet = $('jrSheet');
+                sheet.scrollTop = 0;
+                sheet.classList.remove('is-from-left', 'is-from-right');
+                if (dir) { void sheet.offsetWidth; sheet.classList.add(dir > 0 ? 'is-from-right' : 'is-from-left'); }
+
+                const last = i === topics.length - 1;
+                const endOfLesson = last || topics[i + 1].lesson !== t.lesson;
+                $('jrPrev').disabled = i === 0;
+                $('jrNext').innerHTML = last ? '<span>Finish</span> <i class="fa-solid fa-flag-checkered"></i>'
+                    : endOfLesson ? '<span>Next lesson</span> <i class="fa-solid fa-arrow-right"></i>'
+                    : '<span>Next</span> <i class="fa-solid fa-arrow-right"></i>';
+                stamp(t);
+                renderBookmark();
+                history.replaceState(null, '', `#topic-${t.key}`);
             }
 
-            function runSearch() {
-                const raw = searchInput.value.trim();
-                // Kunin ang tinype at idaan sa translator
-                const filterText = normalizeText(raw);
-                let visible = 0;
-
-                accordionItems.forEach((item, index) => {
-                    // Idaan din sa translator ang title at laman ng lesson
-                    const matches = searchTexts[index].includes(filterText);
-                    item.style.display = matches ? '' : 'none';
-                    if (matches) visible++;
-                    highlightTitle(item.querySelector('.topic-title'), raw);
-                });
-
-                // Itago ang module header kung walang tugmang topic sa loob nito
-                moduleHeaders.forEach((header, m) => {
-                    const hasVisible = [...accordionItems].some(item =>
-                        item.dataset.module == m + 1 && item.style.display !== 'none');
-                    header.style.display = hasVisible ? '' : 'none';
-                });
-
-                // Habang naghahanap, itago ang Objectives/Outline para kita agad ang results
-                document.querySelector('.lesson-top-grid').style.display = raw ? 'none' : '';
-
-                searchCount.hidden = !raw;
-                searchCount.textContent = `${visible} topic${visible === 1 ? '' : 's'} found`;
-                clearSearchBtn.hidden = !raw;
-                document.getElementById('lessonEmpty').hidden = visible > 0;
+            function closeReader() {
+                reader.hidden = true;
+                document.body.classList.remove('jr-reading');
+                history.replaceState(null, '', location.pathname);
+                renderMap($('searchInput').value);
+                const stop = current >= 0 && document.getElementById(`topic-${topics[current].key}`);
+                (stop || lastFocus || document.body).focus();
+                if (stop) stop.scrollIntoView({ block: 'center' });
             }
 
-            searchInput.addEventListener('input', runSearch);
+            // Finishing a lesson shows a stamp page before the next one
+            function celebrate(lessonIndex, isLast) {
+                $('jrTopicNum').innerHTML = '<i class="fa-solid fa-trophy"></i>';
+                $('jrTopicTitle').textContent = isLast ? 'You finished every lesson!' : `Lesson ${lessonIndex + 1} complete!`;
+                $('jrNote').hidden = true;
+                $('jrContent').innerHTML = `<div class="jr-celebrate">
+                    <div class="jr-big-stamp"><i class="fa-solid fa-award"></i></div>
+                    <p>${isLast ? 'Every stop on the trail has a stamp. Try the Quiz Cards to test what you learned!' : 'Great reading! Take a short break, then keep going.'}</p>
+                    ${isLast ? '<a href="StudyCards.html" class="jr-nav-btn is-next"><i class="fa-solid fa-rotate"></i> <span>Practice with Quiz Cards</span></a>' : ''}
+                </div>`;
+                $('jrNext').innerHTML = isLast ? '<span>Back to map</span> <i class="fa-solid fa-map"></i>' : '<span>Start next lesson</span> <i class="fa-solid fa-arrow-right"></i>';
+                $('jrNext').dataset.after = isLast ? 'close' : String(current + 1);
+                HCISfx.play('levelUp');
+            }
 
-            clearSearchBtn.addEventListener('click', () => {
-                searchInput.value = '';
-                runSearch();
-                searchInput.focus();
+            function goNext() {
+                const after = $('jrNext').dataset.after;
+                if (after) {
+                    delete $('jrNext').dataset.after;
+                    return after === 'close' ? closeReader() : openReader(Number(after), 1);
+                }
+                const t = topics[current];
+                const next = topics[current + 1];
+                if (!next || next.lesson !== t.lesson) return celebrate(t.lesson, !next);
+                openReader(current + 1, 1);
+            }
+
+            function goPrev() {
+                delete $('jrNext').dataset.after;
+                if (current > 0) openReader(current - 1, -1);
+            }
+
+            $('jrNext').addEventListener('click', goNext);
+            $('jrPrev').addEventListener('click', goPrev);
+            $('jrClose').addEventListener('click', closeReader);
+            document.addEventListener('keydown', (e) => {
+                if (reader.hidden || e.target.closest('input, textarea, .confirm-overlay, .bm-dialog')) return;
+                if (e.key === 'Escape') closeReader();
+                else if (e.key === 'ArrowRight') goNext();
+                else if (e.key === 'ArrowLeft') goPrev();
             });
 
-
-            // ========================================================
-            // 4. BACK TO TOP BUTTON
-            // ========================================================
-            const toTopBtn = document.getElementById('toTopBtn');
-            const scroller = document.querySelector('.main-content');
-
-            function onScroll() {
-                const y = Math.max(scroller.scrollTop, window.scrollY);
-                toTopBtn.classList.toggle('visible', y > 600);
-            }
-            scroller.addEventListener('scroll', onScroll);
-            window.addEventListener('scroll', onScroll);
-
-            toTopBtn.addEventListener('click', () => {
-                scroller.scrollTo({ top: 0, behavior: 'smooth' });
-                window.scrollTo({ top: 0, behavior: 'smooth' });
+            // Swipe left/right on phones to turn the page
+            let touchX = null;
+            let touchY = null;
+            $('jrSheet').addEventListener('touchstart', (e) => { touchX = e.touches[0].clientX; touchY = e.touches[0].clientY; }, { passive: true });
+            $('jrSheet').addEventListener('touchend', (e) => {
+                if (touchX === null) return;
+                const dx = e.changedTouches[0].clientX - touchX;
+                const dy = e.changedTouches[0].clientY - touchY;
+                touchX = null;
+                if (Math.abs(dx) > 70 && Math.abs(dx) > Math.abs(dy) * 1.5) (dx < 0 ? goNext : goPrev)();
             });
 
+            // Save + note (same bookmarks as the Saved page)
+            $('jrSave').addEventListener('click', async () => {
+                const t = topics[current];
+                $('jrSave').disabled = true;
+                try {
+                    const saved = await HCIBookmarks.toggle('lesson', t.key, t.title);
+                    HCIBookmarks.toast(saved ? 'Topic saved' : 'Removed from Saved');
+                } catch (err) {
+                    HCIBookmarks.toast(err.message, 'fa-circle-exclamation');
+                }
+                $('jrSave').disabled = false;
+                renderBookmark();
+            });
+            $('jrNoteBtn').addEventListener('click', async () => {
+                const t = topics[current];
+                try {
+                    const saved = await HCIBookmarks.editNote('lesson', t.key, t.title);
+                    if (saved) HCIBookmarks.toast('Note saved', 'fa-pen-to-square');
+                } catch (err) {
+                    HCIBookmarks.toast(err.message, 'fa-circle-exclamation');
+                }
+                renderBookmark();
+            });
 
-            // ========================================================
-            // 5. LINK MULA SA "SAVED" PAGE (ReadLesson.html#topic-12)
-            // ========================================================
+            renderMap();
+            HCIBookmarks.load().then(() => { if (!reader.hidden) renderBookmark(); }).catch(() => {});
+
+            // Links from Saved / search: ReadLesson.html#topic-12 opens that topic
             function openFromHash() {
-                const match = /^#topic-(\d+)$/.exec(window.location.hash);
-                const item = match && document.getElementById(`topic-${match[1]}`);
-                if (!item) return;
-                setOpen(item, true);
-                countRead(item);
-                item.scrollIntoView({ behavior: 'smooth', block: 'start' });
-                item.classList.add('is-highlighted');
-                setTimeout(() => item.classList.remove('is-highlighted'), 2000);
+                const match = /^#topic-(.+)$/.exec(location.hash);
+                const i = match ? topics.findIndex(t => String(t.key) === decodeURIComponent(match[1])) : -1;
+                if (i >= 0) openReader(i);
             }
             openFromHash();
             window.addEventListener('hashchange', openFromHash);
-
         });
-
     </script>
 </body>
 </html>

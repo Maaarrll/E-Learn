@@ -8,8 +8,8 @@
     <link rel="icon" href="favicon-32.png?v=2" type="image/png" sizes="32x32">
     <link rel="apple-touch-icon" href="apple-touch-icon.png?v=2">
     <meta name="theme-color" content="#02473d">
-    <link rel="stylesheet" href="style.css?v=73">
-    <link rel="stylesheet" href="dark.css?v=37">
+    <link rel="stylesheet" href="style.css?v=76">
+    <link rel="stylesheet" href="dark.css?v=40">
     <script src="js/theme.js?v=3"></script>
     <!-- FontAwesome para sa icons -->
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
@@ -44,6 +44,9 @@
                 <a href="#content" class="nav-item" data-section="content" id="navContent" hidden>
                     <i class="fa-solid fa-pen-to-square"></i> <span class="nav-text">Content</span>
                     <span class="nav-badge" id="contentPending" hidden></span>
+                </a>
+                <a href="#quizzes" class="nav-item" data-section="quizzes">
+                    <i class="fa-solid fa-stopwatch"></i> <span class="nav-text">Quizzes</span>
                 </a>
                 <a href="#announcements" class="nav-item" data-section="announcements">
                     <i class="fa-solid fa-bullhorn"></i> <span class="nav-text">Announcements</span>
@@ -87,6 +90,14 @@
                         <h2 id="sectionTitle">Overview</h2>
                         <p id="adminSubtitle">How your students are doing at a glance.</p>
                     </div>
+                    <!-- Class open/close switch: shown on every tab -->
+                    <button type="button" class="class-switch" id="classToggle" role="switch" aria-checked="false">
+                        <span class="class-switch-text">
+                            <b id="classToggleTitle">Class closed</b>
+                            <small id="classToggleNote">Students can't log in</small>
+                        </span>
+                        <span class="theme-switch" aria-hidden="true"><span class="theme-switch-knob"><i class="fa-solid fa-lock"></i></span></span>
+                    </button>
                     <a href="/api/admin/export.csv" class="tool-btn admin-export" id="exportBtn" hidden>
                         <i class="fa-solid fa-file-csv"></i> Export CSV
                     </a>
@@ -106,7 +117,6 @@
                         <div class="admin-welcome">
                             <h3 id="welcomeLine">Welcome back!</h3>
                             <div class="admin-quick">
-                                <a href="#" role="button" class="admin-quick-btn" id="classToggle"><i class="fa-solid fa-lock"></i><span><b id="classToggleTitle">Open class</b><small id="classToggleNote">Students can't log in yet</small></span></a>
                                 <a href="#announcements" class="admin-quick-btn"><i class="fa-solid fa-bullhorn"></i><span><b>Post an announcement</b><small>Tell your students something</small></span></a>
                                 <a href="#students" class="admin-quick-btn" data-quick="atrisk"><i class="fa-solid fa-user-clock"></i><span><b>Who needs attention</b><small id="quickInactive">At-risk students</small></span></a>
                                 <a href="#content" class="admin-quick-btn" id="quickContent" hidden><i class="fa-solid fa-pen-to-square"></i><span><b>Edit content</b><small id="quickContentNote">Videos, lessons, questions</small></span></a>
@@ -199,6 +209,11 @@
                         <div id="contentEditor"></div>
                     </section>
 
+                    <!-- QUIZZES (js/admin-quizzes.js) -->
+                    <section class="admin-panel" id="tab-quizzes" hidden>
+                        <div id="quizAdmin"></div>
+                    </section>
+
                     <!-- ANNOUNCEMENTS -->
                     <section class="admin-panel" id="tab-announcements" hidden>
                         <div class="admin-grid">
@@ -262,6 +277,7 @@
     <script src="js/api.js?v=11"></script>
     <script src="js/richtext.js?v=1"></script>
     <script src="js/admin-content.js?v=6"></script>
+    <script src="js/admin-quizzes.js?v=2"></script>
     <script>
         const ACTIVITY_LABELS = { case_study: 'Situation Quiz', study_card: 'Quiz Card', video: 'Video', lesson: 'Lesson' };
         const AUDIT_ICONS = {
@@ -271,6 +287,8 @@
             rollback_content: 'fa-clock-rotate-left', add_instructor: 'fa-user-plus', update_instructor: 'fa-user-pen',
             reset_instructor_password: 'fa-key', remove_instructor: 'fa-user-minus', clear_audit: 'fa-trash',
             open_class: 'fa-lock-open', close_class: 'fa-lock',
+            create_quiz: 'fa-stopwatch', update_quiz: 'fa-stopwatch', publish_quiz: 'fa-upload', unpublish_quiz: 'fa-eye-slash',
+            delete_quiz: 'fa-trash-can', allow_quiz_retake: 'fa-rotate-left',
         };
         const AUDIT_LABELS = {
             open_class: () => 'Opened the class',
@@ -293,6 +311,12 @@
             reset_instructor_password: (e) => `Reset the password of ${e.details}`,
             remove_instructor: (e) => `Removed instructor ${e.details}`,
             clear_audit: () => 'Cleared the activity log',
+            create_quiz: (e) => `Created quiz "${e.details}"`,
+            update_quiz: (e) => `Edited quiz "${e.details}"`,
+            publish_quiz: (e) => `Published quiz "${e.details}"`,
+            unpublish_quiz: (e) => `Unpublished quiz "${e.details}"`,
+            delete_quiz: (e) => `Deleted quiz "${e.details}"`,
+            allow_quiz_retake: (e) => `Let ${e.targetName || 'a student'} retake "${e.details}"`,
         };
 
         let students = [];
@@ -750,6 +774,7 @@
             });
             const first = form.querySelector('input:not([disabled]), select, textarea');
             if (first) first.focus();
+            return form;
         }
 
         // ---------------- Change my password ----------------
@@ -929,6 +954,7 @@
             overview:      { icon: 'fa-house',           title: 'Overview',      desc: 'How your students are doing at a glance.', export: true },
             students:      { icon: 'fa-users',           title: 'Students',      desc: 'Search, filter and open any student to see their progress.', export: true },
             content:       { icon: 'fa-pen-to-square',   title: 'Content',       desc: 'Edit videos, lessons and questions. Changes are drafts until you publish.', adminOnly: true },
+            quizzes:       { icon: 'fa-stopwatch',       title: 'Quizzes',       desc: 'Make timed quizzes and see how your students scored.' },
             announcements: { icon: 'fa-bullhorn',        title: 'Announcements', desc: 'Post a message; students get a pop-up notification.' },
             instructors:   { icon: 'fa-chalkboard-user', title: 'Instructors',   desc: 'Add instructors and choose which sections they see.', adminOnly: true },
             audit:         { icon: 'fa-clipboard-list',  title: 'Activity log',  desc: 'Every view, export and change made in this dashboard.' },
@@ -1009,9 +1035,11 @@
         // ---------------- Class open/close (only teachers can open the class) ----------------
         let classOpen = false;
         function renderClassToggle() {
+            $('classToggle').classList.toggle('is-on', classOpen);
+            $('classToggle').setAttribute('aria-checked', String(classOpen));
             $('classToggle').querySelector('i').className = `fa-solid ${classOpen ? 'fa-lock-open' : 'fa-lock'}`;
-            $('classToggleTitle').textContent = classOpen ? 'Close class' : 'Open class';
-            $('classToggleNote').textContent = classOpen ? 'Class is open: students can study' : "Class is closed: students can't log in";
+            $('classToggleTitle').textContent = classOpen ? 'Class open' : 'Class closed';
+            $('classToggleNote').textContent = classOpen ? 'Students can log in' : "Students can't log in";
         }
         $('classToggle').addEventListener('click', (e) => {
             e.preventDefault();
@@ -1089,6 +1117,7 @@
                 loadAudit();
                 if (instructor.isAdmin) await loadInstructors(); // also fills the section lists
                 loadAnnouncements();
+                HCIQuizAdmin.mount($('quizAdmin'));
                 if (instructor.isAdmin) HCIContentEditor.mount($('contentEditor'), {
                     onPending: (n) => {
                         $('contentPending').hidden = !n;
