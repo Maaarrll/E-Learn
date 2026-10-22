@@ -58,6 +58,13 @@ function youtubeId(value) {
   return m[1] || m[0];
 }
 
+// Lesson (module key) students must read first; '' = none
+function lessonKey(value) {
+  const v = value == null ? '' : String(value);
+  if (!/^[A-Za-z0-9_-]{0,40}$/.test(v)) fail('Pick a lesson.');
+  return v;
+}
+
 // Returns the cleaned data for a kind (without position)
 function validate(kind, data) {
   if (!data || typeof data !== 'object') fail('Missing data.');
@@ -74,7 +81,7 @@ function validate(kind, data) {
     case 'deck': {
       const color = String(data.color || '');
       if (!DECK_COLORS.includes(color)) fail('Pick a color.');
-      return { title: text(data.title, 'Title', { max: 120 }), icon: icon(data.icon), color };
+      return { title: text(data.title, 'Title', { max: 120 }), icon: icon(data.icon), color, lesson: lessonKey(data.lesson) };
     }
     case 'topic': {
       if (!Array.isArray(data.sections) || !data.sections.length) fail('Add at least one section.');
@@ -91,6 +98,7 @@ function validate(kind, data) {
         text: text(data.text, 'Scenario', { max: 2000 }),
         question: text(data.question, 'Question', { max: 400 }),
         ...choices(data),
+        lesson: lessonKey(data.lesson),
       };
     case 'card':
       return { question: text(data.question, 'Question', { max: 400 }), ...choices(data) };

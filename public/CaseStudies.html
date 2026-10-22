@@ -9,8 +9,8 @@
     <link rel="apple-touch-icon" href="apple-touch-icon.png?v=2">
     <meta name="theme-color" content="#02473d">
     <!-- Link to the separated CSS file -->
-    <link rel="stylesheet" href="style.css?v=73">
-    <link rel="stylesheet" href="dark.css?v=37">
+    <link rel="stylesheet" href="style.css?v=93">
+    <link rel="stylesheet" href="dark.css?v=57">
     <script src="js/theme.js?v=3"></script>
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.2/css/all.min.css">
 </head>
@@ -19,7 +19,7 @@
         <div class="noscript-note">ValuesLearn needs JavaScript to work. Please turn it on in your browser settings.</div>
     </noscript>
 
-    <script src="js/api.js?v=12"></script>
+    <script src="js/api.js?v=13"></script>
     <script src="js/notifications.js?v=2"></script>
     <script src="js/gamify.js?v=3"></script>
     <script src="js/search.js?v=3"></script>
@@ -106,7 +106,7 @@
             <div class="case-studies-wrapper">
                 
                 <!-- Header Section -->
-                <div class="cs-header-section">
+                <div class="cs-header-section cs-hero">
                     <div class="cs-header-content">
                         <div class="cs-icon-box">
                             <i class="fa-solid fa-file-invoice"></i>
@@ -114,6 +114,7 @@
                         <div class="cs-header-text">
                             <h2>Situation Quizzes</h2>
                             <p>Read the scenario and choose the best answer</p>
+                            <div class="cs-hero-bar" aria-hidden="true"><div id="csHeroBar"></div></div>
                         </div>
                     </div>
                     <div class="cs-header-side" id="csHeaderSide">
@@ -129,12 +130,19 @@
                 <hr class="cs-divider">
 
                 <!-- VIEW 1: SCENARIOS LIST -->
-                <div id="scenariosListView" class="scenarios-list">
+                <div id="scenariosListView" class="scenarios-list cs-map">
                     <!-- Dynamic rendering of scenario cards via JavaScript -->
                 </div>
 
                 <!-- VIEW 2: SCENARIO QUIZ CARD -->
-                <div id="scenarioView" class="quiz-container" style="display: none;">
+                <div id="scenarioView" class="quiz-container cs-play" style="display: none;">
+
+                    <!-- Rocket moves along the track as scenarios are solved -->
+                    <div class="tq-track" aria-hidden="true">
+                        <div class="tq-track-line"><div id="csTrack"></div></div>
+                        <span class="tq-rocket" id="csRocket"><i class="fa-solid fa-rocket"></i></span>
+                        <span class="tq-flag"><i class="fa-solid fa-flag-checkered"></i></span>
+                    </div>
 
                     <div class="quiz-topbar">
                         <button type="button" class="quiz-back-link" onclick="closeScenario()">
@@ -152,38 +160,39 @@
 
                     <p class="question-text" id="questionText">Loading question...</p>
 
-                    <!-- Multiple Choice Options -->
-                    <div class="options-group" id="optionsGroup">
-                        <!-- Option A -->
+                    <!-- Multiple Choice Options: one colour + shape each, like the teacher quizzes -->
+                    <p class="tq-keys">Tap an answer, or press <kbd>A</kbd>–<kbd>D</kbd> / <kbd>1</kbd>–<kbd>4</kbd>, then <kbd>Enter</kbd></p>
+                    <div class="options-group tq-choices" id="optionsGroup">
                         <div>
                             <input type="radio" name="quizOption" id="optA" class="hidden-radio" value="0">
-                            <label for="optA" class="option-label" onclick="selectOption(0)">
-                                <span class="option-letter">A</span>
-                                <span class="option-text" id="labelA"></span>
+                            <label for="optA" class="tq-choice tq-c0 cs-choice" style="--i:0" onclick="selectOption(0)">
+                                <span class="tq-shape"><i class="fa-solid fa-star"></i></span>
+                                <span class="tq-choice-text" id="labelA"></span>
+                                <span class="tq-letter">A</span>
                             </label>
                         </div>
-                        <!-- Option B -->
                         <div>
                             <input type="radio" name="quizOption" id="optB" class="hidden-radio" value="1">
-                            <label for="optB" class="option-label" onclick="selectOption(1)">
-                                <span class="option-letter">B</span>
-                                <span class="option-text" id="labelB"></span>
+                            <label for="optB" class="tq-choice tq-c1 cs-choice" style="--i:1" onclick="selectOption(1)">
+                                <span class="tq-shape"><i class="fa-solid fa-heart"></i></span>
+                                <span class="tq-choice-text" id="labelB"></span>
+                                <span class="tq-letter">B</span>
                             </label>
                         </div>
-                        <!-- Option C -->
                         <div>
                             <input type="radio" name="quizOption" id="optC" class="hidden-radio" value="2">
-                            <label for="optC" class="option-label" onclick="selectOption(2)">
-                                <span class="option-letter">C</span>
-                                <span class="option-text" id="labelC"></span>
+                            <label for="optC" class="tq-choice tq-c2 cs-choice" style="--i:2" onclick="selectOption(2)">
+                                <span class="tq-shape"><i class="fa-solid fa-circle"></i></span>
+                                <span class="tq-choice-text" id="labelC"></span>
+                                <span class="tq-letter">C</span>
                             </label>
                         </div>
-                        <!-- Option D -->
                         <div>
                             <input type="radio" name="quizOption" id="optD" class="hidden-radio" value="3">
-                            <label for="optD" class="option-label" onclick="selectOption(3)">
-                                <span class="option-letter">D</span>
-                                <span class="option-text" id="labelD"></span>
+                            <label for="optD" class="tq-choice tq-c3 cs-choice" style="--i:3" onclick="selectOption(3)">
+                                <span class="tq-shape"><i class="fa-solid fa-square"></i></span>
+                                <span class="tq-choice-text" id="labelD"></span>
+                                <span class="tq-letter">D</span>
                             </label>
                         </div>
                     </div>
@@ -217,6 +226,7 @@
         const scenarioByKey = new Map();
         let unlockedIds = [];   // mga scenario na puwedeng buksan (galing sa server)
         let solvedIds = [];
+        let lessonLocks = new Map();   // scenario key -> { lesson, title } until that lesson is read
         let currentActiveScenario = null;
         let selectedAnswer = null;
         let isAnswerSubmitted = false;
@@ -253,6 +263,7 @@
             if (progress) {
                 unlockedIds = progress.unlockedIds;
                 solvedIds = progress.solvedIds;
+                lessonLocks = new Map(progress.lessonLocks.map(l => [l.key, l]));
             } else if (scenarios.length) {
                 unlockedIds = [scenarios[0].key];
             }
@@ -298,8 +309,9 @@
         }
 
         function startReview() {
-            if (!mistakeIds.length) return;
-            reviewQueue = [...mistakeIds];
+            const open = mistakeIds.filter(id => !lessonLocks.has(id));
+            if (!open.length) return;
+            reviewQueue = open;
             openScenario(reviewQueue[0]);
         }
 
@@ -321,21 +333,31 @@
                 const isSolved = solvedIds.includes(i);
                 const isNext = i === nextId;
 
+                const lock = lessonLocks.get(i);
                 let state = 'locked';
                 if (isSolved) state = 'solved';
+                else if (unlocked && lock) state = 'lesson';
                 else if (isNext) state = 'next';
                 else if (unlocked) state = 'unlocked';
 
                 const STATUS = {
-                    solved:   '<i class="fa-solid fa-circle-check"></i> Solved',
-                    next:     '<i class="fa-solid fa-play"></i> Up next',
-                    unlocked: '<i class="fa-regular fa-circle"></i> Open',
-                    locked:   '<i class="fa-solid fa-lock"></i> Locked',
+                    solved:   'Solved',
+                    next:     'Up next',
+                    unlocked: 'Open',
+                    lesson:   lock ? `Read Lesson ${lock.lesson} first` : '',
+                    locked:   'Locked',
+                };
+                const DOT = {
+                    solved:   '<i class="fa-solid fa-star"></i>',
+                    next:     '<i class="fa-solid fa-play"></i>',
+                    unlocked: sc.number,
+                    lesson:   '<i class="fa-solid fa-book-open"></i>',
+                    locked:   '<i class="fa-solid fa-lock"></i>',
                 };
 
-                // CHANGED: Gumamit ng 'scenario-card' para basahin yung magandang background sa CSS
+                // A stop on the level map: dot on the path, card on alternating sides
                 const scenarioDiv = document.createElement(unlocked ? 'button' : 'div');
-                scenarioDiv.className = `scenario-card ${unlocked ? 'unlocked' : 'locked'} is-${state}`;
+                scenarioDiv.className = `cs-node is-${state}${index % 2 ? ' is-right' : ''}`;
                 scenarioDiv.id = `scenario-${i}`;
                 if (unlocked) scenarioDiv.type = 'button';
                 else scenarioDiv.title = `Solve Scenario ${index} to unlock`;
@@ -344,13 +366,16 @@
                 if (isMissed) scenarioDiv.classList.add('is-missed');
 
                 scenarioDiv.innerHTML = `
-                    <div class="sc-top">
-                        <span class="sc-num">${sc.number}</span>
-                        ${isMissed ? '<span class="missed-chip"><i class="fa-solid fa-rotate-left"></i> Review</span>' : ''}
-                        <span class="sc-status">${STATUS[state]}</span>
-                    </div>
-                    <p class="sc-question"></p>`;
-                scenarioDiv.querySelector('.sc-question').textContent = sc.question;
+                    <span class="cs-node-dot">${DOT[state]}${state === 'next' ? '<span class="cs-node-go">Start!</span>' : ''}</span>
+                    <span class="cs-node-card">
+                        <span class="cs-node-head">
+                            <strong>Scenario ${sc.number}</strong>
+                            <span class="cs-node-status">${STATUS[state]}</span>
+                            ${isMissed ? '<span class="missed-chip"><i class="fa-solid fa-rotate-left"></i> Review</span>' : ''}
+                        </span>
+                        <span class="cs-node-q"></span>
+                    </span>`;
+                scenarioDiv.querySelector('.cs-node-q').textContent = sc.question;
 
                 if (unlocked) {
                     scenarioDiv.onclick = () => openScenario(i);
@@ -362,9 +387,14 @@
             // Header: solved count + Continue button
             document.getElementById('solvedCount').textContent = solvedIds.length;
             document.getElementById('solvedTotal').textContent = scenarios.length;
+            document.getElementById('csHeroBar').style.width = `${scenarios.length ? (solvedIds.length / scenarios.length) * 100 : 0}%`;
 
             const continueBtn = document.getElementById('continueBtn');
-            if (nextId) {
+            if (nextId && lessonLocks.has(nextId)) {
+                document.getElementById('continueText').textContent = `Read Lesson ${lessonLocks.get(nextId).lesson} first`;
+                continueBtn.onclick = () => showLessonLock(lessonLocks.get(nextId));
+                continueBtn.hidden = false;
+            } else if (nextId) {
                 document.getElementById('continueText').textContent =
                     solvedIds.length ? `Continue: Scenario ${scenarioByKey.get(nextId).number}` : 'Start Scenario 1';
                 continueBtn.onclick = () => openScenario(nextId);
@@ -392,6 +422,7 @@
 
         // Open a specific scenario
         function openScenario(id) {
+            if (lessonLocks.has(id)) return showLessonLock(lessonLocks.get(id));
             currentActiveScenario = id;
             selectedAnswer = null;
             isAnswerSubmitted = false;
@@ -429,6 +460,13 @@
             submitBtn.innerText = "Submit Answer";
             submitBtn.onclick = submitCaseStudy;
 
+            // Tiles pop in for each new scenario
+            const view = document.getElementById('scenarioView');
+            view.classList.remove('is-new');
+            void view.offsetWidth;
+            view.classList.add('is-new');
+            updateTrack();
+
             // Toggle Views
             document.getElementById('scenariosListView').style.display = 'none';
             document.getElementById('csHeaderSide').style.display = 'none';
@@ -445,6 +483,29 @@
             document.getElementById('scenarioView').style.display = 'none';
             scrollToTop();
         }
+
+        function updateTrack() {
+            const pct = scenarios.length ? (solvedIds.length / scenarios.length) * 100 : 0;
+            document.getElementById('csTrack').style.width = `${pct}%`;
+            document.getElementById('csRocket').style.left = `${pct}%`;
+        }
+
+        // Keyboard: A-D or 1-4 picks an answer, Enter submits / goes next
+        document.addEventListener('keydown', (e) => {
+            if (document.getElementById('scenarioView').style.display === 'none' || e.ctrlKey || e.metaKey || e.altKey) return;
+            if (e.target.closest && e.target.closest('input, textarea, button, a, [role="dialog"]')) return;
+            const k = e.key.toUpperCase();
+            if (k === 'ENTER') {
+                e.preventDefault();
+                document.getElementById('submitBtn').click();
+                return;
+            }
+            const i = /^[1-4]$/.test(k) ? Number(k) - 1 : 'ABCD'.indexOf(k);
+            if (k.length === 1 && i >= 0 && !isAnswerSubmitted) {
+                e.preventDefault();
+                selectOption(i);
+            }
+        });
 
         function scrollToTop() {
             document.querySelector('.main-content').scrollTo({ top: 0 });
@@ -472,7 +533,7 @@
 
         // Reset option styling
         function resetOptionsUI() {
-            const labels = document.querySelectorAll('.option-label');
+            const labels = document.querySelectorAll('.cs-choice');
             labels.forEach(label => {
                 label.classList.remove('correct-answer', 'wrong-answer');
             });
@@ -488,7 +549,7 @@
             }
 
             const data = scenarioByKey.get(currentActiveScenario);
-            const labels = document.querySelectorAll('.option-label');
+            const labels = document.querySelectorAll('.cs-choice');
             const submitBtn = document.getElementById('submitBtn');
 
             // Tanggalin ang dating red/green classes bago suriin
@@ -539,6 +600,7 @@
                 // Para gumana agad ang "Next" kahit hindi pa tapos ang save
                 if (firstTime) solvedIds = [...solvedIds, currentActiveScenario];
                 if (unlocksNext) unlockedIds = [...unlockedIds, nextId];
+                updateTrack();
 
                 // Persist progress on the backend, then refresh local state from its response.
                 const scenarioId = currentActiveScenario;

@@ -8,8 +8,8 @@
     <link rel="icon" href="favicon-32.png?v=2" type="image/png" sizes="32x32">
     <link rel="apple-touch-icon" href="apple-touch-icon.png?v=2">
     <meta name="theme-color" content="#02473d">
-    <link rel="stylesheet" href="style.css?v=73">
-    <link rel="stylesheet" href="dark.css?v=37">
+    <link rel="stylesheet" href="style.css?v=93">
+    <link rel="stylesheet" href="dark.css?v=57">
     <script src="js/theme.js?v=3"></script>
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.2/css/all.min.css">
 </head>
@@ -18,7 +18,7 @@
         <div class="noscript-note">ValuesLearn needs JavaScript to work. Please turn it on in your browser settings.</div>
     </noscript>
 
-    <script src="js/api.js?v=12"></script>
+    <script src="js/api.js?v=13"></script>
     <script src="js/notifications.js?v=2"></script>
     <script src="js/gamify.js?v=3"></script>
     <script src="js/search.js?v=3"></script>
@@ -248,6 +248,7 @@
 
         const cardKey = (card) => card.key;
         const isUnlocked = (key) => unlockedIds.includes(key);
+        let lessonLocks = new Map();   // deck key -> { lesson, title } until that lesson is read
         function nextDeckAfter(key) {
             const i = decks.findIndex(d => d.key === key);
             return i >= 0 && i + 1 < decks.length ? decks[i + 1].key : null;
@@ -276,6 +277,7 @@
             if (progress) {
                 unlockedIds = progress.unlockedIds;
                 completedIds = progress.completedIds;
+                lessonLocks = new Map(progress.lessonLocks.map(l => [l.key, l]));
             } else if (decks.length) {
                 unlockedIds = [decks[0].key];
             }
@@ -351,18 +353,22 @@
                 next:     '<i class="fa-solid fa-play"></i> Start',
                 unlocked: '<i class="fa-solid fa-rotate-right"></i> Study',
                 locked:   '<i class="fa-solid fa-lock"></i> Locked',
+                lesson:   '<i class="fa-solid fa-book-open"></i> Read lesson first',
             };
 
             decks.forEach((info, index) => {
                 const i = info.key;
                 const unlocked = isUnlocked(i);
+                const lock = lessonLocks.get(i);
                 let state = 'locked';
                 if (completedIds.includes(i)) state = 'done';
+                else if (unlocked && lock) state = 'lesson';
                 else if (i === nextId) state = 'next';
                 else if (unlocked) state = 'unlocked';
 
                 const deck = document.createElement(unlocked ? 'button' : 'div');
-                deck.className = `deck is-${state}`;
+                // Waiting on its lesson: looks locked, but tapping says which lesson to read
+                deck.className = state === 'lesson' ? 'deck is-locked is-lesson' : `deck is-${state}`;
                 deck.id = `deck-${i}`;
                 if (unlocked) {
                     deck.type = 'button';
@@ -390,7 +396,11 @@
             document.getElementById('completedTotal').textContent = decks.length;
 
             const continueBtn = document.getElementById('continueBtn');
-            if (nextId) {
+            if (nextId && lessonLocks.has(nextId)) {
+                document.getElementById('continueText').textContent = `Read Lesson ${lessonLocks.get(nextId).lesson} first`;
+                continueBtn.onclick = () => showLessonLock(lessonLocks.get(nextId));
+                continueBtn.hidden = false;
+            } else if (nextId) {
                 document.getElementById('continueText').textContent =
                     completedIds.length ? `Continue: Lesson ${deckByKey.get(nextId).number}` : 'Start Lesson 1';
                 continueBtn.onclick = () => startQuiz(nextId);
@@ -445,6 +455,7 @@
         function startQuiz(lessonId) {
             const deck = deckByKey.get(lessonId);
             if (!deck || !isUnlocked(lessonId)) return;
+            if (lessonLocks.has(lessonId)) return showLessonLock(lessonLocks.get(lessonId));
             if (deck.cards.length === 0) {
                 alert("Questions for this lesson are coming soon!");
                 return;
@@ -459,7 +470,7 @@
 
         // Lahat ng card sa mga deck na bukas na
         function examCards() {
-            return decks.filter(d => isUnlocked(d.key))
+            return decks.filter(d => isUnlocked(d.key) && !lessonLocks.has(d.key))
                 .flatMap(d => d.cards.map(card => ({ deck: d.key, key: card.key })));
         }
 
@@ -474,11 +485,13 @@
 
         // Deck ng lahat ng card na nagkamali dati (galing sa iba't ibang lesson)
         function startReview() {
-            if (!mistakeKeys.length) return;
+            const queue = mistakeKeys.map(key => ({ deck: cardByKey.get(key).deck.key, key }))
+                .filter(c => !lessonLocks.has(c.deck));
+            if (!queue.length) return;
             reviewMode = true;
             examMode = false;
             currentLessonId = null;
-            questionQueue = mistakeKeys.map(key => ({ deck: cardByKey.get(key).deck.key, key }));
+            questionQueue = queue;
             showQuizView();
         }
 

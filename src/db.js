@@ -747,6 +747,32 @@ async function init() {
             )
         );
 
+
+        /* Lesson topics each student has read. A situation quiz or quiz
+           card deck opens only after every topic in its lesson is read. */
+        CREATE TABLE IF NOT EXISTS topic_reads (
+
+            user_id
+                INTEGER
+                NOT NULL
+                REFERENCES users(id)
+                ON DELETE CASCADE,
+
+            topic_key
+                TEXT
+                NOT NULL,
+
+            read_at
+                TIMESTAMPTZ
+                NOT NULL
+                DEFAULT NOW(),
+
+            PRIMARY KEY (
+                user_id,
+                topic_key
+            )
+        );
+
     `);
 
 
@@ -1072,6 +1098,39 @@ async function init() {
                 DROP COLUMN IF EXISTS email
 
             `);
+        }
+
+
+        /* ----------------------------------------------
+           Link situation quizzes and quiz card decks to
+           their lesson ("lesson" = module key, '' = none).
+           Items from the original content get the seed's
+           lesson; ones made later get none. Only fills
+           items that don't have the field yet.
+           ---------------------------------------------- */
+
+        const seed = require('./seed/content.json');
+        const seedLessons = [
+            ...seed.cases.map(c => ['case', c.key, c.data.lesson]),
+            ...seed.decks.map(d => ['deck', d.key, d.data.lesson]),
+        ];
+
+        for (const column of ['draft', 'published']) {
+
+            await client.query(`
+
+                UPDATE content_items i
+                SET ${column} = i.${column} || jsonb_build_object('lesson', COALESCE(s.lesson, ''))
+                FROM content_items x
+                LEFT JOIN (
+                    SELECT * FROM jsonb_to_recordset($1::jsonb) AS t(kind TEXT, key TEXT, lesson TEXT)
+                ) s ON s.kind = x.kind AND s.key = x.key
+                WHERE i.id = x.id
+                  AND i.kind IN ('case', 'deck')
+                  AND i.${column} IS NOT NULL
+                  AND NOT (i.${column} ? 'lesson')
+
+            `, [JSON.stringify(seedLessons.map(([kind, key, lesson]) => ({ kind, key, lesson })))]);
         }
 
 

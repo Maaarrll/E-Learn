@@ -242,6 +242,19 @@ document.addEventListener('click', (e) => {
   });
 });
 
+// Situation quiz / quiz card deck whose lesson isn't read yet.
+// lock = { lesson, title } from /progress/case-studies or /progress/study-cards
+function showLessonLock(lock) {
+  confirmDialog({
+    title: `Read Lesson ${lock.lesson} first`,
+    message: `This quiz is about "${lock.title}". Read every page of Lesson ${lock.lesson} to unlock it.`,
+    confirmText: 'Go to lesson',
+    cancelText: 'Later',
+    icon: 'fa-book-open-reader',
+    onConfirm: () => { window.location.href = 'ReadLesson.html'; },
+  });
+}
+
 // Styled replacement for window.confirm(). Resolves true/false.
 // options: { title, message, confirmText, cancelText, icon, danger, onConfirm }
 // If onConfirm is given, the confirm button shows a spinner while it runs.

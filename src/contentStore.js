@@ -24,6 +24,7 @@ function buildCatalog(rows, field = 'published') {
   const moduleKeys = new Set(modules.map(m => m.key));
   const allTopics = list('topic').filter(t => moduleKeys.has(t.parentKey));
   let topicNumber = 0;
+  modules.forEach((m, i) => { m.number = i + 1; });
   for (const m of modules) {
     m.topics = allTopics.filter(t => t.parentKey === m.key);
     m.topics.forEach(t => { t.number = ++topicNumber; });
@@ -47,10 +48,12 @@ function buildCatalog(rows, field = 'published') {
     modules, topics, videos, cases, decks, cards,
     // Lookups used to validate progress / bookmarks
     videoTitles: new Map(videos.map(v => [v.key, v.title])),
+    moduleByKey: new Map(modules.map(m => [m.key, m])),
     topicByKey: new Map(topics.map(t => [t.key, t])),
     caseByKey: new Map(cases.map(c => [Number(c.key), c])),
     deckByKey: new Map(decks.map(d => [Number(d.key), d])),
     cardKeys: new Set(cards.map(c => c.key)),
+    deckOfCard: new Map(cards.map(c => [c.key, Number(c.parentKey)])),
     caseOrder: cases.map(c => Number(c.key)),
     deckOrder: decks.map(d => Number(d.key)),
     totals: { caseStudies: cases.length, decks: decks.length, videos: videos.length, topics: topics.length },
@@ -95,4 +98,13 @@ function unlockedKeys(order, doneList) {
   return unlocked;
 }
 
-module.exports = { getContent, invalidate, buildCatalog, unlockedKeys, VIDEO_TOPICS };
+// The lesson a situation quiz or deck still waits on: its module, until every
+// topic in it is in readTopics (a Set of topic keys). null = open.
+// A missing or removed lesson never locks anything.
+function lessonLock(content, item, readTopics) {
+  const mod = item && item.lesson ? content.moduleByKey.get(item.lesson) : null;
+  if (!mod || mod.topics.every(t => readTopics.has(t.key))) return null;
+  return mod;
+}
+
+module.exports = { getContent, invalidate, buildCatalog, unlockedKeys, lessonLock, VIDEO_TOPICS };
