@@ -1,0 +1,533 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Read Lesson · ValuesLearn</title>
+    <meta name="description" content="Read the Values Education 7 lessons.">
+    <link rel="icon" href="favicon-32.png?v=2" type="image/png" sizes="32x32">
+    <link rel="apple-touch-icon" href="apple-touch-icon.png?v=2">
+    <meta name="theme-color" content="#02473d">
+    <link rel="stylesheet" href="style.css?v=73">
+    <link rel="stylesheet" href="dark.css?v=37">
+    <script src="js/theme.js?v=3"></script>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+</head>
+<body class="lesson-page">
+    <noscript>
+        <div class="noscript-note">ValuesLearn needs JavaScript to work. Please turn it on in your browser settings.</div>
+    </noscript>
+
+    <script src="js/api.js?v=11"></script>
+    <script src="js/notifications.js?v=2"></script>
+    <script src="js/richtext.js?v=1"></script>
+    <script src="js/bookmarks.js?v=2"></script>
+    <script src="js/sfx.js?v=8"></script>
+    <script src="js/gamify.js?v=3"></script>
+    <script src="js/search.js?v=3"></script>
+    <script>
+        requireAuth();
+        document.addEventListener('DOMContentLoaded', function() {
+            let currentPageName = window.location.pathname.split('/').pop();
+            if (currentPageName && currentPageName !== '') {
+                localStorage.setItem('lastLessonVisited', currentPageName);
+            }
+        });
+    </script>
+
+   <div class="dashboard-container">
+        
+        <!-- Sidebar Navigation -->
+        <aside class="sidebar">
+            <div class="sidebar-header">
+                <img src="logo.png" alt="" class="sidebar-logo">
+                <div class="sidebar-brand">
+                    <span class="logo-text">ValuesLearn</span>
+                    <small class="logo-tag">Values Ed 7 Study Hub</small>
+                </div>
+            </div>
+
+            <span class="sidebar-label">Overview</span>
+            
+            <nav class="sidebar-nav">
+                <a href="Dashboard.html" class="nav-item">
+                    <i class="fa-solid fa-border-all"></i> <span class="nav-text">Dashboard</span>
+                </a>
+                <span class="sidebar-label sidebar-label-group">Learn</span>
+                <a href="WatchVideo.html" class="nav-item">
+                    <i class="fa-solid fa-play"></i> <span class="nav-text">Watch Video</span>
+                </a>
+                <a href="ReadLesson.html" class="nav-item active">
+                    <i class="fa-solid fa-book"></i> <span class="nav-text">Read Lesson</span>
+                </a>
+                <a href="CaseStudies.html" class="nav-item">
+                    <i class="fa-solid fa-folder"></i> <span class="nav-text">Situation Quizzes</span>
+                </a>
+                <a href="StudyCards.html" class="nav-item">
+                    <i class="fa-solid fa-rotate"></i> <span class="nav-text">Quiz Cards</span>
+                </a>
+                <span class="sidebar-label sidebar-label-group">You</span>
+                <a href="Saved.html" class="nav-item">
+                    <i class="fa-solid fa-bookmark"></i> <span class="nav-text">Saved</span>
+                </a>
+                <a href="Certificate.html" class="nav-item">
+                    <i class="fa-solid fa-award"></i> <span class="nav-text">Certificates</span>
+                </a>
+                <a href="Account.html" class="nav-item">
+                    <i class="fa-solid fa-circle-user"></i> <span class="nav-text">Account</span>
+                </a>
+            </nav>
+            <!-- Profile card + log out (pinupuno ng renderSidebarUser() sa js/api.js) -->
+            <div class="sidebar-user">
+                <a href="Account.html" class="sidebar-user-link" title="View your account">
+                    <span class="sidebar-avatar" id="sidebarAvatar"><i class="fa-regular fa-user"></i></span>
+                    <span class="sidebar-user-text">
+                        <strong id="sidebarName">My Account</strong>
+                        <small id="sidebarMeta">View profile</small>
+                    </span>
+                </a>
+                <button type="button" class="sidebar-logout" data-logout aria-label="Log out" title="Log out">
+                    <i class="fa-solid fa-arrow-right-from-bracket"></i>
+                </button>
+            </div>
+
+        </aside>
+
+        <!-- Main Content Area -->
+        <main class="main-content">
+            
+            <!-- Page Header + Search -->
+            <div class="video-header">
+                <div class="video-header-text">
+                    <h2><i class="fa-solid fa-book"></i> Read Lesson</h2>
+                    <p>Values Education 7 lessons from the MATATAG curriculum.</p>
+                </div>
+                <div class="search-container">
+                    <i class="fa-solid fa-magnifying-glass"></i>
+                    <!-- DITO YUNG NAGING PROBLEMA: Kailangan may id="searchInput" -->
+                    <input type="text" id="searchInput" placeholder="Search lessons...">
+                    <button type="button" class="clear-search" id="clearSearchBtn" aria-label="Clear search" hidden>
+                        <i class="fa-solid fa-xmark"></i>
+                    </button>
+                </div>
+            </div>
+
+                <!-- Top Cards Grid -->
+               <!-- Top Cards Grid -->
+                <div class="lesson-top-grid">
+                    
+                    <!-- Learning Objectives Card -->
+                    <div class="info-card">
+                        <div class="card-header">
+                            <i class="fa-solid fa-bullseye icon-purple"></i>
+                            <h3>Learning Objectives</h3>
+                        </div>
+                        <div class="card-body" id="learningObjectivesList">
+                            <div class="pill-box">Natutukoy ang mga pang-araw-araw na gawain na may kinalaman sa pagtitipid.</div>
+                            <div class="pill-box">Naipahahayag at naisasakilos ang wastong paraan ng paggamit ng tubig at enerhiya katuwang ang kapuwa.</div>
+                            <div class="pill-box">Nakabubuo ng plano sa pagtitipid ng tubig at enerhiya sa tahanan, paaralan o lugar na pinupuntahan.</div>
+                            <div class="pill-box">Naipaliliwanag ang limang wika ng pag-ibig bilang paraan ng pagpapakita ng pagmamahalan ng pamilya.</div>
+                            <div class="pill-box">Nakikilala ang pamilya bilang likas na institusyon ng pagmamahalan.</div>
+                            <div class="pill-box">Nakagagawa ng presentasyon gamit ang limang wika ng pag-ibig.</div>
+                            <div class="pill-box">Nakikilala ang mga paraan ng mapanagutang paggamit ng social media bilang mamamayan.</div>
+                            <div class="pill-box">Naisasakilos ang mga paraan ng mapanagutang paggamit ng social media upang malinang ang disiplina.</div>
+                        </div>
+                    </div>
+
+                    <!-- Lesson Outline Card -->
+                    <div class="info-card">
+                        <div class="card-header">
+                            <i class="fa-regular fa-file-lines icon-purple"></i>
+                            <h3>Lesson Outline</h3>
+                        </div>
+                        <div class="card-body">
+                            <ul class="custom-bullet-list">
+                                <li>Aralin 1: Wastong Paggamit ng Tubig at Enerhiya (Pagtitipid)</li>
+                                <li>Mga susing salita: Enerhiya, Pagtitipid, Tubig</li>
+                                <li>Mga paraan ng pagtitipid ng tubig</li>
+                                <li>Mahusay na paggamit ng enerhiya</li>
+                                <li>SDG #6: Clean Water and Sanitation</li>
+                                <li>Aralin 2: Limang Wika ng Pag-ibig sa Pamilya</li>
+                                <li>Ang pamilya bilang likas na institusyon</li>
+                                <li>Words of Affirmation, Quality Time, Physical Touch, Acts of Service, Receiving Gifts</li>
+                                <li>Aralin 3: Mapanagutang Paggamit ng Social Media</li>
+                                <li>Mga salita at plataporma ng social media</li>
+                                <li>Mga paalala sa tamang paggamit ng social media</li>
+                            </ul>
+                        </div>
+                    </div>
+
+                </div>
+                
+                <!-- Reading progress + controls -->
+                <div class="lesson-toolbar">
+                    <div class="topic-select module-jump">
+                        <i class="fa-solid fa-list-ul"></i>
+                        <select id="moduleSelect" aria-label="Jump to lesson">
+                            <option value="">Jump to a lesson...</option>
+                        </select>
+                        <i class="fa-solid fa-chevron-down select-arrow"></i>
+                    </div>
+                    <div class="lesson-actions">
+                        <span class="search-count" id="searchCount" hidden></span>
+                        <button type="button" class="filter-btn" id="expandAllBtn"><i class="fa-solid fa-angles-down"></i> Expand all</button>
+                        <button type="button" class="filter-btn" id="collapseAllBtn"><i class="fa-solid fa-angles-up"></i> Collapse all</button>
+                    </div>
+                </div>
+
+                <!-- Accordion Lesson List -->
+                <!-- Topics are loaded from the server (edited in the Admin Dashboard) -->
+                <div class="accordion-container">
+                    <p class="lesson-loading"><span class="btn-spinner"></span> Loading lessons...</p>
+                </div>
+
+            </div>
+            <!-- Empty state kapag walang tugma sa search -->
+            <div class="video-empty" id="lessonEmpty" hidden>
+                <i class="fa-solid fa-book-open"></i>
+                <p>No topics found. Try a different keyword.</p>
+            </div>
+
+            <button type="button" class="to-top-btn" id="toTopBtn" aria-label="Back to top">
+                <i class="fa-solid fa-arrow-up"></i>
+            </button>
+            <!-- Footer -->
+            <footer class="site-footer">
+                <span><strong>ValuesLearn</strong></span>
+                <span class="site-footer-dot" aria-hidden="true">·</span>
+                <span>Values Education 7 Study Hub for Allen National High School</span>
+            </footer>
+        </main>
+    </div>
+
+    <!-- KUMPLETONG JAVASCRIPT PARA SA ACCORDION, SMART SEARCH BAR AT READING PROGRESS -->
+    <script>
+        document.addEventListener('DOMContentLoaded', async function() {
+
+            // PAG-TRACK NG LAST VISITED LESSON PARA SA DASHBOARD
+            let currentPageName = window.location.pathname.split('/').pop();
+            if (!currentPageName || currentPageName === '') {
+                // Palitan ng tamang pangalan depende sa file (e.g. 'ReadLesson.html')
+                currentPageName = 'ReadLesson.html';
+            }
+            localStorage.setItem('lastLessonVisited', currentPageName);
+
+            // FUNCTION: Tagasalin ng words pa-number (e.g. "four" -> "4")
+            function normalizeText(text) {
+                const numberMap = {
+                    'one': '1', 'two': '2', 'three': '3', 'four': '4',
+                    'five': '5', 'six': '6', 'seven': '7', 'eight': '8', 'nine': '9', 'zero': '0'
+                };
+                let normalized = text.toLowerCase();
+                for (const [word, digit] of Object.entries(numberMap)) {
+                    // Hinahanap ang buong salita at pinapalitan ng numero
+                    normalized = normalized.replace(new RegExp(`\\b${word}\\b`, 'g'), digit);
+                }
+                return normalized;
+            }
+
+            // ========================================================
+            // 0. LESSONS (modules + topics) galing sa server
+            // ========================================================
+            const container = document.querySelector('.accordion-container');
+            const moduleSelect = document.getElementById('moduleSelect');
+            const moduleHeaders = [];
+
+            let modules = [];
+            try {
+                ({ modules } = await api.get('/content/lessons'));
+            } catch (err) {
+                container.innerHTML = '<p class="lesson-loading"><i class="fa-solid fa-circle-exclamation"></i> Could not load the lessons. Please refresh the page.</p>';
+                return;
+            }
+            container.innerHTML = '';
+
+            modules.forEach((mod, m) => {
+                const header = document.createElement('div');
+                header.className = 'module-header';
+                header.id = `module-${m + 1}`;
+                header.innerHTML = `
+                    <div class="module-icon"><i class="fa-solid ${HCIRichText.safeIcon(mod.icon)}"></i></div>
+                    <div class="module-text">
+                        <small>Lesson ${m + 1}</small>
+                        <h3></h3>
+                    </div>
+                    <span class="module-count">${mod.topics.length} topic${mod.topics.length === 1 ? '' : 's'}</span>`;
+                header.querySelector('h3').textContent = mod.title;
+                container.appendChild(header);
+                moduleHeaders.push(header);
+
+                const option = document.createElement('option');
+                option.value = m + 1;
+                option.textContent = `Lesson ${m + 1}: ${mod.title}`;
+                moduleSelect.appendChild(option);
+
+                // Topics (key = permanent id for links/bookmarks, number = shown)
+                mod.topics.forEach(topic => {
+                    const item = document.createElement('div');
+                    item.className = 'accordion-item';
+                    item.dataset.module = m + 1;
+                    item.dataset.key = topic.key;
+                    item.dataset.number = topic.number;
+                    item.innerHTML = `
+                        <button class="accordion-button">
+                            <span class="topic-title"></span>
+                            <i class="fa-solid fa-chevron-down chevron-icon"></i>
+                        </button>
+                        <div class="accordion-collapse">
+                            <div class="accordion-content">${topic.sections.map(HCIRichText.renderSection).join('')}</div>
+                        </div>`;
+                    item.querySelector('.topic-title').textContent = topic.title;
+                    container.appendChild(item);
+                });
+            });
+
+            const accordionItems = document.querySelectorAll('.accordion-item');
+
+            // Jump to module
+            moduleSelect.addEventListener('change', function () {
+                if (!this.value) return;
+                const target = document.getElementById(`module-${this.value}`);
+                if (target) target.scrollIntoView({ behavior: 'smooth', block: 'start' });
+                this.value = '';
+            });
+
+
+            // ========================================================
+            // 1. NUMBERS SA BAWAT TOPIC
+            // ========================================================
+            accordionItems.forEach((item) => {
+                const button = item.querySelector('.accordion-button');
+
+                // Original title (para sa search highlight)
+                const titleSpan = button.querySelector('.topic-title');
+                titleSpan.dataset.original = titleSpan.textContent;
+
+                const num = document.createElement('span');
+                num.className = 'topic-num';
+                num.textContent = item.dataset.number;
+                button.prepend(num);
+            });
+
+            // Linisin ang lumang "read topics" data na hindi na ginagamit
+            try { localStorage.removeItem('readLessonTopics'); } catch (e) { }
+
+            // Search text ng bawat topic (kinuha bago idagdag ang bookmark buttons,
+            // para hindi lumabas sa search ang "Save topic" / "Add note")
+            const searchTexts = [...accordionItems].map(item => normalizeText(item.textContent));
+
+
+            // ========================================================
+            // 1b. BOOKMARKS + NOTES SA BAWAT TOPIC
+            // ========================================================
+            accordionItems.forEach((item) => {
+                const topicNum = item.dataset.key;
+                const title = item.querySelector('.topic-title').dataset.original;
+                item.id = `topic-${topicNum}`;
+
+                // Maliit na bookmark icon sa title kapag naka-save
+                const mark = document.createElement('i');
+                mark.className = 'fa-solid fa-bookmark topic-saved-mark';
+                mark.hidden = true;
+                mark.setAttribute('aria-label', 'Saved');
+                item.querySelector('.topic-title').after(mark);
+
+                const tools = document.createElement('div');
+                tools.className = 'topic-tools';
+                tools.innerHTML = `
+                    <div class="player-tool-buttons">
+                        <button type="button" class="tool-btn bm-toggle" aria-pressed="false"></button>
+                        <button type="button" class="tool-btn bm-note"></button>
+                    </div>
+                    <div class="saved-note" hidden>
+                        <strong><i class="fa-solid fa-note-sticky"></i> My note</strong>
+                        <p></p>
+                    </div>`;
+                item.querySelector('.accordion-content').prepend(tools);
+
+                const toggleBtn = tools.querySelector('.bm-toggle');
+                const noteBtn = tools.querySelector('.bm-note');
+
+                const render = () => {
+                    const saved = HCIBookmarks.get('lesson', topicNum);
+                    mark.hidden = !saved;
+                    toggleBtn.classList.toggle('is-active', !!saved);
+                    toggleBtn.setAttribute('aria-pressed', saved ? 'true' : 'false');
+                    toggleBtn.innerHTML = saved
+                        ? '<i class="fa-solid fa-bookmark"></i> <span>Saved</span>'
+                        : '<i class="fa-regular fa-bookmark"></i> <span>Save topic</span>';
+                    const note = saved ? saved.note : '';
+                    noteBtn.innerHTML = `<i class="fa-regular fa-pen-to-square"></i> <span>${note ? 'Edit note' : 'Add note'}</span>`;
+                    tools.querySelector('.saved-note').hidden = !note;
+                    tools.querySelector('.saved-note p').textContent = note;
+                };
+                item._renderBookmark = render;
+                render();
+
+                toggleBtn.addEventListener('click', async () => {
+                    toggleBtn.disabled = true;
+                    try {
+                        const saved = await HCIBookmarks.toggle('lesson', topicNum, title);
+                        HCIBookmarks.toast(saved ? 'Topic saved' : 'Removed from Saved');
+                    } catch (err) {
+                        HCIBookmarks.toast(err.message, 'fa-circle-exclamation');
+                    } finally {
+                        toggleBtn.disabled = false;
+                        render();
+                    }
+                });
+
+                noteBtn.addEventListener('click', async () => {
+                    try {
+                        const saved = await HCIBookmarks.editNote('lesson', topicNum, title);
+                        if (saved) HCIBookmarks.toast('Note saved', 'fa-pen-to-square');
+                    } catch (err) {
+                        HCIBookmarks.toast(err.message, 'fa-circle-exclamation');
+                    }
+                    render();
+                });
+            });
+
+            HCIBookmarks.load()
+                .then(() => accordionItems.forEach(item => item._renderBookmark()))
+                .catch(() => {});
+
+
+            // ========================================================
+            // 2. LOGIC PARA SA ACCORDION (Pampabuka ng mga Lessons)
+            // ========================================================
+            function setOpen(item, open) {
+                item.classList.toggle('active', open);
+                item.querySelector('.accordion-button').setAttribute('aria-expanded', open);
+            }
+
+            // Study streak: bilangin ang topic na binuksan mismo ng user
+            // (isang beses lang bawat topic; hindi kasama ang "Expand all")
+            const topicsCounted = new Set();
+            function countRead(item) {
+                if (topicsCounted.has(item.id)) return;
+                topicsCounted.add(item.id);
+                HCIGamify.record('read');
+            }
+
+            accordionItems.forEach(item => {
+                const button = item.querySelector('.accordion-button');
+                button.setAttribute('aria-expanded', 'false');
+
+                button.addEventListener('click', function() {
+                    const opening = !item.classList.contains('active');
+                    setOpen(item, opening);
+                    if (opening) countRead(item);
+                });
+            });
+
+            // Expand all / Collapse all (para lang sa mga nakikitang topics)
+            document.getElementById('expandAllBtn').addEventListener('click', () => {
+                accordionItems.forEach(item => { if (item.style.display !== 'none') setOpen(item, true); });
+            });
+            document.getElementById('collapseAllBtn').addEventListener('click', () => {
+                accordionItems.forEach(item => setOpen(item, false));
+            });
+
+
+            // ========================================================
+            // 3. LOGIC PARA SA SEARCH BAR (title at laman ng topic)
+            // ========================================================
+            const searchInput = document.getElementById('searchInput');
+            const searchCount = document.getElementById('searchCount');
+            const clearSearchBtn = document.getElementById('clearSearchBtn');
+
+            function escapeHtml(text) {
+                return text.replace(/[&<>"']/g, c => ({ '&': '&amp;', '<': '&lt;', '>': '&gt;', '"': '&quot;', "'": '&#39;' }[c]));
+            }
+
+            // I-highlight ang tinype na salita sa title
+            function highlightTitle(span, query) {
+                const original = span.dataset.original;
+                if (!query) { span.textContent = original; return; }
+                const escapedQuery = query.replace(/[.*+?^${}()|[\]\\]/g, '\\$&');
+                span.innerHTML = escapeHtml(original).replace(
+                    new RegExp(`(${escapeHtml(escapedQuery)})`, 'gi'),
+                    '<mark>$1</mark>'
+                );
+            }
+
+            function runSearch() {
+                const raw = searchInput.value.trim();
+                // Kunin ang tinype at idaan sa translator
+                const filterText = normalizeText(raw);
+                let visible = 0;
+
+                accordionItems.forEach((item, index) => {
+                    // Idaan din sa translator ang title at laman ng lesson
+                    const matches = searchTexts[index].includes(filterText);
+                    item.style.display = matches ? '' : 'none';
+                    if (matches) visible++;
+                    highlightTitle(item.querySelector('.topic-title'), raw);
+                });
+
+                // Itago ang module header kung walang tugmang topic sa loob nito
+                moduleHeaders.forEach((header, m) => {
+                    const hasVisible = [...accordionItems].some(item =>
+                        item.dataset.module == m + 1 && item.style.display !== 'none');
+                    header.style.display = hasVisible ? '' : 'none';
+                });
+
+                // Habang naghahanap, itago ang Objectives/Outline para kita agad ang results
+                document.querySelector('.lesson-top-grid').style.display = raw ? 'none' : '';
+
+                searchCount.hidden = !raw;
+                searchCount.textContent = `${visible} topic${visible === 1 ? '' : 's'} found`;
+                clearSearchBtn.hidden = !raw;
+                document.getElementById('lessonEmpty').hidden = visible > 0;
+            }
+
+            searchInput.addEventListener('input', runSearch);
+
+            clearSearchBtn.addEventListener('click', () => {
+                searchInput.value = '';
+                runSearch();
+                searchInput.focus();
+            });
+
+
+            // ========================================================
+            // 4. BACK TO TOP BUTTON
+            // ========================================================
+            const toTopBtn = document.getElementById('toTopBtn');
+            const scroller = document.querySelector('.main-content');
+
+            function onScroll() {
+                const y = Math.max(scroller.scrollTop, window.scrollY);
+                toTopBtn.classList.toggle('visible', y > 600);
+            }
+            scroller.addEventListener('scroll', onScroll);
+            window.addEventListener('scroll', onScroll);
+
+            toTopBtn.addEventListener('click', () => {
+                scroller.scrollTo({ top: 0, behavior: 'smooth' });
+                window.scrollTo({ top: 0, behavior: 'smooth' });
+            });
+
+
+            // ========================================================
+            // 5. LINK MULA SA "SAVED" PAGE (ReadLesson.html#topic-12)
+            // ========================================================
+            function openFromHash() {
+                const match = /^#topic-(\d+)$/.exec(window.location.hash);
+                const item = match && document.getElementById(`topic-${match[1]}`);
+                if (!item) return;
+                setOpen(item, true);
+                countRead(item);
+                item.scrollIntoView({ behavior: 'smooth', block: 'start' });
+                item.classList.add('is-highlighted');
+                setTimeout(() => item.classList.remove('is-highlighted'), 2000);
+            }
+            openFromHash();
+            window.addEventListener('hashchange', openFromHash);
+
+        });
+
+    </script>
+</body>
+</html>

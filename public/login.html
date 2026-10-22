@@ -1,0 +1,679 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Log In · ValuesLearn</title>
+    <meta name="description" content="Log in to ValuesLearn, the Values Education 7 learning platform of Allen National High School.">
+
+    <link rel="icon" href="favicon-32.png?v=2" type="image/png" sizes="32x32">
+    <link rel="apple-touch-icon" href="apple-touch-icon.png?v=2">
+    <meta name="theme-color" content="#02473d">
+    <link rel="stylesheet" href="style.css?v=73">
+    <link rel="stylesheet" href="dark.css?v=37">
+    <script src="js/theme.js?v=3"></script>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+
+    <meta property="og:title" content="ValuesLearn | Interactive Study Guide">
+    <meta property="og:description" content="The Values Education 7 learning platform of Allen National High School.">
+    <meta property="og:type" content="website">
+</head>
+
+<body class="login-page">
+    <noscript>
+        <div class="noscript-note">ValuesLearn needs JavaScript to work. Please turn it on in your browser settings.</div>
+    </noscript>
+
+    <div class="container">
+
+        <!-- Left Section: Login Form -->
+        <div class="login-section">
+
+            <div class="glass-panel">
+
+                <div class="brand-row">
+                    <img
+                        src="images.png"
+                        alt="ValuesLearn logo"
+                        class="logo"
+                    >
+                    <div class="brand-text">
+                        <span class="brand-name">ValuesLearn</span>
+                        <span class="brand-sub">Values Education 7 Platform</span>
+                    </div>
+                </div>
+
+                <span class="admin-mode-badge" id="adminBadge" hidden><i class="fa-solid fa-user-shield"></i> Admin access</span>
+                <h1 id="loginTitle">Hello, welcome!</h1>
+                <p class="login-subtitle" id="loginSubtitle">Log in to continue your learning journey.</p>
+
+                <form id="loginForm" novalidate>
+
+                    <div id="loginError" class="form-alert" role="alert">
+                        <i class="fa-solid fa-circle-exclamation"></i>
+                        <span id="loginErrorText"></span>
+                    </div>
+
+                    <!-- EMAIL (student login) -->
+                    <div class="input-group" id="emailGroup">
+
+                        <label for="email">Email</label>
+
+                        <div class="input-wrapper">
+
+                            <i class="fa-solid fa-envelope"></i>
+
+                            <input
+                                type="email"
+                                id="email"
+                                placeholder="you@gmail.com"
+                                autocomplete="email"
+                                required
+                            >
+
+                        </div>
+
+                        <small class="field-error" id="emailError">
+                            <i class="fa-solid fa-circle-exclamation"></i> Please enter a valid email address
+                        </small>
+
+                    </div>
+
+
+                    <!-- INSTRUCTOR ID (admin login) -->
+                    <div class="input-group" id="instructorGroup" hidden>
+
+                        <label for="instructorId">Instructor ID</label>
+
+                        <div class="input-wrapper">
+
+                            <i class="fa-solid fa-id-badge"></i>
+
+                            <input
+                                type="text"
+                                id="instructorId"
+                                placeholder="e.g. 122524"
+                                autocomplete="username"
+                                inputmode="numeric"
+                                maxlength="40"
+                            >
+
+                        </div>
+
+                    </div>
+
+
+                    <!-- PASSWORD -->
+                    <div class="input-group">
+
+                        <label for="password">Password</label>
+
+                        <div class="input-wrapper">
+
+                            <i class="fa-solid fa-lock"></i>
+
+                            <input
+                                type="password"
+                                id="password"
+                                placeholder="Enter your password"
+                                autocomplete="current-password"
+                                required
+                            >
+
+                            <button
+                                type="button"
+                                class="toggle-password"
+                                id="togglePassword"
+                                aria-label="Show password"
+                            >
+                                <i class="fa-solid fa-eye"></i>
+                            </button>
+
+                        </div>
+
+                        <small class="caps-warning" id="capsWarning">
+                            <i class="fa-solid fa-triangle-exclamation"></i> Caps Lock is on
+                        </small>
+
+                    </div>
+
+
+                    <!-- REMEMBER ME + FORGOT PASSWORD -->
+                    <div class="form-options" id="formOptions">
+                        <label class="remember-me" for="rememberMe">
+                            <input type="checkbox" id="rememberMe">
+                            <span class="check-box"><i class="fa-solid fa-check"></i></span>
+                            Remember me
+                        </label>
+                        <a href="#" class="forgot-link" onclick="openForgotModal(); return false;">
+                            Forgot Password?
+                        </a>
+                    </div>
+
+
+                    <!-- LOGIN BUTTON -->
+                    <button
+                        type="submit"
+                        class="login-btn"
+                        id="loginBtn"
+                    >
+                        Log in
+                    </button>
+
+                    <!-- Switch between student and admin login -->
+                    <button type="button" class="admin-login-toggle" id="adminToggle" aria-pressed="false">
+                        <i class="fa-solid fa-user-shield"></i> <span>Log in as admin</span>
+                    </button>
+
+                </form>
+
+
+                <!-- SIGNUP LINK (students only) -->
+                <div id="studentExtras">
+                    <div class="form-divider"><span>New to ValuesLearn?</span></div>
+
+                    <a href="signup.html" class="signup-btn-outline">
+                        <i class="fa-solid fa-user-plus"></i> Create an account
+                    </a>
+                </div>
+
+                <p class="secure-note">
+                    <i class="fa-solid fa-shield-halved"></i> Your session is protected and encrypted
+                </p>
+
+            </div>
+
+        </div>
+
+
+        <!-- Right Section: Image -->
+        <div class="image-section">
+            <div class="image-overlay">
+                <span class="overlay-badge"><i class="fa-solid fa-graduation-cap"></i> For Grade 7 Learners</span>
+                <h2>Learn Values Education 7, your way.</h2>
+                <ul class="feature-list">
+                    <li><i class="fa-solid fa-play"></i> Watch video lessons</li>
+                    <li><i class="fa-solid fa-book"></i> Read lessons at your own pace</li>
+                    <li><i class="fa-solid fa-folder"></i> Solve real situation quizzes</li>
+                    <li><i class="fa-solid fa-rotate"></i> Review with quiz cards</li>
+                </ul>
+            </div>
+        </div>
+
+    </div>
+
+
+    <!-- ==========================================
+         FORGOT PASSWORD MODAL
+         ========================================== -->
+
+    <div id="forgotPasswordModal" class="modal-overlay">
+
+        <div class="modal-card" role="dialog" aria-labelledby="resetTitle">
+
+            <div class="modal-icon"><i class="fa-solid fa-key"></i></div>
+
+            <h3 id="resetTitle">Reset Password</h3>
+
+            <p class="modal-text">
+                Enter your email address and we will send you a password reset link.
+            </p>
+
+            <p id="resetMsg" class="modal-msg"></p>
+
+            <div class="input-wrapper">
+                <i class="fa-solid fa-envelope"></i>
+                <input
+                    type="email"
+                    id="resetEmailInput"
+                    placeholder="you@gmail.com"
+                    autocomplete="email"
+                >
+            </div>
+
+            <div class="modal-actions">
+
+                <button type="button" class="modal-btn modal-btn-secondary" onclick="closeForgotModal()">
+                    Cancel
+                </button>
+
+                <button type="button" class="modal-btn modal-btn-primary" id="sendResetBtn" onclick="sendResetLink()">
+                    Send Link
+                </button>
+
+            </div>
+
+        </div>
+
+    </div>
+
+
+    <script src="js/api.js?v=11"></script>
+
+    <script>
+
+        /* ==========================================
+           FORGOT PASSWORD
+           ========================================== */
+
+        function showResetMsg(text, isError) {
+
+            const el =
+                document.getElementById('resetMsg');
+
+            el.textContent = text;
+
+            el.className =
+                'modal-msg ' + (isError ? 'is-error' : 'is-success');
+
+            el.style.display = 'block';
+        }
+
+
+        function openForgotModal() {
+
+            document.getElementById('resetEmailInput').value =
+                document.getElementById('email').value.trim();
+
+            document.getElementById('resetMsg').style.display =
+                'none';
+
+            document.getElementById('forgotPasswordModal').style.display =
+                'flex';
+
+            document.getElementById('resetEmailInput').focus();
+        }
+
+
+        function closeForgotModal() {
+
+            document.getElementById('forgotPasswordModal').style.display =
+                'none';
+
+            document.getElementById('resetEmailInput').value = '';
+
+            document.getElementById('resetMsg').style.display =
+                'none';
+        }
+
+
+        // Close the modal by clicking the dark background or pressing Escape
+        document
+            .getElementById('forgotPasswordModal')
+            .addEventListener('click', function (e) {
+                if (e.target === this) closeForgotModal();
+            });
+
+        document.addEventListener('keydown', function (e) {
+            if (e.key === 'Escape') closeForgotModal();
+        });
+
+
+        async function sendResetLink() {
+
+            const email =
+                document
+                    .getElementById('resetEmailInput')
+                    .value
+                    .trim();
+
+            const btn =
+                document.getElementById('sendResetBtn');
+
+
+            if (!email) {
+
+                showResetMsg(
+                    'Please enter your email address.',
+                    true
+                );
+
+                return;
+            }
+
+
+            btn.disabled = true;
+            btn.textContent = 'Sending...';
+
+
+            try {
+
+                const data =
+                    await api.post(
+                        '/auth/forgot-password',
+                        { email }
+                    );
+
+
+                showResetMsg(
+                    data.message ||
+                    'Reset link sent! Please check your email.',
+                    false
+                );
+
+            } catch (err) {
+
+                showResetMsg(
+                    err.message,
+                    true
+                );
+
+            } finally {
+
+                btn.disabled = false;
+                btn.textContent = 'Send Link';
+            }
+        }
+
+
+        /* ==========================================
+           SHOW / HIDE PASSWORD + CAPS LOCK WARNING
+           ========================================== */
+
+        document
+            .getElementById('togglePassword')
+            .addEventListener(
+                'click',
+                function () {
+
+                    const input =
+                        document.getElementById('password');
+
+                    const show =
+                        input.type === 'password';
+
+                    input.type = show ? 'text' : 'password';
+
+                    this.innerHTML = show
+                        ? '<i class="fa-solid fa-eye-slash"></i>'
+                        : '<i class="fa-solid fa-eye"></i>';
+
+                    this.setAttribute(
+                        'aria-label',
+                        show ? 'Hide password' : 'Show password'
+                    );
+                }
+            );
+
+        document
+            .getElementById('password')
+            .addEventListener('keyup', function (e) {
+                document
+                    .getElementById('capsWarning')
+                    .classList
+                    .toggle('visible', e.getModifierState && e.getModifierState('CapsLock'));
+            });
+
+
+        /* ==========================================
+           CHECK IF ALREADY LOGGED IN
+           ========================================== */
+
+        /* ==========================================
+           STUDENT / ADMIN LOGIN MODE
+           (login.html#admin opens in admin mode)
+           ========================================== */
+
+        let adminMode = window.location.hash === '#admin';
+
+        function applyLoginMode() {
+            document.querySelector('.glass-panel').classList.toggle('is-admin-mode', adminMode);
+            document.getElementById('adminBadge').hidden = !adminMode;
+            document.getElementById('studentExtras').hidden = adminMode;
+            // Instructors log in with their Instructor ID, students with email
+            document.getElementById('emailGroup').hidden = adminMode;
+            document.getElementById('instructorGroup').hidden = !adminMode;
+            document.getElementById('formOptions').hidden = adminMode;
+            document.getElementById('loginTitle').textContent = adminMode ? 'Admin login' : 'Hello, welcome!';
+            document.getElementById('loginSubtitle').textContent = adminMode
+                ? 'For instructors. Log in with your Instructor ID.'
+                : 'Log in to continue your learning journey.';
+
+            const toggle = document.getElementById('adminToggle');
+            toggle.setAttribute('aria-pressed', adminMode ? 'true' : 'false');
+            toggle.innerHTML = adminMode
+                ? '<i class="fa-solid fa-arrow-left"></i> <span>Back to student login</span>'
+                : '<i class="fa-solid fa-user-shield"></i> <span>Log in as admin</span>';
+
+            const btn = document.getElementById('loginBtn');
+            if (!btn.disabled) btn.innerHTML = loginBtnHtml();
+            document.getElementById('loginError').classList.remove('visible');
+            history.replaceState(null, '', adminMode ? '#admin' : window.location.pathname + window.location.search);
+        }
+
+        function loginBtnHtml() {
+            return adminMode ? '<i class="fa-solid fa-user-shield"></i> Log in as admin' : 'Log in';
+        }
+
+        document.getElementById('adminToggle').addEventListener('click', () => {
+            adminMode = !adminMode;
+            applyLoginMode();
+            document.getElementById(adminMode ? 'instructorId' : 'email').focus();
+        });
+
+        applyLoginMode();
+
+        // Only a teacher can open the class; tell students up front when it's closed
+        api.get('/class-status').then(({ open }) => {
+            if (!open && !adminMode) showLoginError('The class is closed. Please wait for your teacher to open it.');
+        }).catch(() => {});
+
+        // Already logged in? Go straight to the right page.
+        api.get(adminMode ? '/instructor/me' : '/auth/me')
+            .then(() => {
+                window.location.href = adminMode ? 'Admin.html' : 'Dashboard.html';
+            })
+            .catch(() => {});
+
+
+        /* ==========================================
+           INSTRUCTOR LOGIN (admin mode)
+           ========================================== */
+
+        async function instructorLogin() {
+            const btn = document.getElementById('loginBtn');
+            const instructorId = document.getElementById('instructorId').value.trim();
+            const password = document.getElementById('password').value;
+
+            if (!instructorId || !password) {
+                showLoginError('Please enter your Instructor ID and password.');
+                return;
+            }
+
+            btn.disabled = true;
+            btn.innerHTML = '<span class="btn-spinner"></span> Logging in...';
+
+            try {
+                await api.post('/instructor/login', { instructorId, password });
+                btn.classList.add('success');
+                btn.innerHTML = '<i class="fa-solid fa-circle-check"></i> Welcome!';
+                setTimeout(() => { window.location.href = 'Admin.html'; }, 600);
+            } catch (err) {
+                showLoginError(err.message);
+                btn.disabled = false;
+                btn.innerHTML = loginBtnHtml();
+            }
+        }
+
+
+        /* ==========================================
+           LOGIN
+           ========================================== */
+
+
+        const EMAIL_PATTERN = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
+
+
+        /* ==========================================
+           REMEMBER ME (email lang ang sine-save, hindi ang password)
+           ========================================== */
+
+        // Auto-focus lang sa desktop para hindi biglang lumabas ang keyboard sa cellphone
+        const isDesktop = window.matchMedia('(min-width: 769px)').matches;
+
+        try {
+            const savedEmail = localStorage.getItem('rememberedEmail');
+            if (savedEmail) {
+                document.getElementById('email').value = savedEmail;
+                document.getElementById('rememberMe').checked = true;
+            }
+            if (isDesktop) {
+                document.getElementById(savedEmail ? 'password' : 'email').focus();
+            }
+        } catch (e) { /* storage blocked */ }
+
+        function saveRememberedEmail(email) {
+            try {
+                if (document.getElementById('rememberMe').checked) {
+                    localStorage.setItem('rememberedEmail', email);
+                } else {
+                    localStorage.removeItem('rememberedEmail');
+                }
+            } catch (e) { /* storage blocked */ }
+        }
+
+
+        /* ==========================================
+           INLINE EMAIL VALIDATION
+           ========================================== */
+
+        function setEmailInvalid(invalid) {
+            document
+                .getElementById('email')
+                .closest('.input-wrapper')
+                .classList
+                .toggle('invalid', invalid);
+
+            document
+                .getElementById('emailError')
+                .classList
+                .toggle('visible', invalid);
+        }
+
+        document
+            .getElementById('email')
+            .addEventListener('blur', function () {
+                const value = this.value.trim();
+                setEmailInvalid(value !== '' && !EMAIL_PATTERN.test(value));
+            });
+
+        document
+            .getElementById('email')
+            .addEventListener('input', function () {
+                if (EMAIL_PATTERN.test(this.value.trim())) setEmailInvalid(false);
+            });
+
+        function showLoginError(message) {
+
+            document.getElementById('loginErrorText').textContent =
+                message;
+
+            const errorEl =
+                document.getElementById('loginError');
+
+            errorEl.classList.remove('visible');
+            void errorEl.offsetWidth; // restart the shake animation
+            errorEl.classList.add('visible');
+        }
+
+        document
+            .getElementById('loginForm')
+            .addEventListener(
+                'submit',
+                async function (e) {
+
+                    e.preventDefault();
+
+                    if (adminMode) {
+                        document.getElementById('loginError').classList.remove('visible');
+                        instructorLogin();
+                        return;
+                    }
+
+
+                    const btn =
+                        document.getElementById('loginBtn');
+
+
+                    document
+                        .getElementById('loginError')
+                        .classList
+                        .remove('visible');
+
+
+                    const email =
+                        document
+                            .getElementById('email')
+                            .value
+                            .trim();
+
+
+                    const password =
+                        document.getElementById('password').value;
+
+
+                    if (!email || !password) {
+
+                        showLoginError(
+                            'Please enter your email and password.'
+                        );
+
+                        return;
+                    }
+
+
+                    if (!EMAIL_PATTERN.test(email)) {
+
+                        setEmailInvalid(true);
+
+                        document.getElementById('email').focus();
+
+                        return;
+                    }
+
+
+                    btn.disabled = true;
+                    btn.innerHTML =
+                        '<span class="btn-spinner"></span> Logging in...';
+
+
+                    try {
+
+                        await api.post(
+                            '/auth/login',
+                            {
+                                email,
+                                password
+                            }
+                        );
+
+
+                        saveRememberedEmail(email);
+
+                        // Short success state bago mag-redirect
+                        btn.classList.add('success');
+                        btn.innerHTML =
+                            '<i class="fa-solid fa-circle-check"></i> Welcome back!';
+
+                        setTimeout(() => {
+                            window.location.href =
+                                'Dashboard.html';
+                        }, 600);
+
+                    } catch (err) {
+
+                        showLoginError(err.message);
+
+                        btn.disabled = false;
+
+                        btn.innerHTML =
+                            loginBtnHtml();
+                    }
+
+                }
+            );
+
+    </script>
+
+</body>
+</html>

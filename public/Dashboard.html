@@ -1,0 +1,673 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Dashboard · ValuesLearn</title>
+    <meta name="description" content="Your ValuesLearn dashboard: progress, recent activity and quick actions.">
+    <link rel="icon" href="favicon-32.png?v=2" type="image/png" sizes="32x32">
+    <link rel="apple-touch-icon" href="apple-touch-icon.png?v=2">
+    <meta name="theme-color" content="#02473d">
+    <link rel="stylesheet" href="style.css?v=73">
+    <link rel="stylesheet" href="dark.css?v=37">
+    <script src="js/theme.js?v=3"></script>
+    <!-- FontAwesome for the input icons -->
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+</head>
+<body class="dashboard-page">
+    <noscript>
+        <div class="noscript-note">ValuesLearn needs JavaScript to work. Please turn it on in your browser settings.</div>
+    </noscript>
+
+    <div class="dashboard-container">
+
+        <!-- Sidebar Navigation -->
+        <aside class="sidebar">
+            <div class="sidebar-header">
+                <img src="logo.png" alt="" class="sidebar-logo">
+                <div class="sidebar-brand">
+                    <span class="logo-text">ValuesLearn</span>
+                    <small class="logo-tag">Values Ed 7 Study Hub</small>
+                </div>
+            </div>
+
+            <span class="sidebar-label">Overview</span>
+
+            <nav class="sidebar-nav">
+                <a href="Dashboard.html" class="nav-item active">
+                    <i class="fa-solid fa-border-all"></i> <span class="nav-text">Dashboard</span>
+                </a>
+                <span class="sidebar-label sidebar-label-group">Learn</span>
+                <a href="WatchVideo.html" class="nav-item">
+                    <i class="fa-solid fa-play"></i> <span class="nav-text">Watch Video</span>
+                </a>
+                <a href="ReadLesson.html" class="nav-item">
+                    <i class="fa-solid fa-book"></i> <span class="nav-text">Read Lesson</span>
+                </a>
+                <a href="CaseStudies.html" class="nav-item">
+                    <i class="fa-solid fa-folder"></i> <span class="nav-text">Situation Quizzes</span>
+                </a>
+                <a href="StudyCards.html" class="nav-item">
+                    <i class="fa-solid fa-rotate"></i> <span class="nav-text">Quiz Cards</span>
+                </a>
+                <span class="sidebar-label sidebar-label-group">You</span>
+                <a href="Saved.html" class="nav-item">
+                    <i class="fa-solid fa-bookmark"></i> <span class="nav-text">Saved</span>
+                </a>
+                <a href="Certificate.html" class="nav-item">
+                    <i class="fa-solid fa-award"></i> <span class="nav-text">Certificates</span>
+                </a>
+                <a href="Account.html" class="nav-item">
+                    <i class="fa-solid fa-circle-user"></i> <span class="nav-text">Account</span>
+                </a>
+            </nav>
+            <!-- Profile card + log out (pinupuno ng renderSidebarUser() sa js/api.js) -->
+            <div class="sidebar-user">
+                <a href="Account.html" class="sidebar-user-link" title="View your account">
+                    <span class="sidebar-avatar" id="sidebarAvatar"><i class="fa-regular fa-user"></i></span>
+                    <span class="sidebar-user-text">
+                        <strong id="sidebarName">My Account</strong>
+                        <small id="sidebarMeta">View profile</small>
+                    </span>
+                </a>
+                <button type="button" class="sidebar-logout" data-logout aria-label="Log out" title="Log out">
+                    <i class="fa-solid fa-arrow-right-from-bracket"></i>
+                </button>
+            </div>
+        </aside>
+
+        <!-- Main Content Area -->
+        <main class="main-content">
+
+            <!-- Welcome Banner -->
+            <div class="welcome-card">
+                <div class="avatar-wrap">
+                    <img src="" alt="Profile" class="profile-img" id="profileImg" hidden>
+                    <div class="profile-initials" id="profileInitials"><i class="fa-regular fa-user"></i></div>
+                </div>
+                <div class="welcome-text">
+                    <span class="welcome-date" id="welcomeDate"></span>
+                    <h1 id="welcomeName">Welcome!</h1>
+                    <p>Keep learning, keep growing</p>
+                    <p class="subtitle">Continue where you left off and achieve your goals</p>
+                </div>
+                <div class="welcome-status">
+                    <div class="status-icon"><i class="fa-regular fa-clock"></i></div>
+                    <div class="status-text">
+                        <small>Last activity</small>
+                        <strong id="lastActivityText">No activity yet</strong>
+                        <span id="lastActivityTime">Start your first lesson today</span>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Study streak, badges and quick actions (pinupuno ng loadGamify()) -->
+            <div class="streak-row">
+
+                <div class="card streak-card">
+                    <div class="streak-main">
+                        <div class="streak-flame" id="streakFlame"><i class="fa-solid fa-fire"></i></div>
+                        <div class="streak-text">
+                            <strong><span id="streakCount">0</span> day streak</strong>
+                            <small id="streakNote">Get an answer right today to start a streak!</small>
+                        </div>
+                    </div>
+                    <div class="streak-week" id="streakWeek" aria-label="Last 7 days"></div>
+                    <small class="streak-best">Best: <b id="streakBest">0</b> days</small>
+                </div>
+
+                <div class="card badges-card">
+                    <h3 class="card-title"><i class="fa-solid fa-medal icon-title"></i> Badges <span class="badge-count" id="badgeCount">0 / 14</span></h3>
+                    <div class="badge-mini-row" id="badgeMini"></div>
+                    <a href="Account.html#badges" class="badge-link">See all badges <i class="fa-solid fa-arrow-right"></i></a>
+                </div>
+
+                <!-- Quick Actions -->
+                <div class="card quick-row-card">
+                    <h3 class="card-title"><i class="fa-solid fa-bolt icon-title"></i> Quick Actions</h3>
+                    <div class="quick-list">
+                        <a href="Saved.html" class="quick-item">
+                            <div class="quick-icon book-icon"><i class="fa-solid fa-bookmark"></i></div>
+                            <div class="quick-info">
+                                <h4>My saved notes</h4>
+                                <p>Topics and videos you saved</p>
+                            </div>
+                            <i class="fa-solid fa-chevron-right quick-arrow"></i>
+                        </a>
+                        <a href="StudyCards.html" class="quick-item">
+                            <div class="quick-icon check-action-icon"><i class="fa-regular fa-file-lines"></i></div>
+                            <div class="quick-info">
+                                <h4>Take knowledge check</h4>
+                                <p>Test your understanding</p>
+                            </div>
+                            <i class="fa-solid fa-chevron-right quick-arrow"></i>
+                        </a>
+                        <a href="Account.html" class="quick-item">
+                            <div class="quick-icon user-icon"><i class="fa-regular fa-user"></i></div>
+                            <div class="quick-info">
+                                <h4>View Profile</h4>
+                                <p>Manage your account</p>
+                            </div>
+                            <i class="fa-solid fa-chevron-right quick-arrow"></i>
+                        </a>
+                    </div>
+                </div>
+
+            </div>
+
+            <!-- Dashboard Grid Layout -->
+            <div class="dashboard-grid">
+
+                <!-- Overall Progress -->
+                <div class="card progress-card">
+                    <h3 class="card-title"><i class="fa-solid fa-chart-pie icon-title"></i> Overall Progress</h3>
+                    <div class="progress-content">
+                        <div class="circular-progress">
+                            <div class="inner-circle">
+                                <span id="overallPercent">0%</span>
+                                <small>Complete</small>
+                            </div>
+                        </div>
+                        <div class="progress-stats">
+                            <a href="CaseStudies.html" class="stat-item">
+                                <div class="stat-icon case-icon"><i class="fa-solid fa-folder"></i></div>
+                                <span><b id="caseStudiesCount">0</b><em id="caseStudiesTotal"></em></span>
+                                <small>Situation Quizzes</small>
+                                <div class="mini-bar"><div class="mini-fill bar-case" id="caseStudiesBar"></div></div>
+                            </a>
+                            <a href="WatchVideo.html" class="stat-item">
+                                <div class="stat-icon video-icon"><i class="fa-solid fa-play"></i></div>
+                                <span><b id="videosCount">0</b><em id="videosTotal"></em></span>
+                                <small>Watch Videos</small>
+                                <div class="mini-bar"><div class="mini-fill bar-video" id="videosBar"></div></div>
+                            </a>
+                            <a href="StudyCards.html" class="stat-item">
+                                <div class="stat-icon check-icon"><i class="fa-solid fa-rotate"></i></div>
+                                <span><b id="studyCardsCount">0</b><em id="studyCardsTotal"></em></span>
+                                <small>Quiz Cards</small>
+                                <div class="mini-bar"><div class="mini-fill bar-cards" id="studyCardsBar"></div></div>
+                            </a>
+                        </div>
+                    </div>
+
+                    <!-- Motivation + suggested next step -->
+                    <div class="progress-footer">
+                        <p class="progress-message" id="progressMessage">
+                            <i class="fa-solid fa-seedling"></i> Loading your progress...
+                        </p>
+                        <a href="WatchVideo.html" class="up-next" id="upNext" hidden>
+                            <small>Up next</small>
+                            <span id="upNextLabel"></span>
+                            <i class="fa-solid fa-arrow-right"></i>
+                        </a>
+                    </div>
+                </div>
+
+                <!-- Activities -->
+                <div class="card activities-card">
+                    <h3 class="card-title"><i class="fa-solid fa-chart-simple icon-title"></i> Activities</h3>
+
+                    <div class="activity-items scrollable-activities">
+
+                        <a href="CaseStudies.html" class="act-item">
+                            <div class="act-icon case-icon"><i class="fa-solid fa-folder"></i></div>
+                            <div class="act-text">
+                                <span>Situation Quizzes</span>
+                                <small id="caseMeta">Not started</small>
+                            </div>
+                            <i class="fa-solid fa-chevron-right act-arrow"></i>
+                        </a>
+
+                        <a href="ReadLesson.html" class="act-item">
+                            <div class="act-icon read-icon"><i class="fa-solid fa-book"></i></div>
+                            <div class="act-text">
+                                <span>Read Lesson</span>
+                            </div>
+                            <i class="fa-solid fa-chevron-right act-arrow"></i>
+                        </a>
+
+                        <a href="WatchVideo.html" class="act-item extra-activity">
+                            <div class="act-icon video-icon"><i class="fa-solid fa-play"></i></div>
+                            <div class="act-text">
+                                <span>Watch Videos</span>
+                                <small id="videoMeta">Not started</small>
+                            </div>
+                            <i class="fa-solid fa-chevron-right act-arrow"></i>
+                        </a>
+
+                        <a href="StudyCards.html" class="act-item extra-activity">
+                            <div class="act-icon check-icon"><i class="fa-solid fa-rotate"></i></div>
+                            <div class="act-text">
+                                <span>Quiz Cards</span>
+                                <small id="cardsMeta">Not started</small>
+                            </div>
+                            <i class="fa-solid fa-chevron-right act-arrow"></i>
+                        </a>
+
+                    </div>
+                </div>
+
+                <!-- Recent Activities -->
+                <div class="card recent-card">
+                    <h3 class="card-title"><i class="fa-regular fa-clock icon-title"></i> Recent Activities</h3>
+                    <div class="recent-list" id="recentList">
+                        <div class="recent-empty">
+                            <i class="fa-regular fa-calendar-check"></i>
+                            <p>No activity yet — start a lesson, video, situation quiz or quiz card!</p>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Leaderboards (right of Overall Progress; uses that slot's layout class) -->
+                <div class="card quick-actions-card leaderboard-card">
+                    <h3 class="card-title"><i class="fa-solid fa-ranking-star icon-title"></i> Leaderboards <span class="badge-count" title="Correct answers in the last 7 days">This week</span></h3>
+                    <div id="leaderboardBody"><p class="lb-note"><span class="btn-spinner"></span> Loading...</p></div>
+                </div>
+
+            </div>
+            <!-- Footer -->
+            <footer class="site-footer">
+                <span><strong>ValuesLearn</strong></span>
+                <span class="site-footer-dot" aria-hidden="true">·</span>
+                <span>Values Education 7 Study Hub for Allen National High School</span>
+            </footer>
+        </main>
+    </div>
+
+    <script src="js/api.js?v=11"></script>
+    <script src="js/notifications.js?v=2"></script>
+    <script src="js/sfx.js?v=8"></script>
+    <script src="js/gamify.js?v=3"></script>
+    <script src="js/search.js?v=3"></script>
+    <script>
+        const ACTIVITY_ICONS = {
+            video: 'fa-play',
+            lesson: 'fa-book',
+            case_study: 'fa-folder',
+            study_card: 'fa-rotate',
+        };
+
+        const ACTIVITY_LABELS = {
+            video: 'Video',
+            lesson: 'Lesson',
+            case_study: 'Situation Quiz',
+            study_card: 'Quiz Card',
+        };
+
+        // Counts a number up from 0 for a livelier load
+        function animateCount(el, target) {
+            const end = Number(target) || 0;
+            const start = performance.now();
+            function frame(now) {
+                const t = Math.min(1, (now - start) / 800);
+                el.textContent = Math.round(end * (1 - Math.pow(1 - t, 3)));
+                if (t < 1) requestAnimationFrame(frame);
+            }
+            requestAnimationFrame(frame);
+        }
+
+        function progressMessage(percent) {
+            if (percent <= 0) return ['fa-seedling', "Let's get started! Pick any module to begin."];
+            if (percent < 25) return ['fa-person-walking', 'Great start — keep the momentum going.'];
+            if (percent < 50) return ['fa-chart-line', "You're making solid progress."];
+            if (percent < 75) return ['fa-fire', "Over halfway there — you're doing great!"];
+            if (percent < 100) return ['fa-flag-checkered', 'Almost done — finish strong!'];
+            return ['fa-trophy', 'Course complete. Amazing work!'];
+        }
+
+        function moduleMeta(done, total, verb) {
+            if (done <= 0) return 'Not started';
+            if (done >= total) return `Completed · ${total}/${total}`;
+            return `${done}/${total} ${verb}`;
+        }
+
+        function renderModules(summary) {
+            const modules = [
+                { name: 'Situation Quizzes', href: 'CaseStudies.html', done: summary.caseStudiesSolved, total: summary.caseStudiesTotal, verb: 'solved', meta: 'caseMeta', count: 'caseStudiesCount', totalEl: 'caseStudiesTotal', bar: 'caseStudiesBar' },
+                { name: 'Watch Videos', href: 'WatchVideo.html', done: summary.videosWatched, total: summary.videosTotal, verb: 'watched', meta: 'videoMeta', count: 'videosCount', totalEl: 'videosTotal', bar: 'videosBar' },
+                { name: 'Quiz Cards', href: 'StudyCards.html', done: summary.studyCardsCompleted, total: summary.studyCardsTotal, verb: 'completed', meta: 'cardsMeta', count: 'studyCardsCount', totalEl: 'studyCardsTotal', bar: 'studyCardsBar' },
+            ];
+
+            modules.forEach(m => {
+                const metaEl = document.getElementById(m.meta);
+                metaEl.textContent = moduleMeta(m.done, m.total, m.verb);
+                metaEl.classList.toggle('is-done', m.done >= m.total);
+
+                animateCount(document.getElementById(m.count), m.done);
+                document.getElementById(m.totalEl).textContent = `/${m.total}`;
+                document.getElementById(m.bar).style.width = `${Math.min(100, (m.done / m.total) * 100)}%`;
+            });
+
+            // Suggest the unfinished module with the lowest completion
+            const next = modules
+                .filter(m => m.done < m.total)
+                .sort((a, b) => a.done / a.total - b.done / b.total)[0];
+
+            const upNext = document.getElementById('upNext');
+            if (next) {
+                upNext.href = next.href;
+                document.getElementById('upNextLabel').textContent = next.name;
+                upNext.hidden = false;
+            }
+
+            const [icon, text] = progressMessage(summary.overallPercent);
+            document.getElementById('progressMessage').innerHTML =
+                `<i class="fa-solid ${icon}"></i> ${escapeHtml(text)}`;
+        }
+
+        function escapeHtml(text) {
+            const div = document.createElement('div');
+            div.textContent = text == null ? '' : String(text);
+            return div.innerHTML;
+        }
+
+        function timeAgo(dateString) {
+            // Updated para basahin ang Supabase (PostgreSQL) ISO date format
+            const then = new Date(dateString);
+
+            // Kung sakaling may error sa petsa, hindi lalabas ang NaN
+            if (isNaN(then.getTime())) return 'Recently';
+
+            const diffMs = Date.now() - then.getTime();
+            const mins = Math.floor(diffMs / 60000);
+
+            if (mins < 1) return 'Just now';
+            if (mins < 60) return `${mins} min ago`;
+
+            const hrs = Math.floor(mins / 60);
+            if (hrs < 24) return `${hrs} hr ago`;
+
+            const days = Math.floor(hrs / 24);
+            return `${days} day${days > 1 ? 's' : ''} ago`;
+        }
+
+        function greeting() {
+            const hour = new Date().getHours();
+            if (hour < 12) return 'Good morning';
+            if (hour < 18) return 'Good afternoon';
+            return 'Good evening';
+        }
+
+        // Smoothly fills the ring and counts the percentage up from 0
+        function animateProgress(percent) {
+            const ring = document.querySelector('.circular-progress');
+            const label = document.getElementById('overallPercent');
+            const target = Math.max(0, Math.min(100, Number(percent) || 0));
+            const duration = 900;
+            const start = performance.now();
+
+            function frame(now) {
+                const t = Math.min(1, (now - start) / duration);
+                const eased = 1 - Math.pow(1 - t, 3);
+                const value = target * eased;
+                label.textContent = `${Math.round(value)}%`;
+                if (ring) {
+                    ring.style.background = `conic-gradient(#1e7e45 ${value * 3.6}deg, var(--ring-track, #e0e0e0) 0deg)`;
+                }
+                if (t < 1) requestAnimationFrame(frame);
+            }
+            requestAnimationFrame(frame);
+        }
+
+        document.getElementById('welcomeDate').textContent = new Date().toLocaleDateString(undefined, {
+            weekday: 'long', month: 'long', day: 'numeric', year: 'numeric'
+        });
+
+        async function loadDashboard() {
+            const user = await requireAuth();
+            if (!user) return;
+
+            const firstName = user.fullName.split(' ')[0];
+            document.getElementById('welcomeName').textContent = `${greeting()}, ${firstName}!`;
+
+            const initials = document.getElementById('profileInitials');
+            initials.textContent = user.fullName
+                .split(' ')
+                .filter(Boolean)
+                .slice(0, 2)
+                .map(n => n[0].toUpperCase())
+                .join('');
+
+            if (user.profilePhoto) {
+                const img = document.getElementById('profileImg');
+                img.onload = () => { img.hidden = false; initials.hidden = true; };
+                img.src = user.profilePhoto;
+            }
+
+            try {
+                const summary = await api.get('/progress/summary');
+                animateProgress(summary.overallPercent);
+                renderModules(summary);
+
+                const recentList = document.getElementById('recentList');
+                if (summary.recentActivities.length > 0) {
+                    const latest = summary.recentActivities[0];
+                    document.getElementById('lastActivityText').textContent = latest.description;
+                    document.getElementById('lastActivityTime').textContent = timeAgo(latest.created_at);
+
+                    recentList.innerHTML = summary.recentActivities.map(a => `
+                        <div class="recent-item">
+                            <div class="recent-icon ${escapeHtml(a.type)}-icon"><i class="fa-solid ${ACTIVITY_ICONS[a.type] || 'fa-check'}"></i></div>
+                            <div class="recent-info">
+                                <h4>${escapeHtml(a.description)}</h4>
+                                <span class="type-chip ${escapeHtml(a.type)}-icon">${ACTIVITY_LABELS[a.type] || 'Activity'}</span>
+                            </div>
+                            <span class="time">${timeAgo(a.created_at)}</span>
+                        </div>
+                    `).join('');
+                }
+            } catch (err) {
+                console.error('Could not load progress summary:', err);
+            }
+        }
+
+        // ========================================================
+        // LEADERBOARDS (all students, correct answers in the last 7 days)
+        // ========================================================
+        const MEDALS = ['🥇', '🥈', '🥉'];
+        const LB_CARD_TOP = 4; // about the height of Overall Progress next to it
+
+        // Medals only for top 3 with points (a 0-point tie isn't a podium)
+        // Same name always gets the same avatar colour
+        const avatarColor = (name) => [...name].reduce((h, c) => (h * 31 + c.charCodeAt(0)) % 997, 7) % 6;
+        const lbAvatar = (e) => `<span class="lb-avatar lb-av-${avatarColor(e.name)}" aria-hidden="true">${escapeHtml(e.name.replace(/[^A-Za-zÀ-ÿ ]/g, '').split(' ').filter(Boolean).map(w => w[0]).join('').slice(0, 2).toUpperCase() || '?')}</span>`;
+
+        const lbRow = (e, i = 0) => `
+            <li class="lb-row${e.isMe ? ' is-me' : ''}${e.points && e.rank <= 3 ? ` is-top${e.rank}` : ''}" style="--i:${Math.min(i, 15)}">
+                <span class="lb-rank">${e.points && e.rank <= 3 ? MEDALS[e.rank - 1] : typeof e.rank === 'number' ? `#${e.rank}` : e.rank}</span>
+                ${lbAvatar(e)}
+                <span class="lb-name">${escapeHtml(e.name)}${e.isMe ? ' <small>(you)</small>' : ''}</span>
+                <span class="lb-points"><i class="fa-solid fa-star"></i> <b>${e.points}</b></span>
+            </li>`;
+
+        // Podium for the top 3 (2nd, 1st, 3rd, like a real one)
+        const lbPodium = (top) => `
+            <div class="lb-podium">${[1, 0, 2].filter(i => top[i]).map(i => `
+                <div class="lb-step is-place${i + 1}${top[i].isMe ? ' is-me' : ''}">
+                    <span class="lb-crown" aria-hidden="true">${MEDALS[i]}</span>
+                    ${lbAvatar(top[i])}
+                    <strong>${escapeHtml(top[i].name)}${top[i].isMe ? ' <small>(you)</small>' : ''}</strong>
+                    <span class="lb-step-points"><i class="fa-solid fa-star"></i> ${top[i].points}</span>
+                    <span class="lb-step-block">${i + 1}</span>
+                </div>`).join('')}
+            </div>`;
+
+        function renderLeaderboard(data) {
+            const mine = data.entries.find(e => e.isMe);
+            const top = data.entries.filter(e => e.points > 0);
+            // The card shows the top 5 (the rest is in "See all"); you're added at the bottom if not in it
+            // Always 5 rows in total: if you're not in the top 5, it's the top 4 plus you
+            const meBelow = mine && !top.slice(0, LB_CARD_TOP).includes(mine);
+            const ranked = top.slice(0, meBelow ? LB_CARD_TOP - 1 : LB_CARD_TOP);
+            // With 0 points you aren't ranked yet: you take the last open spot, shown with "–"
+            const meUnranked = meBelow && !mine.points;
+            // Fewer than 5 with points: fill the card with open spots instead of empty space
+            const openSpots = Array.from({ length: Math.max(0, LB_CARD_TOP - ranked.length - (meBelow ? 1 : 0)) }, (_, k) => {
+                const place = ranked.length + k;
+                return `
+                <li class="lb-row is-open" style="--i:${place}">
+                    <span class="lb-rank">${place < 3 ? MEDALS[place] : `#${place + 1}`}</span>
+                    <span class="lb-avatar is-open" aria-hidden="true">?</span>
+                    <span class="lb-name">Open spot, answer to claim it!</span>
+                </li>`;
+            }).join('');
+            // Ranked rows, then open spots, then you (if you're not in the top 5)
+            const rows = ranked.map(lbRow).join('') + openSpots
+                + (meUnranked ? lbRow({ ...mine, rank: '–' }, LB_CARD_TOP)
+                    : meBelow ? '<li class="lb-gap" aria-hidden="true">⋯</li>' + lbRow(mine, LB_CARD_TOP) : '');
+            document.getElementById('leaderboardBody').innerHTML = `
+                <ol class="lb-list">${rows}</ol>
+                <button type="button" class="tool-btn lb-see-all" data-lb-all><i class="fa-solid fa-list-ol"></i> See all ${data.total} student${data.total === 1 ? '' : 's'}</button>`;
+        }
+
+        // Full leaderboard pop-up: everyone, with a name search, opened at your row
+        async function openFullLeaderboard() {
+            const previousFocus = document.activeElement;
+            const overlay = document.createElement('div');
+            overlay.className = 'confirm-overlay';
+            overlay.innerHTML = `
+                <div class="confirm-card lb-full" role="dialog" aria-modal="true" aria-labelledby="lbFullTitle">
+                    <div class="lb-hero">
+                        <span class="lb-hero-trophy" aria-hidden="true">🏆</span>
+                        <div>
+                            <h3 id="lbFullTitle">Leaderboards</h3>
+                            <p>All students · ⭐ = correct answers in the last 7 days</p>
+                        </div>
+                        <button type="button" class="qs-close lb-close" data-close aria-label="Close"><i class="fa-solid fa-xmark"></i></button>
+                    </div>
+                    <div class="search-container lb-search">
+                        <i class="fa-solid fa-magnifying-glass"></i>
+                        <input type="text" placeholder="Find a classmate..." aria-label="Search the leaderboard">
+                    </div>
+                    <div class="lb-full-body">
+                        <div class="lb-podium-slot"></div>
+                        <ol class="lb-list lb-full-list"><li class="lb-note"><span class="btn-spinner"></span> Loading...</li></ol>
+                    </div>
+                </div>`;
+            document.body.appendChild(overlay);
+            requestAnimationFrame(() => overlay.classList.add('is-open'));
+
+            const close = () => {
+                document.removeEventListener('keydown', onKey);
+                overlay.classList.remove('is-open');
+                setTimeout(() => overlay.remove(), 200);
+                if (previousFocus && previousFocus.focus) previousFocus.focus();
+            };
+            const onKey = (e) => { if (e.key === 'Escape') close(); };
+            document.addEventListener('keydown', onKey);
+            overlay.addEventListener('click', (e) => { if (e.target === overlay || e.target.closest('[data-close]')) close(); });
+            overlay.querySelector('[data-close]').focus();
+
+            const list = overlay.querySelector('.lb-full-list');
+            const podium = overlay.querySelector('.lb-podium-slot');
+            const search = overlay.querySelector('.lb-search input');
+            let entries = [];
+            const render = () => {
+                const q = search.value.trim().toLowerCase();
+                // Podium only for the plain list; a search shows matches as rows
+                const top = q ? [] : entries.slice(0, 3).filter(e => e.points > 0 && e.rank <= 3);
+                const rest = q ? entries.filter(e => e.name.toLowerCase().includes(q)) : entries.slice(top.length);
+                podium.innerHTML = top.length ? lbPodium(top) : '';
+                list.innerHTML = rest.map(lbRow).join('') || (top.length ? '' : '<li class="lb-note">No one matches that name. 🔍</li>');
+            };
+            search.addEventListener('input', render);
+
+            try {
+                ({ entries } = await api.get('/gamify/leaderboard?all=1'));
+                render();
+                const me = list.querySelector('.is-me');
+                if (me) me.scrollIntoView({ block: 'center' });
+                // You're on the podium: celebrate!
+                if (podium.querySelector('.is-me')) HCISfx.confetti(90);
+            } catch (err) {
+                list.innerHTML = '<li class="lb-note">Could not load the leaderboard.</li>';
+            }
+        }
+
+        // The whole card opens the full list (the button is there for keyboard users)
+        document.querySelector('.leaderboard-card').addEventListener('click', openFullLeaderboard);
+
+        async function loadLeaderboard() {
+            try {
+                renderLeaderboard(await api.get('/gamify/leaderboard'));
+            } catch (err) {
+                document.getElementById('leaderboardBody').innerHTML = '<p class="lb-note">Could not load the leaderboard.</p>';
+            }
+        }
+
+        loadLeaderboard();
+
+
+        loadDashboard();
+
+
+        // ========================================================
+        // STUDY STREAK AT BADGES
+        // ========================================================
+        function renderGamify(data) {
+            const { streak, week, badges } = data;
+
+            document.getElementById('streakCount').textContent = streak.current;
+            document.getElementById('streakBest').textContent = streak.longest;
+            document.getElementById('streakFlame').classList.toggle('is-lit', streak.current > 0);
+            document.getElementById('streakNote').textContent =
+                streak.current === 0 ? 'Get an answer right today to start a streak!'
+                : streak.activeToday ? "You studied today. Keep it going tomorrow!"
+                : "Study today to keep your streak alive!";
+
+            document.getElementById('streakWeek').innerHTML = week.map(d => `
+                <span class="streak-day${d.active ? ' is-active' : ''}${d.isToday ? ' is-today' : ''}" title="${d.day}: ${d.answers} correct">
+                    <span class="streak-dot">${d.active ? '<i class="fa-solid fa-fire"></i>' : ''}</span>
+                    <small>${d.isToday ? 'Today' : d.label}</small>
+                </span>`).join('');
+
+            const earned = badges.filter(b => b.earned);
+            document.getElementById('badgeCount').textContent = `${earned.length} / ${badges.length}`;
+            // Recently earned first, then the closest ones still locked
+            const recent = earned.sort((a, b) => new Date(b.earnedAt) - new Date(a.earnedAt));
+            const next = badges.filter(b => !b.earned).sort((a, b) => b.progress / b.target - a.progress / a.target);
+            badgePreview = [...recent, ...next];
+            renderBadgePreview();
+        }
+
+        // Badge preview: exactly two full rows (as many columns as fit), no gaps
+        const BADGE_MIN = 44;   // smallest badge size in px
+        const BADGE_GAP = 10;
+        let badgePreview = [];
+
+        function renderBadgePreview() {
+            const row = document.getElementById('badgeMini');
+            if (!badgePreview.length) return;
+            const fit = Math.max(3, Math.floor((row.clientWidth + BADGE_GAP) / (BADGE_MIN + BADGE_GAP)));
+            // Not enough badges for two full rows of `fit`? Use fewer (bigger) columns
+            const cols = Math.min(fit, Math.max(1, Math.floor(badgePreview.length / 2)));
+            const shown = badgePreview.slice(0, cols * 2);
+            row.style.setProperty('--badge-cols', cols);
+            row.innerHTML = shown.map(b => `
+                <span class="badge-mini badge-${b.color}${b.earned ? ' is-earned' : ''}" title="${escapeHtml(b.name)}: ${escapeHtml(b.description)}${b.earned ? '' : ` (${b.progress}/${b.target})`}">
+                    <i class="fa-solid ${b.earned ? b.icon : 'fa-lock'}"></i>
+                </span>`).join('');
+        }
+
+        let badgeResizeTimer = null;
+        window.addEventListener('resize', () => {
+            clearTimeout(badgeResizeTimer);
+            badgeResizeTimer = setTimeout(renderBadgePreview, 150);
+        });
+
+        async function loadGamify() {
+            try {
+                const data = await api.get('/gamify/summary');
+                renderGamify(data);
+                HCIGamify.celebrate(data.newBadges);
+            } catch (err) {
+                console.error('Could not load streak and badges:', err);
+            }
+        }
+
+        loadGamify();
+
+    </script>
+
+</body>
+</html>

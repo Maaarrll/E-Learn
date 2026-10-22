@@ -1,0 +1,19 @@
+[
+  {"term": "Pagtitipid (Thrifty)", "definition": "Matalino at maingat na paggamit ng tubig, enerhiya at iba pang yaman upang hindi masayang.", "topic": 1},
+  {"term": "Enerhiya", "definition": "Lakas o kuryenteng ginagamit sa ilaw, gadgets, appliances at sasakyan.", "topic": 2},
+  {"term": "Likas na Yaman", "definition": "Mga bagay mula sa kalikasan, tulad ng tubig, na kailangan ng tao at dapat pangalagaan.", "topic": 2},
+  {"term": "SDG #6", "definition": "Sustainable Development Goal tungkol sa malinis at sapat na tubig at sanitasyon para sa lahat.", "topic": 1},
+  {"term": "Mapagmahal (Loving)", "definition": "Pagpapahalagang nagpapakita ng malasakit at pagmamahal sa kapuwa, lalo na sa pamilya.", "topic": 6},
+  {"term": "Pamilya", "definition": "Pinakamaliit na institusyon sa lipunan; unang nagbibigay ng suporta, gabay at pagmamahal.", "topic": 7},
+  {"term": "Institusyon", "definition": "Samahang itinatag para sa isang layuning panrelihiyon, pang-edukasyon o panlipunan.", "topic": 7},
+  {"term": "Words of Affirmation", "definition": "Wika ng pag-ibig na gumagamit ng mga salita ng papuri, pasasalamat at pagmamahal.", "topic": 8},
+  {"term": "Quality Time", "definition": "Wika ng pag-ibig na nagbibigay ng buo at lubos na atensyon.", "topic": 8},
+  {"term": "Physical Touch", "definition": "Wika ng pag-ibig na ipinapakita sa yakap, paghawak ng kamay at paghaplos.", "topic": 8},
+  {"term": "Acts of Service", "definition": "Wika ng pag-ibig na ipinapakita sa paggawa ng mabubuting bagay para sa iba.", "topic": 8},
+  {"term": "Receiving Gifts", "definition": "Wika ng pag-ibig na ipinapakita sa pagbibigay ng regalo.", "topic": 8},
+  {"term": "Disiplina (Discipline)", "definition": "Pagpipigil at pag-iingat sa sariling kilos, kasama ang mga ipino-post sa social media.", "topic": 10},
+  {"term": "Fake News", "definition": "Maling impormasyon na ipinakakalat na parang totoo.", "topic": 13},
+  {"term": "Privacy Settings", "definition": "Mga setting na kumokontrol kung sino ang makakakita ng iyong impormasyon at post.", "topic": 13},
+  {"term": "Social Media Fatigue", "definition": "Pagod at pagkabagot na dulot ng sobrang paggamit ng social media.", "topic": 13},
+  {"term": "Vlog", "definition": "Isang uri ng blog na gumagamit ng video bilang medium.", "topic": 11}
+]

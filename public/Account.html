@@ -1,0 +1,745 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Account · ValuesLearn</title>
+    <meta name="description" content="Manage your ValuesLearn profile and password.">
+
+    <link rel="icon" href="favicon-32.png?v=2" type="image/png" sizes="32x32">
+    <link rel="apple-touch-icon" href="apple-touch-icon.png?v=2">
+    <meta name="theme-color" content="#02473d">
+    <link rel="stylesheet" href="style.css?v=73">
+    <link rel="stylesheet" href="dark.css?v=37">
+    <script src="js/theme.js?v=3"></script>
+
+    <link
+        rel="stylesheet"
+        href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css"
+    >
+</head>
+
+<body class="account-page">
+    <noscript>
+        <div class="noscript-note">ValuesLearn needs JavaScript to work. Please turn it on in your browser settings.</div>
+    </noscript>
+
+    <div class="dashboard-container">
+
+        <!-- Sidebar Navigation -->
+        <aside class="sidebar">
+
+            <div class="sidebar-header">
+                <img src="logo.png" alt="" class="sidebar-logo">
+                <div class="sidebar-brand">
+                    <span class="logo-text">ValuesLearn</span>
+                    <small class="logo-tag">Values Ed 7 Study Hub</small>
+                </div>
+            </div>
+
+            <span class="sidebar-label">Overview</span>
+
+            <nav class="sidebar-nav">
+
+                <a
+                    href="Dashboard.html"
+                    class="nav-item"
+                >
+                    <i class="fa-solid fa-border-all"></i> <span class="nav-text">Dashboard</span>
+                </a>
+
+                <span class="sidebar-label sidebar-label-group">Learn</span>
+                <a
+                    href="WatchVideo.html"
+                    class="nav-item"
+                >
+                    <i class="fa-solid fa-play"></i> <span class="nav-text">Watch Video</span>
+                </a>
+
+                <a
+                    href="ReadLesson.html"
+                    class="nav-item"
+                >
+                    <i class="fa-solid fa-book"></i> <span class="nav-text">Read Lesson</span>
+                </a>
+
+                <a
+                    href="CaseStudies.html"
+                    class="nav-item"
+                >
+                    <i class="fa-solid fa-folder"></i> <span class="nav-text">Situation Quizzes</span>
+                </a>
+
+                <a
+                    href="StudyCards.html"
+                    class="nav-item"
+                >
+                    <i class="fa-solid fa-rotate"></i> <span class="nav-text">Quiz Cards</span>
+                </a>
+
+                <span class="sidebar-label sidebar-label-group">You</span>
+                <a href="Saved.html" class="nav-item">
+                    <i class="fa-solid fa-bookmark"></i> <span class="nav-text">Saved</span>
+                </a>
+                <a href="Certificate.html" class="nav-item">
+                    <i class="fa-solid fa-award"></i> <span class="nav-text">Certificates</span>
+                </a>
+                <a
+                    href="Account.html"
+                    class="nav-item active"
+                >
+                    <i class="fa-solid fa-circle-user"></i> <span class="nav-text">Account</span>
+                </a>
+
+            </nav>
+            <!-- Profile card + log out (pinupuno ng renderSidebarUser() sa js/api.js) -->
+            <div class="sidebar-user">
+                <a href="Account.html" class="sidebar-user-link" title="View your account">
+                    <span class="sidebar-avatar" id="sidebarAvatar"><i class="fa-regular fa-user"></i></span>
+                    <span class="sidebar-user-text">
+                        <strong id="sidebarName">My Account</strong>
+                        <small id="sidebarMeta">View profile</small>
+                    </span>
+                </a>
+                <button type="button" class="sidebar-logout" data-logout aria-label="Log out" title="Log out">
+                    <i class="fa-solid fa-arrow-right-from-bracket"></i>
+                </button>
+            </div>
+
+        </aside>
+
+
+        <!-- Main Content -->
+        <main class="main-content">
+
+            <div class="account-wrapper">
+
+                <!-- Profile header -->
+                <div class="acct-profile">
+
+                    <div class="acct-avatar" id="avatarBox">
+                        <img src="" alt="Profile photo" id="currentPhoto" hidden>
+                        <span class="acct-initials" id="avatarInitials"><i class="fa-regular fa-user"></i></span>
+                        <span class="acct-avatar-loading" id="avatarLoading" hidden><span class="btn-spinner"></span></span>
+
+                        <label for="profile-upload" class="acct-avatar-btn" title="Change photo">
+                            <i class="fa-solid fa-camera"></i>
+                            <span class="sr-only">Change photo</span>
+                        </label>
+                        <input type="file" id="profile-upload" accept="image/*" class="sr-only">
+                    </div>
+
+                    <div class="acct-profile-text">
+                        <h2 id="profileName">Your Account</h2>
+                        <p id="profileMeta">Loading your details...</p>
+                        <div class="acct-profile-chips">
+                            <span class="acct-chip" id="profileIdChip" hidden><i class="fa-regular fa-id-card"></i> <span id="profileId"></span></span>
+                            <label for="profile-upload" class="acct-chip acct-chip-link"><i class="fa-solid fa-image"></i> Change photo</label>
+                        </div>
+                    </div>
+
+                </div>
+
+
+                <!-- Badges (pinupuno ng loadBadges()) -->
+                <div class="acct-card acct-badges" id="badges">
+                    <div class="acct-card-head">
+                        <div class="acct-card-icon"><i class="fa-solid fa-medal"></i></div>
+                        <div>
+                            <h3>Badges</h3>
+                            <p id="badgeSummary">Earn badges by studying, finishing decks and keeping your streak.</p>
+                        </div>
+                        <span class="acct-streak-chip" id="acctStreak" hidden><i class="fa-solid fa-fire"></i> <span></span></span>
+                    </div>
+                    <div class="badge-grid" id="badgeGrid">
+                        <p class="badge-loading"><span class="btn-spinner"></span> Loading badges...</p>
+                    </div>
+                </div>
+
+                <!-- Message -->
+                <div id="accountMsg" class="acct-alert" role="status" hidden></div>
+
+
+                <form id="accountForm" class="account-form" novalidate>
+
+                    <!-- =====================================
+                         PERSONAL INFORMATION
+                         ===================================== -->
+                    <div class="acct-card">
+
+                        <div class="acct-card-head">
+                            <div class="acct-card-icon"><i class="fa-solid fa-address-card"></i></div>
+                            <div>
+                                <h3>Personal Information</h3>
+                                <p>This is how you appear on ValuesLearn.</p>
+                            </div>
+                        </div>
+
+                        <div class="acct-grid">
+
+                            <!-- Full Name -->
+                            <div class="acct-field">
+                                <label for="full-name">Full Name</label>
+                                <div class="acct-input">
+                                    <i class="fa-regular fa-user"></i>
+                                    <input type="text" id="full-name" maxlength="160" autocomplete="name" required>
+                                </div>
+                            </div>
+
+                            <!-- Year and Section -->
+                            <div class="acct-field">
+                                <label for="year-section">Year &amp; Section</label>
+                                <div class="acct-input">
+                                    <i class="fa-solid fa-layer-group"></i>
+                                    <input type="text" id="year-section" placeholder="e.g. Grade 7 - Section B" required>
+                                </div>
+                            </div>
+
+                            <!-- Program -->
+                            <div class="acct-field">
+                                <label for="program">School</label>
+                                <div class="acct-input">
+                                    <i class="fa-solid fa-graduation-cap"></i>
+                                    <input type="text" id="program" maxlength="80" required>
+                                </div>
+                            </div>
+
+                            <!-- Student ID -->
+                            <div class="acct-field">
+                                <label for="student-id">LRN</label>
+                                <div class="acct-input">
+                                    <i class="fa-regular fa-id-card"></i>
+                                    <input type="text" id="student-id" maxlength="12" minlength="12" inputmode="numeric" pattern="[0-9]{12}" autocomplete="off" required>
+                                </div>
+                                <small class="acct-hint">LRN: exactly 12 digits.</small>
+                            </div>
+
+                        </div>
+
+                    </div>
+
+
+                    <!-- =====================================
+                         LOGIN & SECURITY
+                         ===================================== -->
+                    <div class="acct-card">
+
+                        <div class="acct-card-head">
+                            <div class="acct-card-icon"><i class="fa-solid fa-shield-halved"></i></div>
+                            <div>
+                                <h3>Login &amp; Security</h3>
+                                <p>Leave these blank to keep your current password.</p>
+                            </div>
+                        </div>
+
+                        <div class="acct-grid">
+
+                            <!-- Password -->
+                            <div class="acct-field">
+                                <label for="password">New Password <span class="acct-optional">optional</span></label>
+                                <div class="acct-input">
+                                    <i class="fa-solid fa-lock"></i>
+                                    <input type="password" id="password" minlength="8" placeholder="Enter a new password to change it" autocomplete="new-password">
+                                    <button type="button" class="acct-eye" id="togglePassword" aria-label="Show password">
+                                        <i class="fa-solid fa-eye"></i>
+                                    </button>
+                                </div>
+                                <small class="acct-hint">8–72 characters, not all letters or all numbers.</small>
+                            </div>
+
+                            <!-- Confirm Password -->
+                            <div class="acct-field">
+                                <label for="confirm-password">Confirm New Password</label>
+                                <div class="acct-input">
+                                    <i class="fa-solid fa-lock"></i>
+                                    <input type="password" id="confirm-password" placeholder="Type the new password again" autocomplete="new-password" disabled>
+                                </div>
+                                <small class="acct-hint" id="confirmHint">Enter a new password first.</small>
+                            </div>
+
+                            <!-- Current Password (needed to change the password) -->
+                            <div class="acct-field acct-field-full">
+                                <label for="current-password">Current Password</label>
+                                <div class="acct-input">
+                                    <i class="fa-solid fa-key"></i>
+                                    <input type="password" id="current-password" placeholder="Enter your current password to confirm it's you" autocomplete="current-password" disabled>
+                                </div>
+                                <small class="acct-hint">Required only when changing your password.</small>
+                            </div>
+
+                        </div>
+
+                    </div>
+
+
+                    <!-- =====================================
+                         SAVE
+                         ===================================== -->
+                    <div class="acct-save-bar">
+                        <span class="acct-save-note" id="saveNote">No changes yet</span>
+                        <button type="submit" class="acct-save-btn" id="saveBtn" disabled>
+                            <i class="fa-solid fa-floppy-disk"></i> Save Changes
+                        </button>
+                    </div>
+
+                </form>
+
+
+                <!-- =====================================
+                     DANGER ZONE
+                     ===================================== -->
+                <div class="acct-card acct-danger">
+                    <div class="acct-danger-text">
+                        <h3><i class="fa-solid fa-triangle-exclamation"></i> Delete Account</h3>
+                        <p>This permanently deletes your account and all your progress. It cannot be undone.</p>
+                    </div>
+                    <button type="button" class="acct-delete-btn" id="deleteAccountBtn">
+                        <i class="fa-solid fa-trash"></i> Delete Account
+                    </button>
+                </div>
+
+            </div>
+
+            <!-- Footer -->
+            <footer class="site-footer">
+                <span><strong>ValuesLearn</strong></span>
+                <span class="site-footer-dot" aria-hidden="true">·</span>
+                <span>Values Education 7 Study Hub for Allen National High School</span>
+            </footer>
+        </main>
+
+    </div>
+
+
+    <script src="js/api.js?v=11"></script>
+    <script src="js/notifications.js?v=2"></script>
+    <script src="js/sfx.js?v=8"></script>
+    <script src="js/gamify.js?v=3"></script>
+    <script src="js/search.js?v=3"></script>
+
+
+    <script>
+
+        /* =================================================
+           ELEMENT REFERENCES
+           ================================================= */
+
+        const els = {
+            fullName: document.getElementById('full-name'),
+            yearSection: document.getElementById('year-section'),
+            program: document.getElementById('program'),
+            studentId: document.getElementById('student-id'),
+            password: document.getElementById('password'),
+        };
+
+        const confirmPassword = document.getElementById('confirm-password');
+        const confirmHint = document.getElementById('confirmHint');
+        const currentPassword = document.getElementById('current-password');
+
+        const msgEl = document.getElementById('accountMsg');
+        const saveBtn = document.getElementById('saveBtn');
+        const saveNote = document.getElementById('saveNote');
+
+        const SAVE_BTN_HTML = '<i class="fa-solid fa-floppy-disk"></i> Save Changes';
+
+        // Ang huling na-save na values (para malaman kung may binago)
+        let savedValues = {};
+
+
+        /* =================================================
+           MESSAGE HELPER
+           ================================================= */
+
+        let msgTimer = null;
+
+        function showMessage(text, isError) {
+            msgEl.className = 'acct-alert ' + (isError ? 'is-error' : 'is-success');
+            msgEl.innerHTML = `<i class="fa-solid ${isError ? 'fa-circle-exclamation' : 'fa-circle-check'}"></i> <span></span>`;
+            msgEl.querySelector('span').textContent = text;
+            msgEl.hidden = false;
+            msgEl.scrollIntoView({ behavior: 'smooth', block: 'nearest' });
+
+            // Kusang mawawala ang success message
+            clearTimeout(msgTimer);
+            if (!isError) msgTimer = setTimeout(() => { msgEl.hidden = true; }, 5000);
+        }
+
+
+        /* =================================================
+           PROFILE HEADER
+           ================================================= */
+
+        function updateProfileHeader() {
+            const name = els.fullName.value.trim() || 'Your Account';
+            document.getElementById('profileName').textContent = name;
+
+            const meta = [els.program.value.trim(), els.yearSection.value.trim()].filter(Boolean).join(' · ');
+            document.getElementById('profileMeta').textContent = meta || 'ValuesLearn student';
+
+            const id = els.studentId.value.trim();
+            document.getElementById('profileId').textContent = id ? `ID ${id}` : '';
+            document.getElementById('profileIdChip').hidden = !id;
+
+            document.getElementById('avatarInitials').textContent = name === 'Your Account'
+                ? ''
+                : name.split(' ').filter(Boolean).slice(0, 2).map(n => n[0].toUpperCase()).join('');
+        }
+
+        function showPhoto(url) {
+            const img = document.getElementById('currentPhoto');
+            img.onload = () => {
+                img.hidden = false;
+                document.getElementById('avatarInitials').hidden = true;
+            };
+            img.src = url;
+        }
+
+
+        /* =================================================
+           UNSAVED CHANGES (Save button)
+           ================================================= */
+
+        function currentValues() {
+            return {
+                fullName: els.fullName.value.trim(),
+                yearSection: els.yearSection.value.trim(),
+                program: els.program.value.trim(),
+                studentId: els.studentId.value.trim(),
+                password: els.password.value,
+            };
+        }
+
+        function updateDirtyState() {
+            const now = currentValues();
+            const dirty = Object.keys(now).some(k => now[k] !== (savedValues[k] || ''));
+            saveBtn.disabled = !dirty;
+            saveNote.textContent = dirty ? 'You have unsaved changes' : 'No changes yet';
+            saveNote.classList.toggle('is-dirty', dirty);
+        }
+
+        Object.values(els).forEach(input => {
+            input.addEventListener('input', () => {
+                input.closest('.acct-input').classList.remove('invalid');
+                updateDirtyState();
+                updateProfileHeader();
+            });
+        });
+
+        /* =================================================
+           CONFIRM PASSWORD (live check)
+           ================================================= */
+
+        function passwordsMatch() {
+            return !els.password.value || confirmPassword.value === els.password.value;
+        }
+
+        function updateConfirmState() {
+            const pw = els.password.value;
+
+            // Bubukas lang ang Confirm kapag may tinype na bagong password
+            confirmPassword.disabled = !pw;
+            currentPassword.disabled = !pw;
+            if (!pw) {
+                confirmPassword.value = '';
+                currentPassword.value = '';
+            }
+
+            confirmHint.classList.remove('is-ok', 'is-bad');
+            if (!pw) {
+                confirmHint.textContent = 'Enter a new password first.';
+            } else if (!confirmPassword.value) {
+                confirmHint.textContent = 'Type the same password again.';
+            } else if (passwordsMatch()) {
+                confirmHint.innerHTML = '<i class="fa-solid fa-circle-check"></i> Passwords match';
+                confirmHint.classList.add('is-ok');
+                confirmPassword.closest('.acct-input').classList.remove('invalid');
+            } else {
+                confirmHint.innerHTML = '<i class="fa-solid fa-circle-xmark"></i> Passwords do not match';
+                confirmHint.classList.add('is-bad');
+            }
+        }
+
+        els.password.addEventListener('input', updateConfirmState);
+        confirmPassword.addEventListener('input', updateConfirmState);
+        currentPassword.addEventListener('input', () => {
+            currentPassword.closest('.acct-input').classList.remove('invalid');
+        });
+
+
+        // Babala kapag aalis nang hindi naka-save
+        window.addEventListener('beforeunload', (e) => {
+            if (!saveBtn.disabled) {
+                e.preventDefault();
+                e.returnValue = '';
+            }
+        });
+
+
+        /* =================================================
+           LOAD ACCOUNT
+           ================================================= */
+
+        async function loadAccount() {
+            const user = await requireAuth();
+            if (!user) return;
+
+            els.fullName.value = user.fullName || '';
+            els.yearSection.value = user.yearSection || '';
+            els.program.value = user.program || '';
+            els.studentId.value = user.studentId || '';
+
+            savedValues = currentValues();
+            updateProfileHeader();
+            updateDirtyState();
+
+            if (user.profilePhoto) showPhoto(user.profilePhoto);
+        }
+
+
+        /* =================================================
+           STUDENT ID - NUMBERS ONLY
+           ================================================= */
+
+        els.studentId.addEventListener('input', function () {
+            this.value = this.value.replace(/\D/g, '').substring(0, 6);
+        });
+
+
+        /* =================================================
+           SHOW / HIDE PASSWORD
+           ================================================= */
+
+        document.getElementById('togglePassword').addEventListener('click', function () {
+            const show = els.password.type === 'password';
+            els.password.type = show ? 'text' : 'password';
+            confirmPassword.type = els.password.type;
+            currentPassword.type = els.password.type;
+            this.innerHTML = show ? '<i class="fa-solid fa-eye-slash"></i>' : '<i class="fa-solid fa-eye"></i>';
+            this.setAttribute('aria-label', show ? 'Hide password' : 'Show password');
+        });
+
+
+        /* =================================================
+           DELETE ACCOUNT
+           ================================================= */
+
+        document.getElementById('deleteAccountBtn').addEventListener('click', function () {
+            const btn = this;
+
+            confirmDialog({
+                title: 'Delete your account?',
+                message: 'This permanently deletes your account and all your progress. This action cannot be undone.',
+                confirmText: 'Delete Account',
+                cancelText: 'Cancel',
+                icon: 'fa-trash',
+                danger: true,
+                onConfirm: async () => {
+                    btn.disabled = true;
+                    btn.textContent = 'Deleting...';
+
+                    try {
+                        const response = await fetch('/api/account', {
+                            method: 'DELETE',
+                            credentials: 'include'
+                        });
+
+                        const data = await response.json().catch(() => ({}));
+
+                        if (!response.ok) {
+                            throw new Error(data.error || 'Failed to delete account.');
+                        }
+
+                        saveBtn.disabled = true; // para walang "unsaved changes" warning
+                        window.location.href = 'login.html';
+
+                    } catch (err) {
+                        showMessage(err.message, true);
+                        btn.disabled = false;
+                        btn.innerHTML = '<i class="fa-solid fa-trash"></i> Delete Account';
+                    }
+                }
+            });
+        });
+
+
+        /* =================================================
+           PROFILE PHOTO UPLOAD
+           ================================================= */
+
+        document.getElementById('profile-upload').addEventListener('change', async function () {
+            const file = this.files[0];
+            if (!file) return;
+
+            const formData = new FormData();
+            formData.append('photo', file);
+
+            const loading = document.getElementById('avatarLoading');
+            loading.hidden = false;
+
+            try {
+                const response = await fetch('/api/account/photo', {
+                    method: 'POST',
+                    credentials: 'include',
+                    body: formData
+                });
+
+                const data = await response.json();
+
+                if (!response.ok) {
+                    throw new Error(data.error || 'Upload failed.');
+                }
+
+                showPhoto(data.profilePhoto);
+                showMessage('Profile photo updated successfully.', false);
+
+            } catch (err) {
+                showMessage(err.message, true);
+            } finally {
+                loading.hidden = true;
+                this.value = ''; // para mapili ulit ang parehong file
+            }
+        });
+
+
+        /* =================================================
+           SAVE ACCOUNT
+           ================================================= */
+
+        document.getElementById('accountForm').addEventListener('submit', async function (e) {
+            e.preventDefault();
+
+            /* Validate required fields */
+            for (const key of ['fullName', 'yearSection', 'program']) {
+                if (!els[key].value.trim()) {
+                    els[key].closest('.acct-input').classList.add('invalid');
+                    els[key].focus();
+                    showMessage('Please fill in all required fields.', true);
+                    return;
+                }
+            }
+
+            /* Validate student ID */
+            if (!/^\d{12}$/.test(els.studentId.value.trim())) {
+                els.studentId.closest('.acct-input').classList.add('invalid');
+                els.studentId.focus();
+                showMessage('LRN must contain exactly 12 digits.', true);
+                return;
+            }
+
+            /* Validate confirm password */
+            if (els.password.value && !passwordsMatch()) {
+                confirmPassword.closest('.acct-input').classList.add('invalid');
+                confirmPassword.focus();
+                showMessage(confirmPassword.value
+                    ? 'The new passwords do not match.'
+                    : 'Please confirm your new password.', true);
+                return;
+            }
+
+            /* Current password is required to set a new one */
+            if (els.password.value && !currentPassword.value) {
+                currentPassword.closest('.acct-input').classList.add('invalid');
+                currentPassword.focus();
+                showMessage('Please enter your current password to change it.', true);
+                return;
+            }
+
+            const payload = {
+                fullName: els.fullName.value.trim(),
+                yearSection: els.yearSection.value.trim(),
+                program: els.program.value.trim(),
+                studentId: els.studentId.value.trim()
+            };
+
+            /* Only send password when changing it (with the current one). */
+            if (els.password.value) {
+                payload.password = els.password.value;
+                payload.currentPassword = currentPassword.value;
+            }
+
+            saveBtn.disabled = true;
+            saveBtn.innerHTML = '<span class="btn-spinner"></span> Saving...';
+
+            try {
+                await api.put('/account', payload);
+
+                els.password.value = '';
+                updateConfirmState();
+                savedValues = currentValues();
+
+                showMessage('Account information updated successfully.', false);
+
+            } catch (err) {
+                if (/current password/i.test(err.message)) {
+                    currentPassword.closest('.acct-input').classList.add('invalid');
+                    currentPassword.value = '';
+                    currentPassword.focus();
+                }
+                showMessage(err.message, true);
+
+            } finally {
+                saveBtn.innerHTML = SAVE_BTN_HTML;
+                updateDirtyState();
+            }
+        });
+
+
+        /* =================================================
+           INITIALIZE
+           ================================================= */
+
+        loadAccount();
+
+    </script>
+
+    <script>
+        /* =================================================
+           BADGES
+           ================================================= */
+
+        function renderBadges(data) {
+            const grid = document.getElementById('badgeGrid');
+            const earnedCount = data.badges.filter(b => b.earned).length;
+            document.getElementById('badgeSummary').textContent =
+                `${earnedCount} of ${data.badges.length} earned. Keep studying to unlock the rest!`;
+
+            const streakChip = document.getElementById('acctStreak');
+            streakChip.hidden = data.streak.current === 0;
+            streakChip.querySelector('span').textContent = `${data.streak.current}-day streak`;
+
+            grid.innerHTML = '';
+            data.badges.forEach(b => {
+                const tile = document.createElement('div');
+                tile.className = `badge-tile badge-${b.color}${b.earned ? ' is-earned' : ''}`;
+                tile.innerHTML = `
+                    <div class="badge-tile-icon"><i class="fa-solid ${b.icon}"></i>${b.earned ? '' : '<span class="badge-lock"><i class="fa-solid fa-lock"></i></span>'}</div>
+                    <strong></strong>
+                    <span class="badge-desc"></span>
+                    <div class="badge-progress"><div></div></div>
+                    <small class="badge-state"></small>`;
+                tile.querySelector('strong').textContent = b.name;
+                tile.querySelector('.badge-desc').textContent = b.description;
+                tile.querySelector('.badge-progress div').style.width = `${(b.progress / b.target) * 100}%`;
+                tile.querySelector('.badge-state').textContent = b.earned
+                    ? `Earned ${new Date(b.earnedAt).toLocaleDateString(undefined, { month: 'short', day: 'numeric', year: 'numeric' })}`
+                    : `${b.progress} / ${b.target}`;
+                grid.appendChild(tile);
+            });
+        }
+
+        api.get('/gamify/summary')
+            .then(data => {
+                renderBadges(data);
+                HCIGamify.celebrate(data.newBadges);
+                if (window.location.hash === '#badges') {
+                    document.getElementById('badges').scrollIntoView({ behavior: 'smooth', block: 'start' });
+                }
+            })
+            .catch(() => {
+                document.getElementById('badgeGrid').innerHTML =
+                    '<p class="badge-loading"><i class="fa-solid fa-circle-exclamation"></i> Could not load badges. Please refresh the page.</p>';
+            });
+    </script>
+
+</body>
+</html>

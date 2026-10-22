@@ -1,0 +1,200 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Certificates · ValuesLearn</title>
+    <meta name="description" content="Your Values Education 7 e-certificates.">
+    <link rel="icon" href="favicon-32.png?v=2" type="image/png" sizes="32x32">
+    <link rel="apple-touch-icon" href="apple-touch-icon.png?v=2">
+    <meta name="theme-color" content="#02473d">
+    <link rel="stylesheet" href="style.css?v=73">
+    <link rel="stylesheet" href="dark.css?v=37">
+    <script src="js/theme.js?v=3"></script>
+    <!-- FontAwesome para sa icons -->
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+</head>
+<body class="saved-page cert-page">
+    <noscript>
+        <div class="noscript-note">ValuesLearn needs JavaScript to work. Please turn it on in your browser settings.</div>
+    </noscript>
+
+    <div class="dashboard-container">
+
+        <!-- Sidebar Navigation -->
+        <aside class="sidebar">
+            <div class="sidebar-header">
+                <img src="logo.png" alt="" class="sidebar-logo">
+                <div class="sidebar-brand">
+                    <span class="logo-text">ValuesLearn</span>
+                    <small class="logo-tag">Values Ed 7 Study Hub</small>
+                </div>
+            </div>
+
+            <span class="sidebar-label">Overview</span>
+
+            <nav class="sidebar-nav">
+                <a href="Dashboard.html" class="nav-item">
+                    <i class="fa-solid fa-border-all"></i> <span class="nav-text">Dashboard</span>
+                </a>
+                <span class="sidebar-label sidebar-label-group">Learn</span>
+                <a href="WatchVideo.html" class="nav-item">
+                    <i class="fa-solid fa-play"></i> <span class="nav-text">Watch Video</span>
+                </a>
+                <a href="ReadLesson.html" class="nav-item">
+                    <i class="fa-solid fa-book"></i> <span class="nav-text">Read Lesson</span>
+                </a>
+                <a href="CaseStudies.html" class="nav-item">
+                    <i class="fa-solid fa-folder"></i> <span class="nav-text">Situation Quizzes</span>
+                </a>
+                <a href="StudyCards.html" class="nav-item">
+                    <i class="fa-solid fa-rotate"></i> <span class="nav-text">Quiz Cards</span>
+                </a>
+                <span class="sidebar-label sidebar-label-group">You</span>
+                <a href="Saved.html" class="nav-item">
+                    <i class="fa-solid fa-bookmark"></i> <span class="nav-text">Saved</span>
+                </a>
+                <a href="Certificate.html" class="nav-item active">
+                    <i class="fa-solid fa-award"></i> <span class="nav-text">Certificates</span>
+                </a>
+                <a href="Account.html" class="nav-item">
+                    <i class="fa-solid fa-circle-user"></i> <span class="nav-text">Account</span>
+                </a>
+            </nav>
+            <!-- Profile card + log out (pinupuno ng renderSidebarUser() sa js/api.js) -->
+            <div class="sidebar-user">
+                <a href="Account.html" class="sidebar-user-link" title="View your account">
+                    <span class="sidebar-avatar" id="sidebarAvatar"><i class="fa-regular fa-user"></i></span>
+                    <span class="sidebar-user-text">
+                        <strong id="sidebarName">My Account</strong>
+                        <small id="sidebarMeta">View profile</small>
+                    </span>
+                </a>
+                <button type="button" class="sidebar-logout" data-logout aria-label="Log out" title="Log out">
+                    <i class="fa-solid fa-arrow-right-from-bracket"></i>
+                </button>
+            </div>
+        </aside>
+
+        <!-- Main Content Area -->
+        <main class="main-content">
+
+            <div class="saved-wrapper">
+
+                <!-- Header -->
+                <div class="saved-header">
+                    <div class="saved-header-icon"><i class="fa-solid fa-award"></i></div>
+                    <div class="saved-header-text">
+                        <h2>Certificates</h2>
+                        <p>Master a quiz card deck or finish all situation quizzes to earn an e-certificate.</p>
+                    </div>
+                </div>
+
+                <div class="cert-list" id="certList" aria-live="polite">
+                    <div class="saved-loading"><span class="btn-spinner"></span> Loading your certificates...</div>
+                </div>
+
+                <h3 class="cert-subhead" id="goalsHead" hidden><i class="fa-solid fa-lock"></i> Still to earn</h3>
+                <div class="cert-goals" id="goalList"></div>
+
+            </div>
+
+            <!-- Footer -->
+            <footer class="site-footer">
+                <span><strong>ValuesLearn</strong></span>
+                <span class="site-footer-dot" aria-hidden="true">·</span>
+                <span>Values Education 7 Study Hub for Allen National High School</span>
+            </footer>
+        </main>
+    </div>
+
+    <script src="js/api.js?v=11"></script>
+    <script src="js/notifications.js?v=2"></script>
+    <script src="js/bookmarks.js?v=2"></script>
+    <script src="js/sfx.js?v=8"></script>
+    <script src="js/gamify.js?v=3"></script>
+    <script src="js/search.js?v=3"></script>
+    <script>
+        // shortcut: certificates are drawn in the browser from the student's own progress, with no
+        // server-side verification code; add one if certificates must be checked by others.
+        const esc = (t) => String(t).replace(/[&<>"']/g, c => ({ '&': '&amp;', '<': '&lt;', '>': '&gt;', '"': '&quot;', "'": '&#39;' }[c]));
+        const today = new Intl.DateTimeFormat('en-PH', { dateStyle: 'long', timeZone: 'Asia/Manila' }).format(new Date());
+
+        function certHtml(cert, name) {
+            return `
+                <article class="cert">
+                    <div class="cert-paper">
+                        <img src="logo.png" alt="" class="cert-logo">
+                        <p class="cert-school">Allen National High School · Values Education 7</p>
+                        <h3 class="cert-title">Certificate of Completion</h3>
+                        <p class="cert-small">This certifies that</p>
+                        <p class="cert-name">${esc(name)}</p>
+                        <p class="cert-small">has successfully completed</p>
+                        <p class="cert-what"><i class="fa-solid ${esc(cert.icon)}"></i> ${esc(cert.title)}</p>
+                        <div class="cert-foot">
+                            <span><b>${esc(today)}</b>Date issued</span>
+                            <span><b>&nbsp;</b>Guro sa Values Education</span>
+                        </div>
+                    </div>
+                    <button type="button" class="tool-btn cert-print"><i class="fa-solid fa-download"></i> Download / Print</button>
+                </article>`;
+        }
+
+        function goalHtml(goal) {
+            const pct = goal.total ? Math.round((goal.done / goal.total) * 100) : 0;
+            return `
+                <a class="cert-goal" href="${goal.href}">
+                    <i class="fa-solid ${esc(goal.icon)}"></i>
+                    <span><b>${esc(goal.title)}</b><small>${goal.done} of ${goal.total} done</small>
+                    <span class="cert-bar"><span style="width:${pct}%"></span></span></span>
+                </a>`;
+        }
+
+        (async function init() {
+            const user = await requireAuth();
+            if (!user) return;
+            const listEl = document.getElementById('certList');
+            try {
+                const [cards, cardProg, cases, caseProg] = await Promise.all([
+                    api.get('/content/study-cards'),
+                    api.get('/progress/study-cards'),
+                    api.get('/content/case-studies'),
+                    api.get('/progress/case-studies'),
+                ]);
+                const earned = [];
+                const goals = [];
+                cards.decks.forEach(d => {
+                    const cert = { title: `Quiz Cards: ${d.title}`, icon: d.icon };
+                    if (cardProg.completedIds.includes(d.key)) earned.push(cert);
+                    else goals.push({ ...cert, done: 0, total: 1, href: `StudyCards.html#deck-${d.key}` });
+                });
+                const solved = cases.scenarios.filter(s => caseProg.solvedIds.includes(s.key)).length;
+                const caseCert = { title: 'All Situation Quizzes', icon: 'fa-folder' };
+                if (cases.scenarios.length && solved === cases.scenarios.length) earned.push(caseCert);
+                else if (cases.scenarios.length) goals.push({ ...caseCert, done: solved, total: cases.scenarios.length, href: 'CaseStudies.html' });
+
+                listEl.innerHTML = earned.length
+                    ? earned.map(c => certHtml(c, user.fullName || 'Student')).join('')
+                    : `<div class="saved-empty"><div class="saved-empty-icon"><i class="fa-solid fa-award"></i></div>
+                       <h3>No certificates yet</h3><p>Master a quiz card deck or solve every situation quiz to earn your first e-certificate.</p></div>`;
+                document.getElementById('goalsHead').hidden = !goals.length;
+                document.getElementById('goalList').innerHTML = goals.map(goalHtml).join('');
+            } catch (err) {
+                listEl.innerHTML = `<p class="saved-no-match"><i class="fa-solid fa-circle-exclamation"></i> ${esc(err.message)}</p>`;
+            }
+        })();
+
+        // Print only the chosen certificate (the browser can save it as PDF)
+        document.addEventListener('click', (e) => {
+            const btn = e.target.closest('.cert-print');
+            if (!btn) return;
+            const cert = btn.closest('.cert');
+            cert.classList.add('is-printing');
+            document.body.classList.add('cert-printing');
+            window.print();
+            cert.classList.remove('is-printing');
+            document.body.classList.remove('cert-printing');
+        });
+    </script>
+</body>
+</html>

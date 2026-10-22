@@ -1,0 +1,1142 @@
+{
+ "note": "Initial course content (Values Education 7, MATATAG). Loaded into the content_items table the first time the server starts with an empty table. After that, edit content from the Admin Dashboard.",
+ "videoTopics": [
+  {
+   "key": "pagtitipid",
+   "label": "Pagtitipid",
+   "cls": "video-icon"
+  },
+  {
+   "key": "pamilya",
+   "label": "Pagmamahal sa Pamilya",
+   "cls": "book-icon"
+  },
+  {
+   "key": "socialmedia",
+   "label": "Social Media",
+   "cls": "read-icon"
+  },
+  {
+   "key": "iba",
+   "label": "Iba pa",
+   "cls": "check-icon"
+  }
+ ],
+ "modules": [
+  {
+   "key": "1",
+   "data": {
+    "position": 1,
+    "title": "Wastong Paggamit ng Tubig at Enerhiya (Pagtitipid)",
+    "icon": "fa-droplet"
+   }
+  },
+  {
+   "key": "2",
+   "data": {
+    "position": 2,
+    "title": "Limang Wika ng Pag-ibig sa Pamilya",
+    "icon": "fa-heart"
+   }
+  },
+  {
+   "key": "3",
+   "data": {
+    "position": 3,
+    "title": "Mapanagutang Paggamit ng Social Media",
+    "icon": "fa-share-nodes"
+   }
+  }
+ ],
+ "topics": [
+  {
+   "key": "1",
+   "parentKey": "1",
+   "data": {
+    "position": 1,
+    "title": "Mga Layunin at Pagpapahalaga: Pagtitipid",
+    "sections": [
+     {
+      "icon": "fa-bullseye",
+      "heading": "Pamantayang Pangnilalaman",
+      "body": "Natutukoy ang mga pang-araw-araw na gawain na may kinalaman sa pagtitipid."
+     },
+     {
+      "icon": "fa-list-check",
+      "heading": "Pamantayan sa Pagganap",
+      "body": "Nakabubuo ng plano na nakatutulong sa pagtitipid ng tubig at enerhiya sa tahanan, sa paaralan, o sa mga lugar na pinupuntahan."
+     },
+     {
+      "icon": "fa-star",
+      "heading": "Lilinanging Pagpapahalaga",
+      "body": "**Pagtitipid (Thrifty)** — ang matalino at maingat na paggamit ng tubig, enerhiya at iba pang likas na yaman upang hindi masayang."
+     },
+     {
+      "icon": "fa-earth-asia",
+      "heading": "Integrasyon",
+      "body": "Kaugnay ito ng **SDG #6: Clean Water and Sanitation** — malinis at sapat na tubig para sa lahat."
+     }
+    ]
+   }
+  },
+  {
+   "key": "2",
+   "parentKey": "1",
+   "data": {
+    "position": 2,
+    "title": "Mga Susing Salita: Enerhiya, Pagtitipid, Tubig",
+    "sections": [
+     {
+      "icon": "fa-bolt",
+      "heading": "Enerhiya",
+      "body": "Ang lakas o kuryenteng ginagamit natin sa ilaw, gadgets, appliances at sasakyan. Karamihan nito ay galing sa likas na yaman na nauubos."
+     },
+     {
+      "icon": "fa-piggy-bank",
+      "heading": "Pagtitipid",
+      "body": "Paggamit lamang ng kung ano ang kailangan, at pag-iwas sa pag-aaksaya. Hindi ito pagdadamot kundi pagiging responsable."
+     },
+     {
+      "icon": "fa-droplet",
+      "heading": "Tubig",
+      "body": "Mahalagang likas na yaman na kailangan ng tao, hayop at halaman. Hindi ito walang hanggan — may mga lugar tulad ng Masbate na nakararanas ng kakulangan sa tubig."
+     }
+    ]
+   }
+  },
+  {
+   "key": "3",
+   "parentKey": "1",
+   "data": {
+    "position": 3,
+    "title": "Mga Paraan ng Pagtitipid ng Tubig",
+    "sections": [
+     {
+      "icon": "fa-faucet",
+      "heading": "Sa Tahanan",
+      "body": "- Patayin ang gripo habang nagsisipilyo.\n- Gumamit ng tabo at timba sa halip na shower kung maaari.\n- Ayusin agad ang tumutulong gripo o tubo.\n- Ipunin ang tubig-ulan para sa pagdidilig at paglilinis."
+     },
+     {
+      "icon": "fa-shirt",
+      "heading": "Sa Paglalaba at Paghuhugas",
+      "body": "- Labhan nang sabay-sabay ang maraming damit.\n- Gamitin muli ang pinagbanlawan sa paglilinis ng sahig o banyo.\n- Huwag hayaang tumakbo ang gripo habang naghuhugas ng pinagkainan."
+     },
+     {
+      "icon": "fa-school",
+      "heading": "Sa Paaralan",
+      "body": "Isara nang mabuti ang gripo pagkatapos gamitin at ireport sa guro ang sirang gripo o tubo."
+     }
+    ]
+   }
+  },
+  {
+   "key": "4",
+   "parentKey": "1",
+   "data": {
+    "position": 4,
+    "title": "Mahusay na Paggamit ng Enerhiya",
+    "sections": [
+     {
+      "icon": "fa-lightbulb",
+      "heading": "Ilaw at Appliances",
+      "body": "- Patayin ang ilaw at bentilador kapag walang tao sa silid.\n- Gumamit ng LED na bombilya.\n- Hugutin sa saksakan ang appliances na hindi ginagamit."
+     },
+     {
+      "icon": "fa-mobile-screen",
+      "heading": "Gadgets",
+      "body": "Huwag iwanang nakasaksak ang charger kapag puno na ang baterya. Bawasan ang oras ng paggamit ng gadgets."
+     },
+     {
+      "icon": "fa-hotel",
+      "heading": "Sa Labas ng Bahay",
+      "body": "Sa restaurant, mall o hotel, gamitin pa rin nang tama ang tubig at kuryente — kahit hindi tayo ang nagbabayad, likas na yaman pa rin ito ng lahat."
+     }
+    ]
+   }
+  },
+  {
+   "key": "5",
+   "parentKey": "1",
+   "data": {
+    "position": 5,
+    "title": "Gawain: Plano sa Pagtitipid",
+    "sections": [
+     {
+      "icon": "fa-clipboard-list",
+      "heading": "Panuto",
+      "body": "Bumuo ng plano na makatutulong sa pagtitipid ng tubig at enerhiya sa tahanan, paaralan o lugar na pinupuntahan. Isulat ang **Gawain**, ang **Kailangang Gawin**, at kung **Paano Ito Makatutulong**."
+     },
+     {
+      "icon": "fa-pen",
+      "heading": "Halimbawa",
+      "body": "**Gawain:** Pag-toothbrush\n**Kailangang gawin:** Patayin ang gripo habang nagsisipilyo.\n**Paano makatutulong:** Maiiwasan ang pag-aaksaya ng tubig."
+     },
+     {
+      "icon": "fa-list",
+      "heading": "Iba pang Gawain na Susuriin",
+      "body": "- Pagligo\n- Pag-charge ng gadgets\n- Paghuhugas ng pinagkainan\n- Paglalaba ng damit\n- Pagkain sa restaurant o mall\n- Pagtulog sa hotel\n- Pagpasok sa paaralan"
+     },
+     {
+      "icon": "fa-scale-balanced",
+      "heading": "Rubrik",
+      "body": "Pagbuo ng plano, Orihinalidad ng konsepto, at Pagpaplano at pag-oorganisa — bawat isa ay may iskor mula 1 (hindi nagtutugma) hanggang 5 (mahusay)."
+     }
+    ]
+   }
+  },
+  {
+   "key": "6",
+   "parentKey": "2",
+   "data": {
+    "position": 1,
+    "title": "Mga Layunin at Pagpapahalaga: Pagmamahal",
+    "sections": [
+     {
+      "icon": "fa-bullseye",
+      "heading": "Pamantayang Pangnilalaman",
+      "body": "Natututuhan ang mga paraan ng pagpapakita ng pagmamahal sa kasapi ng pamilya."
+     },
+     {
+      "icon": "fa-list-check",
+      "heading": "Pamantayan sa Pagganap",
+      "body": "Naisasagawa ng mag-aaral ang wastong paraan ng pagmamahal sa mga kasapi ng pamilya bilang tanda ng pagiging mapagmahal."
+     },
+     {
+      "icon": "fa-star",
+      "heading": "Lilinanging Pagpapahalaga",
+      "body": "**Mapagmahal (Loving)**"
+     },
+     {
+      "icon": "fa-flag",
+      "heading": "Mga Layunin",
+      "body": "- Naipaliliwanag ang limang wika ng pag-ibig bilang paraan ng pagpapakita ng pagmamahalan ng pamilya.\n- Nakikilala ang pamilya bilang likas na institusyon ng pagmamahalan.\n- Nakagagawa ng presentasyon gamit ang limang wika ng pag-ibig."
+     }
+    ]
+   }
+  },
+  {
+   "key": "7",
+   "parentKey": "2",
+   "data": {
+    "position": 2,
+    "title": "Ang Pamilya: Likas na Institusyon",
+    "sections": [
+     {
+      "icon": "fa-people-roof",
+      "heading": "Pamilya",
+      "body": "Ang pinakamaliit na pangkat o institusyon sa lipunan. Ito ang unang nagbibigay ng suporta, gabay at pagmamahal sa isang indibidwal."
+     },
+     {
+      "icon": "fa-building-columns",
+      "heading": "Institusyon",
+      "body": "Isang samahan na itinatag para sa isang layunin — panrelihiyon, pang-edukasyon o panlipunan."
+     },
+     {
+      "icon": "fa-house",
+      "heading": "Haligi",
+      "body": "Matibay na bagay na umaalalay para hindi mawasak ang kabuuan ng isang gusali o bahay. Sa pamilya, ang mga magulang ang madalas tawaging haligi."
+     },
+     {
+      "icon": "fa-heart",
+      "heading": "Pag-ibig",
+      "body": "Pagmamahal na iniaalay natin sa mga taong malapit sa ating buhay. Sa pamilya natin unang natututunan ang pag-ibig."
+     }
+    ]
+   }
+  },
+  {
+   "key": "8",
+   "parentKey": "2",
+   "data": {
+    "position": 3,
+    "title": "Ang Limang Wika ng Pag-ibig ni Chapman",
+    "sections": [
+     {
+      "icon": "fa-comment-dots",
+      "heading": "Words of Affirmation",
+      "body": "Pagpapahayag ng pagmamahal sa pamamagitan ng mga salita: papuri, pasasalamat, at pagsasabi ng \"Mahal kita.\""
+     },
+     {
+      "icon": "fa-clock",
+      "heading": "Quality Time",
+      "body": "Pagbibigay ng buo at lubos na atensyon: sabay na kumain, makipagkuwentuhan, o mamasyal nang walang gadgets."
+     },
+     {
+      "icon": "fa-hand-holding-heart",
+      "heading": "Physical Touch",
+      "body": "Nararamdaman ang pagmamahal sa paghawak ng kamay, pagyakap, paghaplos sa likod o pagmamasahe."
+     },
+     {
+      "icon": "fa-handshake-angle",
+      "heading": "Acts of Service",
+      "body": "Paggawa ng mabubuting bagay para sa kanila: pagtulong sa gawaing-bahay, pagluluto, o pag-aalaga sa nakababatang kapatid."
+     },
+     {
+      "icon": "fa-gift",
+      "heading": "Receiving Gifts",
+      "body": "Ang pagbibigay ng regalo — malaki man o maliit — bilang tanda na naaalala at mahal mo sila."
+     }
+    ]
+   }
+  },
+  {
+   "key": "9",
+   "parentKey": "2",
+   "data": {
+    "position": 4,
+    "title": "Gawain: Presentasyon ng Wika ng Pag-ibig",
+    "sections": [
+     {
+      "icon": "fa-users",
+      "heading": "Pangkatang Gawain",
+      "body": "Bumuo ng pangkat na may lima hanggang anim na miyembro. Ilista ang mga wika ng pag-ibig na ipinapakita ng bawat pamilya, pumili ng isa, at ipakita ito sa awit, slogan, sabayang bigkas o tula."
+     },
+     {
+      "icon": "fa-scale-balanced",
+      "heading": "Rubrik",
+      "body": "Organisasyon: 15 puntos (napakaayos at napakalinaw) hanggang 8 puntos (hindi maayos at malinaw)."
+     },
+     {
+      "icon": "fa-book",
+      "heading": "Takdang-Aralin",
+      "body": "Isulat sa journal kung anong wika ng pag-ibig ang gamit ng bawat miyembro ng iyong pamilya, at ipaliwanag kung paano nila ito ipinapakita."
+     }
+    ]
+   }
+  },
+  {
+   "key": "10",
+   "parentKey": "3",
+   "data": {
+    "position": 1,
+    "title": "Mga Layunin at Pagpapahalaga: Disiplina",
+    "sections": [
+     {
+      "icon": "fa-bullseye",
+      "heading": "Pamantayang Pangnilalaman",
+      "body": "Natututuhan ng mag-aaral ang pag-unawa sa mapanagutang paggamit ng social media."
+     },
+     {
+      "icon": "fa-list-check",
+      "heading": "Pamantayan sa Pagganap",
+      "body": "Naisasagawa ng mag-aaral ang mga paraan ng mapanagutang paggamit ng social media bilang mamamayan upang malinang ang disiplina."
+     },
+     {
+      "icon": "fa-star",
+      "heading": "Lilinanging Pagpapahalaga",
+      "body": "**Disiplina (Discipline)** — pag-iingat sa mga inilalagay sa sariling social media at sa mga mensahe sa iba."
+     }
+    ]
+   }
+  },
+  {
+   "key": "11",
+   "parentKey": "3",
+   "data": {
+    "position": 2,
+    "title": "Mga Salita Mula sa Social Media",
+    "sections": [
+     {
+      "icon": "fa-camera",
+      "heading": "Selfie",
+      "body": "Pagkuha ng larawan sa sarili gamit ang gadget."
+     },
+     {
+      "icon": "fa-gem",
+      "heading": "Flex",
+      "body": "Salitang ginagamit kapag may ipinagmamayabang — tao, hayop o bagay."
+     },
+     {
+      "icon": "fa-star",
+      "heading": "Lodi",
+      "body": "Binaligtad na \"idol\"; tawag sa taong hinahangaan."
+     },
+     {
+      "icon": "fa-video",
+      "heading": "Vlog",
+      "body": "Isang uri ng blog na gumagamit ng video bilang medium."
+     },
+     {
+      "icon": "fa-microphone",
+      "heading": "Fliptop at Spoken Word Poetry",
+      "body": "**Fliptop** — sagutan ng dalawang panig sa pamamagitan ng rap, ang \"makabagong balagtasan.\" **Spoken word poetry** — malikhaing pagsasalaysay ng kuwento sa anyong patula sa harap ng madla."
+     }
+    ]
+   }
+  },
+  {
+   "key": "12",
+   "parentKey": "3",
+   "data": {
+    "position": 3,
+    "title": "Mga Plataporma ng Social Media",
+    "sections": [
+     {
+      "icon": "fa-users",
+      "heading": "Facebook",
+      "body": "Social media kung saan maaaring magdagdag ng mga kaibigan at magpadala ng mensahe."
+     },
+     {
+      "icon": "fa-feather",
+      "heading": "Twitter (X)",
+      "body": "Microblogging na serbisyo para magpadala at magbasa ng maiikling mensahe na tinatawag na tweets."
+     },
+     {
+      "icon": "fa-image",
+      "heading": "Instagram",
+      "body": "Serbisyo para magbahagi ng larawan at video."
+     },
+     {
+      "icon": "fa-play",
+      "heading": "YouTube",
+      "body": "Website para magbahagi, manood at mag-upload ng mga video."
+     },
+     {
+      "icon": "fa-briefcase",
+      "heading": "LinkedIn",
+      "body": "Professional networking platform para makipag-ugnayan sa mga propesyonal at maghanap ng trabaho."
+     }
+    ]
+   }
+  },
+  {
+   "key": "13",
+   "parentKey": "3",
+   "data": {
+    "position": 4,
+    "title": "Mga Paalala sa Tamang Paggamit ng Social Media",
+    "sections": [
+     {
+      "icon": "fa-scale-balanced",
+      "heading": "Balanseng Paggamit",
+      "body": "Magtakda ng oras sa paggamit ng social media at tiyaking hindi ito nakaaapekto sa pag-aaral, gawain at pamilya."
+     },
+     {
+      "icon": "fa-magnifying-glass",
+      "heading": "Pagsusuri ng Nilalaman",
+      "body": "Bago mag-like, mag-share o mag-comment, siguraduhing tama at totoo ang impormasyon. Iwasan ang fake news, hate speech at bullying."
+     },
+     {
+      "icon": "fa-lock",
+      "heading": "Privacy Settings",
+      "body": "Alamin at ayusin ang privacy settings upang maprotektahan ang personal na impormasyon."
+     },
+     {
+      "icon": "fa-shield-halved",
+      "heading": "Maingat na Pagbabahagi",
+      "body": "Mag-ingat sa mga larawan, post at komento. Huwag i-post ang personal na impormasyon na maaaring makasira sa iyong imahe o kaligtasan."
+     },
+     {
+      "icon": "fa-bed",
+      "heading": "Pag-iwas sa Social Media Fatigue",
+      "body": "Alamin kung kailan magpapahinga. Huwag hayaang maging hadlang ang social media sa iyong tulog at kapanatagan."
+     }
+    ]
+   }
+  },
+  {
+   "key": "14",
+   "parentKey": "3",
+   "data": {
+    "position": 5,
+    "title": "Gawain at Repleksiyon",
+    "sections": [
+     {
+      "icon": "fa-users",
+      "heading": "Pangkatang Gawain",
+      "body": "Sa pangkat na may pitong miyembro, ipaliwanag o ipakita ang tamang paggamit ng social media sa pamamagitan ng tula, sabayang bigkas, pagguhit o pag-awit."
+     },
+     {
+      "icon": "fa-circle-question",
+      "heading": "Mga Tanong",
+      "body": "- Anong aral ang iyong naintindihan sa positibong paggamit ng social media?\n- Mahalaga ba ang paggabay ng magulang upang tayo ay maging mapanagutan sa paggamit ng media?"
+     },
+     {
+      "icon": "fa-book",
+      "heading": "Takdang-Aralin",
+      "body": "Isulat sa journal: Bakit mahalaga ang disiplina sa pag-post ng personal na impormasyon sa iyong social media accounts?"
+     }
+    ]
+   }
+  }
+ ],
+ "videos": [],
+ "cases": [
+  {
+   "key": "1",
+   "data": {
+    "position": 1,
+    "text": "Habang nagsisipilyo si Ana, hinahayaan niyang bukas ang gripo hanggang matapos siya.",
+    "question": "Ano ang dapat gawin ni Ana?",
+    "options": [
+     "Lakasan pa ang gripo para mabilis matapos",
+     "Patayin ang gripo habang nagsisipilyo",
+     "Magsipilyo na lamang isang beses sa isang linggo",
+     "Gumamit ng mineral water sa pagsisipilyo"
+    ],
+    "answer": 1
+   }
+  },
+  {
+   "key": "2",
+   "data": {
+    "position": 2,
+    "text": "Napansin ni Ben na may tumutulong gripo sa CR ng paaralan at walang ibang nakapapansin.",
+    "question": "Ano ang pinakamabuting gawin ni Ben?",
+    "options": [
+     "Hayaan na lang dahil hindi naman niya ito sira",
+     "Iulat agad sa guro o tagapangalaga ng paaralan",
+     "Lakasan ang gripo para mapansin ng iba",
+     "Magpost tungkol dito sa social media"
+    ],
+    "answer": 1
+   }
+  },
+  {
+   "key": "3",
+   "data": {
+    "position": 3,
+    "text": "Puno na ang baterya ng cellphone ni Carlo pero nakasaksak pa rin ito buong gabi.",
+    "question": "Anong gawi ang dapat baguhin ni Carlo?",
+    "options": [
+     "Hugutin ang charger kapag puno na ang baterya",
+     "Bumili ng mas malaking charger",
+     "Mag-charge na lamang sa paaralan",
+     "Huwag nang gumamit ng cellphone kailanman"
+    ],
+    "answer": 0
+   }
+  },
+  {
+   "key": "4",
+   "data": {
+    "position": 4,
+    "text": "Kumakain ang pamilya ni Dina sa isang mall. Napansin niyang bukas ang gripo sa lababo kahit walang gumagamit.",
+    "question": "Ano ang nagpapakita ng pagtitipid kahit nasa labas ng bahay?",
+    "options": [
+     "Hayaan dahil hindi naman sila ang nagbabayad",
+     "Isara ang gripo kung ligtas at maaari",
+     "Kumuha ng litrato bilang patunay",
+     "Umalis agad sa lugar"
+    ],
+    "answer": 1
+   }
+  },
+  {
+   "key": "5",
+   "data": {
+    "position": 5,
+    "text": "Sa bayan ng Allen, nagkaroon ng mahinang daloy ng tubig sa loob ng isang linggo.",
+    "question": "Paano makatutulong ang isang mag-aaral?",
+    "options": [
+     "Mag-ipon ng maraming tubig kahit hindi kailangan",
+     "Gamitin muli ang pinagbanlawan at mag-ipon ng tubig-ulan",
+     "Maligo nang mas matagal habang may tubig pa",
+     "Walang magagawa ang isang bata"
+    ],
+    "answer": 1
+   }
+  },
+  {
+   "key": "6",
+   "data": {
+    "position": 6,
+    "text": "Laging sinasabi ni Elena sa kaniyang ina na \"Salamat po, Nay, ang sarap ng luto ninyo!\"",
+    "question": "Anong wika ng pag-ibig ang ipinapakita ni Elena?",
+    "options": [
+     "Receiving Gifts",
+     "Physical Touch",
+     "Words of Affirmation",
+     "Acts of Service"
+    ],
+    "answer": 2
+   }
+  },
+  {
+   "key": "7",
+   "data": {
+    "position": 7,
+    "text": "Tuwing Linggo, iniiwan ng pamilya ni Felix ang kanilang cellphone at sabay-sabay silang nagkukuwentuhan habang kumakain.",
+    "question": "Anong wika ng pag-ibig ito?",
+    "options": [
+     "Quality Time",
+     "Receiving Gifts",
+     "Words of Affirmation",
+     "Physical Touch"
+    ],
+    "answer": 0
+   }
+  },
+  {
+   "key": "8",
+   "data": {
+    "position": 8,
+    "text": "Pagod ang tatay ni Gina mula sa trabaho kaya siya na ang naghugas ng pinggan at nagwalis ng bahay.",
+    "question": "Anong wika ng pag-ibig ang ipinakita ni Gina?",
+    "options": [
+     "Physical Touch",
+     "Acts of Service",
+     "Quality Time",
+     "Receiving Gifts"
+    ],
+    "answer": 1
+   }
+  },
+  {
+   "key": "9",
+   "data": {
+    "position": 9,
+    "text": "Niyakap ni Hector ang kaniyang lola pagdating nito mula sa probinsiya.",
+    "question": "Anong wika ng pag-ibig ito?",
+    "options": [
+     "Acts of Service",
+     "Words of Affirmation",
+     "Physical Touch",
+     "Receiving Gifts"
+    ],
+    "answer": 2
+   }
+  },
+  {
+   "key": "10",
+   "data": {
+    "position": 10,
+    "text": "Nakakita si Ivy ng post na nagsasabing walang pasok bukas, pero walang anunsiyo mula sa paaralan o DepEd.",
+    "question": "Ano ang dapat gawin ni Ivy bago ito i-share?",
+    "options": [
+     "I-share agad para malaman ng lahat",
+     "Suriin muna sa opisyal na pahina ng paaralan o DepEd",
+     "Magdagdag ng sariling detalye para mas kapani-paniwala",
+     "I-like lang para hindi maging responsable"
+    ],
+    "answer": 1
+   }
+  },
+  {
+   "key": "11",
+   "data": {
+    "position": 11,
+    "text": "Gustong i-post ni Jake ang litrato ng kaniyang ID na may buong pangalan, address at numero ng telepono.",
+    "question": "Ano ang mapanagutang desisyon?",
+    "options": [
+     "I-post para makilala siya ng marami",
+     "Huwag i-post ang personal na impormasyon",
+     "I-post pero burahin pagkalipas ng isang araw",
+     "Ipadala sa lahat ng kaibigan sa group chat"
+    ],
+    "answer": 1
+   }
+  },
+  {
+   "key": "12",
+   "data": {
+    "position": 12,
+    "text": "May kaklase si Kim na pinagtatawanan sa isang group chat at hinihikayat siyang magdagdag ng masamang komento.",
+    "question": "Ano ang dapat gawin ni Kim?",
+    "options": [
+     "Sumali para hindi siya ang pagtawanan",
+     "Huwag sumali, ipagtanggol ang kaklase at isumbong sa guro",
+     "Mag-screenshot at i-post sa publiko",
+     "Umalis sa group chat at kalimutan na"
+    ],
+    "answer": 1
+   }
+  },
+  {
+   "key": "13",
+   "data": {
+    "position": 13,
+    "text": "Hatinggabi na pero nag-i-scroll pa rin si Leo sa social media kahit may pagsusulit siya kinabukasan.",
+    "question": "Anong paalala ang dapat niyang sundin?",
+    "options": [
+     "Balanseng paggamit at pag-iwas sa social media fatigue",
+     "Mag-post tungkol sa pagsusulit",
+     "Uminom ng kape para tumagal pa",
+     "Mag-scroll hanggang antukin"
+    ],
+    "answer": 0
+   }
+  }
+ ],
+ "decks": [
+  {
+   "key": "1",
+   "data": {
+    "position": 1,
+    "title": "Pagtitipid ng Tubig at Enerhiya",
+    "icon": "fa-droplet",
+    "color": "video-icon"
+   }
+  },
+  {
+   "key": "2",
+   "data": {
+    "position": 2,
+    "title": "Limang Wika ng Pag-ibig",
+    "icon": "fa-heart",
+    "color": "check-icon"
+   }
+  },
+  {
+   "key": "3",
+   "data": {
+    "position": 3,
+    "title": "Mapanagutang Paggamit ng Social Media",
+    "icon": "fa-share-nodes",
+    "color": "read-icon"
+   }
+  }
+ ],
+ "cards": [
+  {
+   "key": "1-0",
+   "parentKey": "1",
+   "data": {
+    "position": 1,
+    "question": "Alin ang TAMA tungkol sa pangangalaga ng tubig?",
+    "options": [
+     "Hindi na kailangan dahil marami pa ito",
+     "Mahalaga ito dahil nauubos at kailangan ng lahat",
+     "Para lamang ito sa mga taga-lungsod",
+     "Tungkulin lamang ito ng pamahalaan"
+    ],
+    "answer": 1
+   }
+  },
+  {
+   "key": "1-1",
+   "parentKey": "1",
+   "data": {
+    "position": 2,
+    "question": "Ang pagpapalit ng malakas kumonsumong shower head ay...",
+    "options": [
+     "Nag-aaksaya ng tubig",
+     "Nakatitipid ng tubig",
+     "Walang epekto",
+     "Bawal sa bahay"
+    ],
+    "answer": 1
+   }
+  },
+  {
+   "key": "1-2",
+   "parentKey": "1",
+   "data": {
+    "position": 3,
+    "question": "May kaugnayan ba ang wastong paggamit ng tubig sa kaginhawaan ng lipunan?",
+    "options": [
+     "Wala, personal lamang ito",
+     "Mayroon, nakatutulong ito sa kaginhawaan at kasiglahan ng lipunan",
+     "Para lamang sa mayayaman",
+     "Para lamang sa mga magsasaka"
+    ],
+    "answer": 1
+   }
+  },
+  {
+   "key": "1-3",
+   "parentKey": "1",
+   "data": {
+    "position": 4,
+    "question": "Ang responsibilidad sa paggamit ng likas na yaman ay para sa...",
+    "options": [
+     "Sariling pangangailangan lamang",
+     "Kapakanan ng sarili at ng kapuwa",
+     "Mga dayuhan lamang",
+     "Mga matatanda lamang"
+    ],
+    "answer": 1
+   }
+  },
+  {
+   "key": "1-4",
+   "parentKey": "1",
+   "data": {
+    "position": 5,
+    "question": "Ano ang naidudulot ng edukasyon tungkol sa tamang paggamit ng tubig at enerhiya?",
+    "options": [
+     "Mas maalam na lipunan",
+     "Mas maraming basura",
+     "Mas mataas na bayarin",
+     "Wala itong naidudulot"
+    ],
+    "answer": 0
+   }
+  },
+  {
+   "key": "1-5",
+   "parentKey": "1",
+   "data": {
+    "position": 6,
+    "question": "Anong SDG ang kaugnay ng aralin sa pagtitipid ng tubig?",
+    "options": [
+     "SDG #1 No Poverty",
+     "SDG #4 Quality Education",
+     "SDG #6 Clean Water and Sanitation",
+     "SDG #13 Climate Action"
+    ],
+    "answer": 2
+   }
+  },
+  {
+   "key": "1-6",
+   "parentKey": "1",
+   "data": {
+    "position": 7,
+    "question": "Anong pagpapahalaga ang nililinang sa araling ito?",
+    "options": [
+     "Pagtitipid (Thrifty)",
+     "Disiplina",
+     "Mapagmahal",
+     "Katapangan"
+    ],
+    "answer": 0
+   }
+  },
+  {
+   "key": "1-7",
+   "parentKey": "1",
+   "data": {
+    "position": 8,
+    "question": "Alin ang wastong gawi habang naghuhugas ng pinagkainan?",
+    "options": [
+     "Hayaang bukas ang gripo",
+     "Gumamit ng palanggana at isara ang gripo kapag hindi kailangan",
+     "Hugasan ang bawat pinggan sa ilalim ng malakas na tubig",
+     "Gumamit ng mainit na tubig palagi"
+    ],
+    "answer": 1
+   }
+  },
+  {
+   "key": "1-8",
+   "parentKey": "1",
+   "data": {
+    "position": 9,
+    "question": "Ano ang dapat gawin sa ilaw kapag walang tao sa silid?",
+    "options": [
+     "Iwanang bukas para hindi madilim pagbalik",
+     "Patayin",
+     "Palitan ng mas maliwanag",
+     "Takpan ng tela"
+    ],
+    "answer": 1
+   }
+  },
+  {
+   "key": "1-9",
+   "parentKey": "1",
+   "data": {
+    "position": 10,
+    "question": "Saang lalawigan nabanggit sa aralin ang kakulangan sa tubig?",
+    "options": [
+     "Masbate",
+     "Cebu",
+     "Batanes",
+     "Laguna"
+    ],
+    "answer": 0
+   }
+  },
+  {
+   "key": "2-0",
+   "parentKey": "2",
+   "data": {
+    "position": 1,
+    "question": "Ilan ang wika ng pag-ibig ayon kay Gary Chapman?",
+    "options": [
+     "Tatlo",
+     "Apat",
+     "Lima",
+     "Anim"
+    ],
+    "answer": 2
+   }
+  },
+  {
+   "key": "2-1",
+   "parentKey": "2",
+   "data": {
+    "position": 2,
+    "question": "Nagpapahayag ng pagmamahal sa pamamagitan ng pagbigkas ng mga salita.",
+    "options": [
+     "Words of Affirmation",
+     "Quality Time",
+     "Physical Touch",
+     "Acts of Service"
+    ],
+    "answer": 0
+   }
+  },
+  {
+   "key": "2-2",
+   "parentKey": "2",
+   "data": {
+    "position": 3,
+    "question": "Ang wika ng pag-ibig na nagnanais ng lubos na atensyon.",
+    "options": [
+     "Receiving Gifts",
+     "Quality Time",
+     "Acts of Service",
+     "Physical Touch"
+    ],
+    "answer": 1
+   }
+  },
+  {
+   "key": "2-3",
+   "parentKey": "2",
+   "data": {
+    "position": 4,
+    "question": "Nararamdaman nilang mahal sila sa paghawak ng kamay, pagyakap at paghaplos sa likod.",
+    "options": [
+     "Words of Affirmation",
+     "Receiving Gifts",
+     "Physical Touch",
+     "Quality Time"
+    ],
+    "answer": 2
+   }
+  },
+  {
+   "key": "2-4",
+   "parentKey": "2",
+   "data": {
+    "position": 5,
+    "question": "Magagandang bagay na ginagawa mo para sa kanila, tulad ng pagtulong sa gawaing-bahay.",
+    "options": [
+     "Acts of Service",
+     "Quality Time",
+     "Receiving Gifts",
+     "Words of Affirmation"
+    ],
+    "answer": 0
+   }
+  },
+  {
+   "key": "2-5",
+   "parentKey": "2",
+   "data": {
+    "position": 6,
+    "question": "Ang pagbibigay ng regalo bilang tanda ng pagmamahal.",
+    "options": [
+     "Physical Touch",
+     "Receiving Gifts",
+     "Acts of Service",
+     "Quality Time"
+    ],
+    "answer": 1
+   }
+  },
+  {
+   "key": "2-6",
+   "parentKey": "2",
+   "data": {
+    "position": 7,
+    "question": "Ano ang pinakamaliit na institusyon sa lipunan?",
+    "options": [
+     "Paaralan",
+     "Simbahan",
+     "Pamilya",
+     "Barangay"
+    ],
+    "answer": 2
+   }
+  },
+  {
+   "key": "2-7",
+   "parentKey": "2",
+   "data": {
+    "position": 8,
+    "question": "PUFF o BLUFF: \"Hindi mahalaga ang pagmamahalan sa loob ng pamilya.\"",
+    "options": [
+     "Puff — tama",
+     "Bluff — mali",
+     "Minsan tama",
+     "Depende sa pamilya"
+    ],
+    "answer": 1
+   }
+  },
+  {
+   "key": "2-8",
+   "parentKey": "2",
+   "data": {
+    "position": 9,
+    "question": "PUFF o BLUFF: \"Sa aking pamilya natututunan ang unang pag-ibig.\"",
+    "options": [
+     "Puff — tama",
+     "Bluff — mali",
+     "Hindi totoo kailanman",
+     "Para lamang sa magkakapatid"
+    ],
+    "answer": 0
+   }
+  },
+  {
+   "key": "2-9",
+   "parentKey": "2",
+   "data": {
+    "position": 10,
+    "question": "Anong pagpapahalaga ang nililinang sa araling ito?",
+    "options": [
+     "Disiplina",
+     "Pagtitipid",
+     "Mapagmahal (Loving)",
+     "Pagkamasunurin"
+    ],
+    "answer": 2
+   }
+  },
+  {
+   "key": "3-0",
+   "parentKey": "3",
+   "data": {
+    "position": 1,
+    "question": "Social media kung saan maaaring magdagdag ng mga kaibigan at magpadala ng mensahe.",
+    "options": [
+     "Facebook",
+     "LinkedIn",
+     "YouTube",
+     "Twitter"
+    ],
+    "answer": 0
+   }
+  },
+  {
+   "key": "3-1",
+   "parentKey": "3",
+   "data": {
+    "position": 2,
+    "question": "Microblogging na serbisyo para magpadala at magbasa ng tweets.",
+    "options": [
+     "Instagram",
+     "Twitter",
+     "Facebook",
+     "YouTube"
+    ],
+    "answer": 1
+   }
+  },
+  {
+   "key": "3-2",
+   "parentKey": "3",
+   "data": {
+    "position": 3,
+    "question": "Serbisyo para magbahagi ng larawan at video.",
+    "options": [
+     "LinkedIn",
+     "Twitter",
+     "Instagram",
+     "Gmail"
+    ],
+    "answer": 2
+   }
+  },
+  {
+   "key": "3-3",
+   "parentKey": "3",
+   "data": {
+    "position": 4,
+    "question": "Website para magbahagi at manood ng mga video clips.",
+    "options": [
+     "YouTube",
+     "LinkedIn",
+     "Facebook",
+     "Twitter"
+    ],
+    "answer": 0
+   }
+  },
+  {
+   "key": "3-4",
+   "parentKey": "3",
+   "data": {
+    "position": 5,
+    "question": "Professional networking platform para maghanap ng trabaho.",
+    "options": [
+     "Instagram",
+     "TikTok",
+     "YouTube",
+     "LinkedIn"
+    ],
+    "answer": 3
+   }
+  },
+  {
+   "key": "3-5",
+   "parentKey": "3",
+   "data": {
+    "position": 6,
+    "question": "Ano ang ibig sabihin ng \"lodi\"?",
+    "options": [
+     "Taong maarte",
+     "Binaligtad na \"idol\"; taong hinahangaan",
+     "Pagkuha ng sariling litrato",
+     "Pagmamayabang"
+    ],
+    "answer": 1
+   }
+  },
+  {
+   "key": "3-6",
+   "parentKey": "3",
+   "data": {
+    "position": 7,
+    "question": "Ano ang dapat gawin bago mag-share ng isang post?",
+    "options": [
+     "I-share agad",
+     "Suriin kung totoo at tama ang impormasyon",
+     "Dagdagan ng sariling opinyon",
+     "Hintayin ang maraming likes"
+    ],
+    "answer": 1
+   }
+  },
+  {
+   "key": "3-7",
+   "parentKey": "3",
+   "data": {
+    "position": 8,
+    "question": "Ano ang tawag sa pagod na dulot ng sobrang paggamit ng social media?",
+    "options": [
+     "Social media fatigue",
+     "Fliptop",
+     "Friendzone",
+     "Flex"
+    ],
+    "answer": 0
+   }
+  },
+  {
+   "key": "3-8",
+   "parentKey": "3",
+   "data": {
+    "position": 9,
+    "question": "Bakit dapat ayusin ang privacy settings?",
+    "options": [
+     "Para dumami ang followers",
+     "Para maprotektahan ang personal na impormasyon",
+     "Para makita ng lahat ang post",
+     "Wala itong silbi"
+    ],
+    "answer": 1
+   }
+  },
+  {
+   "key": "3-9",
+   "parentKey": "3",
+   "data": {
+    "position": 10,
+    "question": "Anong pagpapahalaga ang nililinang sa araling ito?",
+    "options": [
+     "Disiplina (Discipline)",
+     "Mapagmahal",
+     "Pagtitipid",
+     "Pagkamalikhain"
+    ],
+    "answer": 0
+   }
+  }
+ ]
+}

@@ -1,0 +1,74 @@
+
+/* Base: page colours, native controls and scrollbars */
+:root[data-theme="dark"] {
+    color-scheme: dark;
+    --fun-bg: #09170d;
+}
+
+:root[data-theme="dark"] body {
+    background-color: #09170d;
+    color: #deebe1;
+}
+
+:root[data-theme="dark"] .main-content,
+:root[data-theme="dark"] .dashboard-container {
+    background-color: var(--fun-bg) !important;
+}
+
+:root[data-theme="dark"] input::placeholder,
+:root[data-theme="dark"] textarea::placeholder {
+    color: #7c9682;
+}
+
+/* Inline colours written straight into the HTML */
+:root[data-theme="dark"] [style*="color: #555"],
+:root[data-theme="dark"] [style*="color:#555"] {
+    color: #aac0af !important;
+}
+
+:root[data-theme="dark"] [style*="color:#1e7e45"] {
+    color: #6fdc9f !important;
+}
+
+/* Photos: slightly dimmer so they don't glare */
+:root[data-theme="dark"] .thumbnail-container img,
+:root[data-theme="dark"] .image-section {
+    filter: brightness(0.88);
+}
+
+/* Login / sign up: darker glass over the blurred campus photo */
+:root[data-theme="dark"] .login-section::before {
+    filter: blur(4px) brightness(0.55);
+}
+
+/* Smooth colour change when switching themes */
+:root.theme-switching *,
+:root.theme-switching *::before,
+:root.theme-switching *::after {
+    transition: background-color 0.3s ease, color 0.3s ease, border-color 0.3s ease !important;
+}
+
+/* Dashboard progress ring: empty part of the track */
+:root[data-theme="dark"] {
+    --ring-track: #1a3221;
+}
+
+/* Quick search: keep highlighted words dark on the yellow highlight */
+:root[data-theme="dark"] .qs-result mark {
+    color: #00260e;
+}
+
+/* Dark mode switch: keep the knob white on the coloured track */
+:root[data-theme="dark"] .theme-switch {
+    box-shadow: inset 0 0 0 1.5px rgba(255, 255, 255, 0.35);
+}
+:root[data-theme="dark"] .theme-switch-knob {
+    background: #ffffff;
+}
+:root[data-theme="dark"] .is-on .theme-switch {
+    box-shadow: inset 0 0 0 1.5px rgba(255, 255, 255, 0.4);
+}
+:root[data-theme="dark"] .theme-toggle:focus-visible .theme-switch,
+:root[data-theme="dark"] .theme-fab:focus-visible .theme-switch {
+    outline-color: #ffffff;
+}

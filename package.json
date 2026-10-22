@@ -1,0 +1,36 @@
+{
+  "name": "valueslearn",
+  "version": "1.0.0",
+  "description": "Values Education 7 e-learning platform",
+  "main": "server.js",
+  "scripts": {
+    "start": "node server.js",
+    "dev": "node --watch server.js",
+    "build:dark": "node scripts/build-dark-css.js",
+    "instructor": "node scripts/instructor.js",
+    "test": "node scripts/check.js",
+    "lint": "eslint .",
+    "db": "node scripts/local-db.mjs"
+  },
+  "dependencies": {
+    "bcryptjs": "^2.4.3",
+    "cloudinary": "^2.5.1",
+    "cookie-parser": "^1.4.6",
+    "dotenv": "^16.4.5",
+    "express": "^4.19.2",
+    "jsonwebtoken": "^9.0.2",
+    "multer": "^1.4.5-lts.1",
+    "nodemailer": "^6.10.1",
+    "pg": "^8.13.0",
+    "streamifier": "^0.1.1"
+  },
+  "engines": {
+    "node": ">=18"
+  },
+  "devDependencies": {
+    "@eslint/js": "^9.39.5",
+    "embedded-postgres": "^17.5.0-beta.15",
+    "eslint": "^9.39.5",
+    "globals": "^17.13.0"
+  }
+}
