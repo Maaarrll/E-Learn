@@ -1,0 +1,306 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Teacher Quizzes · ValuesLearn</title>
+    <meta name="description" content="Timed quizzes from your teacher.">
+    <link rel="icon" href="favicon-32.png?v=2" type="image/png" sizes="32x32">
+    <link rel="apple-touch-icon" href="apple-touch-icon.png?v=2">
+    <meta name="theme-color" content="#02473d">
+    <link rel="stylesheet" href="style.css?v=78">
+    <link rel="stylesheet" href="dark.css?v=42">
+    <script src="js/theme.js?v=3"></script>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+</head>
+<body class="quiz-page">
+    <noscript>
+        <div class="noscript-note">ValuesLearn needs JavaScript to work. Please turn it on in your browser settings.</div>
+    </noscript>
+
+    <div class="dashboard-container">
+
+        <!-- Sidebar Navigation -->
+        <aside class="sidebar">
+            <div class="sidebar-header">
+                <img src="logo.png" alt="" class="sidebar-logo">
+                <div class="sidebar-brand">
+                    <span class="logo-text">ValuesLearn</span>
+                    <small class="logo-tag">Values Ed 7 Study Hub</small>
+                </div>
+            </div>
+
+            <span class="sidebar-label">Overview</span>
+
+            <nav class="sidebar-nav">
+                <a href="Dashboard.html" class="nav-item">
+                    <i class="fa-solid fa-border-all"></i> <span class="nav-text">Dashboard</span>
+                </a>
+                <span class="sidebar-label sidebar-label-group">Learn</span>
+                <a href="WatchVideo.html" class="nav-item">
+                    <i class="fa-solid fa-play"></i> <span class="nav-text">Watch Video</span>
+                </a>
+                <a href="ReadLesson.html" class="nav-item">
+                    <i class="fa-solid fa-book"></i> <span class="nav-text">Read Lesson</span>
+                </a>
+                <a href="CaseStudies.html" class="nav-item">
+                    <i class="fa-solid fa-folder"></i> <span class="nav-text">Situation Quizzes</span>
+                </a>
+                <a href="StudyCards.html" class="nav-item">
+                    <i class="fa-solid fa-rotate"></i> <span class="nav-text">Quiz Cards</span>
+                </a>
+                <a href="Quizzes.html" class="nav-item active">
+                    <i class="fa-solid fa-stopwatch"></i> <span class="nav-text">Teacher Quizzes</span>
+                </a>
+                <span class="sidebar-label sidebar-label-group">You</span>
+                <a href="Saved.html" class="nav-item">
+                    <i class="fa-solid fa-bookmark"></i> <span class="nav-text">Saved</span>
+                </a>
+                <a href="Certificate.html" class="nav-item">
+                    <i class="fa-solid fa-award"></i> <span class="nav-text">Certificates</span>
+                </a>
+                <a href="Account.html" class="nav-item">
+                    <i class="fa-solid fa-circle-user"></i> <span class="nav-text">Account</span>
+                </a>
+            </nav>
+            <!-- Profile card + log out (filled by renderSidebarUser() in js/api.js) -->
+            <div class="sidebar-user">
+                <a href="Account.html" class="sidebar-user-link" title="View your account">
+                    <span class="sidebar-avatar" id="sidebarAvatar"><i class="fa-regular fa-user"></i></span>
+                    <span class="sidebar-user-text">
+                        <strong id="sidebarName">My Account</strong>
+                        <small id="sidebarMeta">View profile</small>
+                    </span>
+                </a>
+                <button type="button" class="sidebar-logout" data-logout aria-label="Log out" title="Log out">
+                    <i class="fa-solid fa-arrow-right-from-bracket"></i>
+                </button>
+            </div>
+        </aside>
+
+        <!-- Main Content Area -->
+        <main class="main-content">
+
+            <div class="saved-wrapper">
+
+                <div class="saved-header">
+                    <div class="saved-header-icon"><i class="fa-solid fa-stopwatch"></i></div>
+                    <div class="saved-header-text">
+                        <h2>Teacher Quizzes</h2>
+                        <p>Timed quizzes from your teacher. Each question has its own timer, and you get one try.</p>
+                    </div>
+                </div>
+
+                <!-- Quiz list -->
+                <div id="quizListView">
+                    <div class="tq-list" id="quizList" aria-live="polite">
+                        <div class="saved-loading"><span class="btn-spinner"></span> Loading quizzes...</div>
+                    </div>
+
+                    <!-- Finished quizzes leave the list above but keep their scores here -->
+                    <section class="tq-scores" id="scoresSection" hidden>
+                        <h3><i class="fa-solid fa-trophy"></i> Your scores</h3>
+                        <div class="tq-score-list" id="scoreList"></div>
+                    </section>
+                </div>
+
+                <!-- Taking a quiz -->
+                <section class="tq-play" id="playView" hidden>
+                    <div class="tq-play-top">
+                        <span class="tq-count" id="playCount">Question 1 of 1</span>
+                        <span class="tq-timer" id="playTimer" aria-live="off"><i class="fa-solid fa-stopwatch"></i> <b id="playSeconds">0</b>s</span>
+                    </div>
+                    <div class="tq-timebar" aria-hidden="true"><div id="playBar"></div></div>
+                    <h3 class="tq-question" id="playQuestion"></h3>
+                    <div class="tq-choices" id="playChoices"></div>
+                    <p class="tq-feedback" id="playFeedback" role="status" hidden></p>
+                </section>
+
+                <!-- Result -->
+                <section class="tq-result" id="resultView" hidden>
+                    <div class="tq-score">
+                        <span class="tq-score-num" id="resultScore">0/0</span>
+                        <span class="tq-score-label" id="resultLabel"></span>
+                    </div>
+                    <p class="tq-result-note"><i class="fa-solid fa-lock"></i> Answers stay private. Your teacher can see how you did on each question.</p>
+                    <button type="button" class="tool-btn" id="backToList"><i class="fa-solid fa-arrow-left"></i> Back to quizzes</button>
+                </section>
+
+            </div>
+
+            <!-- Footer -->
+            <footer class="site-footer">
+                <span><strong>ValuesLearn</strong></span>
+                <span class="site-footer-dot" aria-hidden="true">·</span>
+                <span>Values Education 7 Study Hub for Allen National High School</span>
+            </footer>
+        </main>
+    </div>
+
+    <script src="js/api.js?v=11"></script>
+    <script src="js/notifications.js?v=2"></script>
+    <script src="js/sfx.js?v=8"></script>
+    <script src="js/search.js?v=3"></script>
+    <script>
+        requireAuth();
+
+        const $ = (id) => document.getElementById(id);
+        const esc = (t) => String(t).replace(/[&<>"']/g, c => ({ '&': '&amp;', '<': '&lt;', '>': '&gt;', '"': '&quot;', "'": '&#39;' }[c]));
+        const LETTERS = 'ABCDEF';
+        const FEEDBACK_MS = 900;
+
+        let quizId = null;
+        let state = null;      // the server's view of the quiz (current question or result)
+        let timer = null;
+        let deadline = 0;
+        let busy = false;
+
+        function show(view) {
+            $('quizListView').hidden = view !== 'list';
+            $('playView').hidden = view !== 'play';
+            $('resultView').hidden = view !== 'result';
+            window.scrollTo({ top: 0 });
+        }
+
+        const minutes = (secs) => secs < 60 ? `${secs} sec` : `about ${Math.round(secs / 60)} min`;
+
+        async function loadList() {
+            show('list');
+            try {
+                const { quizzes } = await api.get('/quizzes');
+                const toTake = quizzes.filter(q => q.status !== 'done');
+                const done = quizzes.filter(q => q.status === 'done')
+                    .sort((a, b) => new Date(b.finishedAt) - new Date(a.finishedAt));
+
+                $('quizList').innerHTML = toTake.length ? toTake.map(q => `
+                    <article class="tq-card">
+                        <div class="tq-card-icon"><i class="fa-solid fa-stopwatch"></i></div>
+                        <div class="tq-card-text">
+                            <h3>${esc(q.title)}</h3>
+                            ${q.description ? `<p>${esc(q.description)}</p>` : ''}
+                            <small>${q.questionCount} question${q.questionCount === 1 ? '' : 's'} · ${minutes(q.totalSeconds)}</small>
+                        </div>
+                        <button type="button" class="tool-btn tq-start" data-open="${q.id}" data-new="${q.status === 'new' ? 1 : ''}">
+                            <i class="fa-solid fa-play"></i> ${q.status === 'started' ? 'Continue' : 'Start'}</button>
+                    </article>`).join('')
+                    : `<div class="saved-empty">
+                        <div class="saved-empty-icon"><i class="fa-solid fa-stopwatch"></i></div>
+                        <h3>${done.length ? 'All done!' : 'No quizzes yet'}</h3>
+                        <p>${done.length ? 'You have finished every quiz. New ones from your teacher will show up here.' : 'When your teacher posts a quiz, it will show up here.'}</p>
+                    </div>`;
+
+                $('scoresSection').hidden = !done.length;
+                $('scoreList').innerHTML = done.map(q => {
+                    const pct = Math.round((q.score / q.questionCount) * 100);
+                    return `<button type="button" class="tq-score-row" data-open="${q.id}">
+                        <span class="tq-score-badge ${pct >= 75 ? 'is-high' : pct >= 50 ? 'is-mid' : 'is-low'}">${q.score}/${q.questionCount}</span>
+                        <span class="tq-score-text"><strong>${esc(q.title)}</strong>
+                            <small>${pct}% · finished ${esc(new Date(q.finishedAt).toLocaleDateString(undefined, { month: 'short', day: 'numeric', year: 'numeric' }))}</small></span>
+                        <span class="tq-score-link">View <i class="fa-solid fa-chevron-right"></i></span>
+                    </button>`;
+                }).join('');
+                return true;
+            } catch (err) {
+                $('scoresSection').hidden = true;
+                $('quizList').innerHTML = `<p class="saved-error"><i class="fa-solid fa-circle-exclamation"></i> ${esc(err.message)}</p>`;
+                return false;
+            }
+        }
+
+        $('quizListView').addEventListener('click', (e) => {
+            const btn = e.target.closest('[data-open]');
+            if (!btn) return;
+            const id = Number(btn.dataset.open);
+            if (!btn.dataset.new) return openQuiz(id);
+            confirmDialog({
+                title: 'Start the quiz?',
+                message: 'Every question has a timer, and you only get one try. Once you start, the clock keeps running even if you leave the page.',
+                confirmText: 'Start', icon: 'fa-stopwatch',
+                onConfirm: () => openQuiz(id),
+            });
+        });
+
+        async function openQuiz(id) {
+            quizId = id;
+            try {
+                render(await api.post(`/quizzes/${id}/start`));
+            } catch (err) {
+                // If the list fails too (e.g. class closed) it already shows the message
+                if (await loadList()) $('quizList').insertAdjacentHTML('afterbegin', `<p class="saved-error"><i class="fa-solid fa-circle-exclamation"></i> ${esc(err.message)}</p>`);
+            }
+        }
+
+        function render(next) {
+            state = next;
+            clearInterval(timer);
+            if (state.done) return renderResult();
+            show('play');
+            busy = false;
+            const q = state.question;
+            $('playCount').textContent = `Question ${state.index + 1} of ${state.total}`;
+            $('playQuestion').textContent = q.text;
+            $('playFeedback').hidden = true;
+            $('playChoices').innerHTML = q.choices.map((c, i) => `
+                <button type="button" class="tq-choice" data-choice="${i}">
+                    <span class="tq-letter">${LETTERS[i]}</span><span>${esc(c)}</span>
+                </button>`).join('');
+            deadline = performance.now() + state.secondsLeft * 1000;
+            tick();
+            timer = setInterval(tick, 250);
+        }
+
+        let lastShown = null;
+        function tick() {
+            const left = Math.max(0, (deadline - performance.now()) / 1000);
+            const secs = Math.ceil(left);
+            $('playSeconds').textContent = secs;
+            $('playBar').style.width = `${(left / state.question.seconds) * 100}%`;
+            $('playTimer').classList.toggle('is-low', secs <= 5);
+            if (secs !== lastShown && secs > 0 && secs <= 5) HCISfx.play(secs % 2 ? 'tick' : 'tock');
+            lastShown = secs;
+            if (left <= 0) {
+                clearInterval(timer);
+                HCISfx.play('timeUp');
+                submit(null);
+            }
+        }
+
+        $('playChoices').addEventListener('click', (e) => {
+            const btn = e.target.closest('[data-choice]');
+            if (btn) submit(Number(btn.dataset.choice));
+        });
+
+        async function submit(choice) {
+            if (busy) return;
+            busy = true;
+            clearInterval(timer);
+            const buttons = [...$('playChoices').querySelectorAll('.tq-choice')];
+            buttons.forEach(b => { b.disabled = true; });
+            if (choice !== null) buttons[choice].classList.add('is-picked');
+            try {
+                const next = await api.post(`/quizzes/${quizId}/answer`, { index: state.index, choice });
+                if (next.stale) return render(next);
+                // No right/wrong here on purpose: students only see their final score
+                const fb = $('playFeedback');
+                fb.innerHTML = next.timedOut ? '<i class="fa-solid fa-hourglass-end"></i> Time\'s up!' : '<i class="fa-solid fa-check"></i> Answer saved';
+                fb.hidden = false;
+                setTimeout(() => render(next), FEEDBACK_MS);
+            } catch (err) {
+                // Network hiccup: ask the server where the quiz is now
+                openQuiz(quizId);
+            }
+        }
+
+        function renderResult() {
+            show('result');
+            const pct = state.total ? Math.round((state.score / state.total) * 100) : 0;
+            $('resultScore').textContent = `${state.score}/${state.total}`;
+            $('resultLabel').textContent = pct >= 75 ? `${pct}% · Great job!` : pct >= 50 ? `${pct}% · Nice try!` : `${pct}% · Keep studying!`;
+        }
+
+        $('backToList').addEventListener('click', loadList);
+
+        loadList();
+    </script>
+</body>
+</html>

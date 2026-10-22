@@ -18,6 +18,8 @@ const instructorRoutes = require('./src/routes/instructor');
 const adminContentRoutes = require('./src/routes/adminContent');
 const adminInstructorRoutes = require('./src/routes/adminInstructors');
 const adminRoutes = require('./src/routes/admin');
+const quizRoutes = require('./src/routes/quizzes');
+const adminQuizRoutes = require('./src/routes/adminQuizzes');
 const { isClassOpen, requireClassOpen } = require('./src/middleware/classOpen');
 
 const app = express();
@@ -68,7 +70,7 @@ app.get('/api/class-status', async (req, res, next) => {
 
 // Student APIs only work while a teacher has the class open (logout always works).
 // /api/content stays open: it's public course text and the Admin Dashboard uses it.
-const studentApi = ['/api/auth', '/api/account', '/api/progress', '/api/bookmarks', '/api/gamify', '/api/announcements'];
+const studentApi = ['/api/auth', '/api/account', '/api/progress', '/api/bookmarks', '/api/gamify', '/api/announcements', '/api/quizzes'];
 app.use(studentApi, (req, res, next) => (req.path === '/logout' ? next() : requireClassOpen(req, res, next)));
 
 app.use('/api/auth', authRoutes);
@@ -78,9 +80,11 @@ app.use('/api/bookmarks', bookmarkRoutes);
 app.use('/api/gamify', gamifyRoutes);
 app.use('/api/content', contentRoutes);
 app.use('/api/announcements', announcementRoutes);
+app.use('/api/quizzes', quizRoutes);
 app.use('/api/instructor', instructorRoutes);
 app.use('/api/admin/content', adminContentRoutes);
 app.use('/api/admin/instructors', adminInstructorRoutes);
+app.use('/api/admin/quizzes', adminQuizRoutes);
 app.use('/api/admin', adminRoutes);
 
 // ----- Static front-end -----

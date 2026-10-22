@@ -648,6 +648,105 @@ async function init() {
                 NOT NULL
         );
 
+
+        /* Timed quizzes made by teachers (not the quiz cards).
+           questions = [{ text, choices: [..], answer: index, seconds }] */
+        CREATE TABLE IF NOT EXISTS quizzes (
+
+            id
+                SERIAL
+                PRIMARY KEY,
+
+            instructor_id
+                INTEGER
+                REFERENCES instructors(id)
+                ON DELETE SET NULL,
+
+            title
+                TEXT
+                NOT NULL,
+
+            description
+                TEXT
+                NOT NULL
+                DEFAULT '',
+
+            questions
+                JSONB
+                NOT NULL,
+
+            published
+                BOOLEAN
+                NOT NULL
+                DEFAULT FALSE,
+
+            created_at
+                TIMESTAMPTZ
+                NOT NULL
+                DEFAULT NOW(),
+
+            updated_at
+                TIMESTAMPTZ
+                NOT NULL
+                DEFAULT NOW()
+        );
+
+
+        /* One attempt per student per quiz. The server tracks which
+           question is showing and since when, so the timer can't be cheated.
+           answers = [{ choice, correct, timedOut }] */
+        CREATE TABLE IF NOT EXISTS quiz_attempts (
+
+            id
+                SERIAL
+                PRIMARY KEY,
+
+            quiz_id
+                INTEGER
+                NOT NULL
+                REFERENCES quizzes(id)
+                ON DELETE CASCADE,
+
+            user_id
+                INTEGER
+                NOT NULL
+                REFERENCES users(id)
+                ON DELETE CASCADE,
+
+            current
+                INTEGER
+                NOT NULL
+                DEFAULT 0,
+
+            shown_at
+                TIMESTAMPTZ
+                NOT NULL
+                DEFAULT NOW(),
+
+            answers
+                JSONB
+                NOT NULL
+                DEFAULT '[]'::jsonb,
+
+            score
+                INTEGER
+                NOT NULL
+                DEFAULT 0,
+
+            started_at
+                TIMESTAMPTZ
+                NOT NULL
+                DEFAULT NOW(),
+
+            finished_at
+                TIMESTAMPTZ,
+
+            UNIQUE (
+                quiz_id,
+                user_id
+            )
+        );
+
     `);
 
 
