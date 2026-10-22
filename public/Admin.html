@@ -583,6 +583,15 @@
                         ${d.badges.map(b => `<span class="badge-mini badge-${b.color}${b.earnedAt ? ' is-earned' : ''}" title="${escapeHtml(b.name)}${b.earnedAt ? '' : ' (locked)'}"><i class="fa-solid ${b.earnedAt ? b.icon : 'fa-lock'}"></i></span>`).join('')}
                     </div>
 
+                    <h4>Quizzes finished (${d.quizzes.length})</h4>
+                    <div class="admin-list">
+                        ${d.quizzes.length ? d.quizzes.map(q => `
+                            <div class="admin-list-item is-static">
+                                <span class="admin-tag">${q.score}/${q.total}</span>
+                                <span class="admin-list-text"><strong>${escapeHtml(q.title)}</strong><small>Finished ${formatDateTime(q.finishedAt)}</small></span>
+                            </div>`).join('') : '<p class="admin-empty">No quizzes finished yet.</p>'}
+                    </div>
+
                     <h4>Recent activity</h4>
                     <div class="admin-list">
                         ${d.recentActivity.length ? d.recentActivity.map(a => `

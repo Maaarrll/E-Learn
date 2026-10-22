@@ -13244,38 +13244,6 @@ fieldset.ce-field legend {
     color: #00260e;
 }
 
-.tq-timer {
-    display: inline-flex;
-    align-items: center;
-    gap: 6px;
-    padding: 6px 14px;
-    border-radius: 999px;
-    background: #e0f5f0;
-    color: #057a68;
-    font-size: 16px;
-}
-
-.tq-timer.is-low {
-    background: #ffe3e3;
-    color: #b42318;
-    animation: funJiggle 0.5s ease infinite;
-}
-
-.tq-timebar {
-    height: 10px;
-    margin: 14px 0 22px;
-    border-radius: 999px;
-    background: #eef6f0;
-    overflow: hidden;
-}
-
-.tq-timebar div {
-    height: 100%;
-    border-radius: inherit;
-    background: linear-gradient(90deg, var(--fun-pink), var(--fun-sun), var(--fun-mint));
-    transition: width 0.25s linear;
-}
-
 .tq-question {
     margin-bottom: 18px;
     font-size: 22px;
@@ -13283,58 +13251,6 @@ fieldset.ce-field legend {
     color: #00260e;
     white-space: pre-wrap;
 }
-
-.tq-choices {
-    display: grid;
-    grid-template-columns: repeat(2, minmax(0, 1fr));
-    gap: 12px;
-}
-
-.tq-choice {
-    display: flex;
-    align-items: center;
-    gap: 12px;
-    padding: 14px 16px;
-    border-radius: 18px;
-    border: 2px solid #dff0e3;
-    background: #f8fcf9;
-    color: #00260e;
-    font: inherit;
-    font-size: 16px;
-    font-weight: 700;
-    text-align: left;
-    cursor: pointer;
-    transition: transform 0.3s var(--fun-bounce), border-color 0.2s, background 0.2s;
-}
-
-.tq-choice:hover:not(:disabled) {
-    transform: translateY(-2px);
-    border-color: var(--fun-pink);
-}
-
-.tq-choice:focus-visible {
-    outline: 3px solid var(--fun-pink);
-    outline-offset: 2px;
-}
-
-.tq-choice:disabled {
-    cursor: default;
-}
-
-.tq-letter {
-    flex-shrink: 0;
-    width: 32px;
-    height: 32px;
-    display: flex;
-    align-items: center;
-    justify-content: center;
-    border-radius: 10px;
-    background: #fff;
-    border: 2px solid #dff0e3;
-    font-weight: 900;
-}
-
-.tq-choice.is-picked { border-color: var(--fun-pink); background: #fff0f6; }
 
 .tq-feedback {
     display: flex;
@@ -15104,5 +15020,337 @@ body.sb-reading .main-content {
 @media screen and (max-width: 768px) {
     .qz-card-for {
         margin-left: 0;
+    }
+}
+
+/* =========================================
+   Teacher quiz: game-show look while answering
+   (fun, but never shows right or wrong)
+   ========================================= */
+
+/* Rocket track */
+.tq-track {
+    position: relative;
+    height: 34px;
+    margin: 0 30px 14px 6px;
+}
+
+.tq-track-line {
+    position: absolute;
+    left: 0;
+    right: 0;
+    top: 14px;
+    height: 8px;
+    border-radius: 999px;
+    background: repeating-linear-gradient(90deg, #e3eee8 0 10px, transparent 10px 16px);
+}
+
+.tq-track-line div {
+    width: 0;
+    height: 100%;
+    border-radius: inherit;
+    background: linear-gradient(90deg, var(--fun-mint), var(--fun-sky), var(--fun-pink));
+    transition: width 0.6s var(--fun-bounce);
+}
+
+.tq-rocket {
+    position: absolute;
+    top: 0;
+    left: 0;
+    width: 34px;
+    height: 34px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    margin-left: -6px;
+    border-radius: 50%;
+    background: #fff;
+    color: var(--fun-pink);
+    font-size: 16px;
+    box-shadow: 0 4px 10px rgba(255, 111, 165, 0.35);
+    transform: rotate(45deg);
+    transition: left 0.6s var(--fun-bounce);
+}
+
+.tq-rocket i {
+    transform: rotate(-90deg);
+}
+
+.tq-flag {
+    position: absolute;
+    right: -28px;
+    top: 6px;
+    color: #00260e;
+    font-size: 18px;
+}
+
+/* Ring timer */
+.tq-ring {
+    position: relative;
+    width: 62px;
+    height: 62px;
+    --ring: #1e9e55;
+}
+
+.tq-ring svg {
+    width: 100%;
+    height: 100%;
+    transform: rotate(-90deg);
+}
+
+.tq-ring circle {
+    fill: #fff;
+    stroke-width: 6;
+}
+
+.tq-ring-track {
+    stroke: #e8f1ec;
+}
+
+.tq-ring-fill {
+    fill: none !important;
+    stroke: var(--ring);
+    stroke-linecap: round;
+    stroke-dasharray: 157.08;
+    transition: stroke-dashoffset 0.25s linear, stroke 0.3s;
+}
+
+.tq-ring b {
+    position: absolute;
+    inset: 0;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-size: 22px;
+    font-weight: 900;
+    color: var(--ring);
+}
+
+.tq-ring.is-mid { --ring: #e0a100; }
+
+.tq-ring.is-low {
+    --ring: #d6336c;
+    animation: funJiggle 0.5s ease infinite;
+}
+
+.tq-count {
+    padding: 6px 14px;
+    border-radius: 999px;
+    background: #f1f8f3;
+}
+
+.tq-keys {
+    margin: -8px 0 14px;
+    font-size: 12px;
+    color: #888;
+}
+
+.tq-keys kbd {
+    padding: 1px 6px;
+    border: 1px solid #d5e3db;
+    border-bottom-width: 2px;
+    border-radius: 5px;
+    background: #fff;
+    font-family: inherit;
+    font-size: 11px;
+}
+
+/* New question slides in */
+.tq-play.is-new .tq-question {
+    animation: tqSlideIn 0.4s var(--fun-bounce) both;
+}
+
+@keyframes tqSlideIn {
+    from { opacity: 0; transform: translateY(14px); }
+    to   { opacity: 1; transform: none; }
+}
+
+/* Answer tiles: one colour + shape each */
+.tq-choices {
+    display: grid;
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+    gap: 12px;
+}
+
+.tq-choice {
+    --tile: #1e9e55;
+    position: relative;
+    display: flex;
+    align-items: center;
+    gap: 14px;
+    min-height: 74px;
+    padding: 14px 16px;
+    border: none;
+    border-radius: 20px;
+    background: var(--tile);
+    color: #fff;
+    font: inherit;
+    font-size: 17px;
+    font-weight: 800;
+    text-align: left;
+    cursor: pointer;
+    box-shadow: 0 6px 0 color-mix(in srgb, var(--tile) 70%, #000);
+    transition: transform 0.25s var(--fun-bounce), box-shadow 0.15s, opacity 0.25s, filter 0.2s;
+}
+
+.tq-play.is-new .tq-choice {
+    animation: tqTileIn 0.45s var(--fun-bounce) both;
+    animation-delay: calc(var(--i) * 70ms);
+}
+
+@keyframes tqTileIn {
+    from { opacity: 0; transform: scale(0.85) translateY(10px); }
+    to   { opacity: 1; transform: none; }
+}
+
+.tq-c0 { --tile: #e0457b; }
+.tq-c1 { --tile: #2f74c0; }
+.tq-c2 { --tile: #d48a00; }
+.tq-c3 { --tile: #11916f; }
+.tq-c4 { --tile: #7a4fc4; }
+.tq-c5 { --tile: #d4572b; }
+
+.tq-choice:hover:not(:disabled) {
+    transform: translateY(-3px);
+    filter: brightness(1.06);
+}
+
+.tq-choice:active:not(:disabled) {
+    transform: translateY(4px);
+    box-shadow: 0 2px 0 color-mix(in srgb, var(--tile) 70%, #000);
+}
+
+.tq-choice:focus-visible {
+    outline: 4px solid #ffe66b;
+    outline-offset: 3px;
+}
+
+.tq-choice:disabled {
+    cursor: default;
+}
+
+.tq-shape {
+    flex-shrink: 0;
+    width: 40px;
+    height: 40px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    border-radius: 12px;
+    background: rgba(255, 255, 255, 0.22);
+    font-size: 18px;
+}
+
+.tq-choice-text {
+    flex: 1;
+    min-width: 0;
+}
+
+.tq-letter {
+    flex-shrink: 0;
+    width: 26px;
+    height: 26px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    border-radius: 8px;
+    background: rgba(255, 255, 255, 0.25);
+    font-size: 13px;
+    font-weight: 900;
+}
+
+/* Picked: that tile pops, the others fade (no right/wrong colours) */
+.tq-choices.has-pick .tq-choice:not(.is-picked) {
+    opacity: 0.35;
+    filter: grayscale(0.5);
+}
+
+.tq-choice.is-picked {
+    transform: scale(1.04);
+    box-shadow: 0 0 0 4px #fff, 0 0 0 8px var(--tile);
+    animation: tqPicked 0.4s var(--fun-bounce);
+}
+
+@keyframes tqPicked {
+    0%   { transform: scale(1); }
+    50%  { transform: scale(1.1) rotate(-1deg); }
+    100% { transform: scale(1.04); }
+}
+
+.tq-feedback {
+    justify-content: center;
+    font-size: 22px;
+}
+
+/* 3-2-1 Go! */
+.tq-countdown {
+    position: fixed;
+    inset: 0;
+    z-index: 1000;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    background: rgba(2, 71, 61, 0.88);
+}
+
+.tq-countdown[hidden] {
+    display: none;
+}
+
+.tq-countdown span {
+    width: 190px;
+    height: 190px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    border-radius: 50%;
+    background: #fff;
+    color: var(--fun-pink);
+    font-size: 96px;
+    font-weight: 900;
+    box-shadow: 0 0 0 14px rgba(255, 255, 255, 0.2);
+}
+
+.tq-countdown span.is-go {
+    background: var(--fun-sun);
+    color: #00260e;
+    font-size: 60px;
+}
+
+.tq-countdown span.is-pop {
+    animation: funPop 0.45s var(--fun-bounce) both;
+}
+
+@media screen and (max-width: 768px) {
+    /* One wide tile per row so long answers stay readable */
+    .tq-play .tq-choices {
+        grid-template-columns: 1fr;
+    }
+
+    .tq-choice {
+        min-height: 60px;
+        font-size: 16px;
+    }
+
+    /* No keyboard on phones */
+    .tq-keys,
+    .tq-letter {
+        display: none;
+    }
+
+    .tq-countdown span {
+        width: 150px;
+        height: 150px;
+        font-size: 76px;
+    }
+}
+
+@media (prefers-reduced-motion: reduce) {
+    .tq-ring.is-low,
+    .tq-play.is-new .tq-question,
+    .tq-play.is-new .tq-choice,
+    .tq-choice.is-picked,
+    .tq-countdown span.is-pop {
+        animation: none;
     }
 }

@@ -8,8 +8,8 @@
     <link rel="icon" href="favicon-32.png?v=2" type="image/png" sizes="32x32">
     <link rel="apple-touch-icon" href="apple-touch-icon.png?v=2">
     <meta name="theme-color" content="#02473d">
-    <link rel="stylesheet" href="style.css?v=83">
-    <link rel="stylesheet" href="dark.css?v=47">
+    <link rel="stylesheet" href="style.css?v=91">
+    <link rel="stylesheet" href="dark.css?v=55">
     <script src="js/theme.js?v=3"></script>
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
 </head>
@@ -106,15 +106,27 @@
 
                 <!-- Taking a quiz -->
                 <section class="tq-play" id="playView" hidden>
+                    <!-- Rocket moves along the track as questions are answered -->
+                    <div class="tq-track" aria-hidden="true">
+                        <div class="tq-track-line"><div id="playTrack"></div></div>
+                        <span class="tq-rocket" id="playRocket"><i class="fa-solid fa-rocket"></i></span>
+                        <span class="tq-flag"><i class="fa-solid fa-flag-checkered"></i></span>
+                    </div>
                     <div class="tq-play-top">
                         <span class="tq-count" id="playCount">Question 1 of 1</span>
-                        <span class="tq-timer" id="playTimer" aria-live="off"><i class="fa-solid fa-stopwatch"></i> <b id="playSeconds">0</b>s</span>
+                        <div class="tq-ring" id="playTimer" role="timer" aria-label="Seconds left">
+                            <svg viewBox="0 0 60 60" aria-hidden="true"><circle cx="30" cy="30" r="25" class="tq-ring-track"></circle><circle cx="30" cy="30" r="25" class="tq-ring-fill" id="playRing"></circle></svg>
+                            <b id="playSeconds">0</b>
+                        </div>
                     </div>
-                    <div class="tq-timebar" aria-hidden="true"><div id="playBar"></div></div>
                     <h3 class="tq-question" id="playQuestion"></h3>
+                    <p class="tq-keys">Tap an answer, or press <kbd>A</kbd>–<kbd>D</kbd> / <kbd>1</kbd>–<kbd>4</kbd></p>
                     <div class="tq-choices" id="playChoices"></div>
                     <p class="tq-feedback" id="playFeedback" role="status" hidden></p>
                 </section>
+
+                <!-- 3-2-1 Go! before a new quiz (the server clock starts after it) -->
+                <div class="tq-countdown" id="countdown" hidden aria-live="assertive"><span id="countdownNum"></span></div>
 
                 <!-- Result -->
                 <section class="tq-result" id="resultView" hidden>
@@ -139,7 +151,7 @@
 
     <script src="js/api.js?v=12"></script>
     <script src="js/notifications.js?v=2"></script>
-    <script src="js/sfx.js?v=8"></script>
+    <script src="js/sfx.js?v=9"></script>
     <script src="js/search.js?v=3"></script>
     <script>
         requireAuth();
@@ -148,6 +160,13 @@
         const esc = (t) => String(t).replace(/[&<>"']/g, c => ({ '&': '&amp;', '<': '&lt;', '>': '&gt;', '"': '&quot;', "'": '&#39;' }[c]));
         const LETTERS = 'ABCDEF';
         const FEEDBACK_MS = 900;
+        // Each answer tile gets its own colour and shape, like a game show
+        const SHAPES = ['fa-star', 'fa-heart', 'fa-circle', 'fa-square', 'fa-gem', 'fa-bolt'];
+        // Fun but neutral: nothing here hints whether the answer was right
+        const LOCKED = ['Locked in! 🔒', 'Nice pick! ✨', 'Got it! 👍', 'Answer saved! 💾', 'On to the next! 🚀', 'Boom! 💥'];
+        const RING = 2 * Math.PI * 25;
+        let justAnswered = false;   // confetti only when the quiz was finished just now
+        let countUp = null;         // so a quick switch to another result can't keep counting
 
         let quizId = null;
         let state = null;      // the server's view of the quiz (current question or result)
@@ -222,9 +241,27 @@
                 title: 'Start the quiz?',
                 message: 'Every question has a timer, and you only get one try. Once you start, the clock keeps running even if you leave the page.',
                 confirmText: 'Start', icon: 'fa-stopwatch',
-                onConfirm: () => openQuiz(id),
+                onConfirm: () => { setTimeout(() => countdown(id), 250); },
             });
         });
+
+        // 3, 2, 1, Go! then start (the server only starts the clock on /start)
+        function countdown(id) {
+            const box = $('countdown');
+            const num = $('countdownNum');
+            const steps = ['3', '2', '1', 'Go!'];
+            show('play');
+            $('playView').hidden = true;
+            box.hidden = false;
+            steps.forEach((label, i) => setTimeout(() => {
+                num.textContent = label;
+                num.className = label === 'Go!' ? 'is-go' : '';
+                void num.offsetWidth;     // restart the pop animation
+                num.classList.add('is-pop');
+                HCISfx.play(label === 'Go!' ? 'go' : 'count');
+            }, i * 750));
+            setTimeout(() => { box.hidden = true; openQuiz(id); }, steps.length * 750);
+        }
 
         async function openQuiz(id) {
             quizId = id;
@@ -236,19 +273,29 @@
             }
         }
 
-        function render(next) {
+        function render(next, fromAnswer = false) {
             state = next;
+            if (state.done && fromAnswer) justAnswered = true;
             clearInterval(timer);
             if (state.done) return renderResult();
             show('play');
             busy = false;
             const q = state.question;
+            justAnswered = false;
             $('playCount').textContent = `Question ${state.index + 1} of ${state.total}`;
             $('playQuestion').textContent = q.text;
             $('playFeedback').hidden = true;
+            const progress = state.total ? (state.index / state.total) * 100 : 0;
+            $('playTrack').style.width = `${progress}%`;
+            $('playRocket').style.left = `${progress}%`;
+            $('playView').classList.remove('is-new');
+            void $('playView').offsetWidth;
+            $('playView').classList.add('is-new');
             $('playChoices').innerHTML = q.choices.map((c, i) => `
-                <button type="button" class="tq-choice" data-choice="${i}">
-                    <span class="tq-letter">${LETTERS[i]}</span><span>${esc(c)}</span>
+                <button type="button" class="tq-choice tq-c${i}" data-choice="${i}" style="--i:${i}">
+                    <span class="tq-shape"><i class="fa-solid ${SHAPES[i]}"></i></span>
+                    <span class="tq-choice-text">${esc(c)}</span>
+                    <span class="tq-letter">${LETTERS[i]}</span>
                 </button>`).join('');
             deadline = performance.now() + state.secondsLeft * 1000;
             tick();
@@ -259,8 +306,10 @@
         function tick() {
             const left = Math.max(0, (deadline - performance.now()) / 1000);
             const secs = Math.ceil(left);
+            const part = Math.min(1, left / state.question.seconds);
             $('playSeconds').textContent = secs;
-            $('playBar').style.width = `${(left / state.question.seconds) * 100}%`;
+            $('playRing').style.strokeDashoffset = String(RING * (1 - part));
+            $('playTimer').classList.toggle('is-mid', part <= 0.5 && secs > 5);
             $('playTimer').classList.toggle('is-low', secs <= 5);
             if (secs !== lastShown && secs > 0 && secs <= 5) HCISfx.play(secs % 2 ? 'tick' : 'tock');
             lastShown = secs;
@@ -282,15 +331,19 @@
             clearInterval(timer);
             const buttons = [...$('playChoices').querySelectorAll('.tq-choice')];
             buttons.forEach(b => { b.disabled = true; });
-            if (choice !== null) buttons[choice].classList.add('is-picked');
+            if (choice !== null) {
+                buttons[choice].classList.add('is-picked');
+                $('playChoices').classList.add('has-pick');
+            }
             try {
                 const next = await api.post(`/quizzes/${quizId}/answer`, { index: state.index, choice });
                 if (next.stale) return render(next);
                 // No right/wrong here on purpose: students only see their final score
                 const fb = $('playFeedback');
-                fb.innerHTML = next.timedOut ? '<i class="fa-solid fa-hourglass-end"></i> Time\'s up!' : '<i class="fa-solid fa-check"></i> Answer saved';
+                fb.textContent = next.timedOut ? '⏰ Time\'s up!' : LOCKED[Math.floor(Math.random() * LOCKED.length)];
                 fb.hidden = false;
-                setTimeout(() => render(next), FEEDBACK_MS);
+                if (!next.timedOut) HCISfx.play('lockIn');
+                setTimeout(() => { $('playChoices').classList.remove('has-pick'); render(next, true); }, FEEDBACK_MS);
             } catch (err) {
                 // Network hiccup: ask the server where the quiz is now
                 openQuiz(quizId);
@@ -300,12 +353,37 @@
         function renderResult() {
             show('result');
             const pct = state.total ? Math.round((state.score / state.total) * 100) : 0;
-            $('resultScore').textContent = `${state.score}/${state.total}`;
+            // Score counts up; confetti when the quiz was just finished
+            const counting = justAnswered && !state.missed;
+            clearInterval(countUp);
+            let shown = counting ? 0 : state.score;
+            $('resultScore').textContent = `${shown}/${state.total}`;
+            if (counting) {
+                const final = state.score, total = state.total;
+                countUp = setInterval(() => {
+                    shown += 1;
+                    if (shown >= final) { shown = final; clearInterval(countUp); }
+                    $('resultScore').textContent = `${shown}/${total}`;
+                }, Math.max(60, 900 / Math.max(1, state.score)));
+                try { HCISfx.confetti(pct >= 50 ? 140 : 70); } catch (e) { /* visuals must never break the quiz */ }
+            }
+            justAnswered = false;
             $('resultLabel').textContent = state.missed ? 'Missed · the deadline passed before you took it'
                 : pct >= 75 ? `${pct}% · Great job!` : pct >= 50 ? `${pct}% · Nice try!` : `${pct}% · Keep studying!`;
         }
 
         $('backToList').addEventListener('click', loadList);
+
+        // Keyboard: A-F or 1-6 picks an answer
+        document.addEventListener('keydown', (e) => {
+            if ($('playView').hidden || busy || e.ctrlKey || e.metaKey || e.altKey || (e.target.closest && e.target.closest('input, textarea'))) return;
+            const k = e.key.toUpperCase();
+            const i = /^[1-6]$/.test(k) ? Number(k) - 1 : LETTERS.indexOf(k);
+            if (i >= 0 && k.length === 1 && state && !state.done && i < state.question.choices.length) {
+                e.preventDefault();
+                submit(i);
+            }
+        });
 
         loadList();
     </script>
