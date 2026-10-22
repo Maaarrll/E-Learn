@@ -6,6 +6,7 @@ This file provides guidance to Claude Code (claude.ai/code) when working with co
 
 - `npm run dev` — server with `node --watch`. Needs `DATABASE_URL`; the server only listens after `db.ready` resolves.
 - `npm test` — NOT a test suite. `scripts/check.js` only checks that every `.js` file and every inline `<script>` in the HTML pages parses, and that `public/dark.css` is up to date. There are no unit tests; verify behavior by running the app.
+- `node scripts/quiz-import-check.js` — assert-based self-check for the quiz file importer (`public/js/quiz-import.js`).
 - `npm run lint` — ESLint on `.js` files (not inline HTML scripts). `public/js` globals are shared across files, so `no-undef` is off there.
 - `npm run build:dark` — regenerate `public/dark.css` from `public/style.css`. Run after any `style.css` change (a hook does this automatically). Never edit `dark.css` by hand; manual dark-mode fixes go in `scripts/dark-manual.css`.
 - `npm run instructor -- <add|set-role|reset-password|rename|remove|list> ...` — manage instructor accounts.
