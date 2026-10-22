@@ -6,6 +6,7 @@
 //
 // Usage:   HCISfx.play('correct' | 'wrong' | 'levelUp' | 'mastered')            (Situation Quizzes)
 //          HCISfx.play('cardCorrect' | 'cardWrong' | 'cardMastered' | 'tick' | 'tock' | 'timeUp')  (Quiz Cards)
+//          HCISfx.play('lockIn' | 'count' | 'go')                                    (Teacher Quizzes)
 // May maliit na mute button (kanang-itaas) sa Situation Quizzes at Quiz Cards
 // na naaalala ng browser. Sa ibang pages, confetti lang ang ginagamit.
 
@@ -148,6 +149,24 @@
       tone({ freq: 950, slideTo: 600, start: 0.00, dur: 0.07, type: 'triangle', vol: 0.35 });
     },
 
+    // ---- Teacher Quizzes (no right/wrong sounds there, on purpose) ----
+
+    // Answer locked in: a neutral bubbly pop
+    lockIn: function () {
+      tone({ freq: 620, slideTo: 990, start: 0.00, dur: 0.09, type: 'sine', vol: 0.28 });
+      tone({ freq: 1240, start: 0.07, dur: 0.08, type: 'triangle', vol: 0.12 });
+    },
+
+    // 3-2-1 countdown beep, then "Go!"
+    count: function () {
+      tone({ freq: N.G4 * 2, start: 0.00, dur: 0.14, type: 'triangle', vol: 0.25 });
+    },
+    go: function () {
+      tone({ freq: N.C5, start: 0.00, dur: 0.12, type: 'triangle', vol: 0.22 });
+      tone({ freq: N.E5, start: 0.06, dur: 0.12, type: 'triangle', vol: 0.22 });
+      tone({ freq: N.C6, start: 0.12, dur: 0.30, type: 'triangle', vol: 0.25 });
+    },
+
     // Naubos ang oras: alarm-clock na "brring" + pababang tono
     timeUp: function () {
       for (var i = 0; i < 6; i++) {
@@ -229,7 +248,7 @@
   function mountButton() {
     if (document.getElementById('sfxToggle')) return;
     // Other pages load this file only for the confetti (badge pop-ups)
-    if (!document.body.matches('.case-page, .study-page')) return;
+    if (!document.body.matches('.case-page, .study-page, .quiz-page')) return;
 
     var btn = document.createElement('button');
     btn.id = 'sfxToggle';
@@ -251,7 +270,8 @@
       // Short preview so the user knows it's on (sound only, no confetti).
       // Quiz Cards previews its own "correct" sound.
       if (!muted) {
-        var preview = document.body.classList.contains('study-page') ? SOUNDS.cardCorrect : SOUNDS.correct;
+        var preview = document.body.classList.contains('study-page') ? SOUNDS.cardCorrect
+          : document.body.classList.contains('quiz-page') ? SOUNDS.lockIn : SOUNDS.correct;
         try { preview(); } catch (e) { /* ignore */ }
       }
     });

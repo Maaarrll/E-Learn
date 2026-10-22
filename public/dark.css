@@ -4183,41 +4183,8 @@
 :root[data-theme="dark"] .tq-play-top {
     color: hsl(142 75% 92%);
 }
-:root[data-theme="dark"] .tq-timer {
-    background: hsl(166 45% 22%);
-    color: hsl(171 75% 82%);
-}
-:root[data-theme="dark"] .tq-timer.is-low {
-    background: hsl(0 45% 20%);
-    color: hsl(4 75% 74%);
-}
-:root[data-theme="dark"] .tq-timebar {
-    background: hsl(135 31% 20%);
-}
-:root[data-theme="dark"] .tq-timebar div {
-    background: linear-gradient(90deg, var(--fun-pink), var(--fun-sun), var(--fun-mint));
-}
 :root[data-theme="dark"] .tq-question {
     color: hsl(142 75% 92%);
-}
-:root[data-theme="dark"] .tq-choice {
-    border: 2px solid hsl(134 36% 23%);
-    background: hsl(135 40% 18%);
-    color: hsl(142 75% 92%);
-}
-:root[data-theme="dark"] .tq-choice:hover:not(:disabled) {
-    border-color: var(--fun-pink);
-}
-:root[data-theme="dark"] .tq-choice:focus-visible {
-    outline: 3px solid var(--fun-pink);
-}
-:root[data-theme="dark"] .tq-letter {
-    background: hsl(165 14% 17%);
-    border: 2px solid hsl(134 36% 23%);
-}
-:root[data-theme="dark"] .tq-choice.is-picked {
-    border-color: var(--fun-pink);
-    background: hsl(336 45% 19%);
 }
 :root[data-theme="dark"] .tq-feedback {
     color: hsl(171 75% 82%);
@@ -4780,6 +4747,104 @@
 }
 :root[data-theme="dark"] .qz-card-for {
     color: hsl(211 61% 70%);
+}
+:root[data-theme="dark"] .tq-track-line {
+    background: repeating-linear-gradient(90deg, hsl(147 24% 22%) 0 10px, transparent 10px 16px);
+}
+:root[data-theme="dark"] .tq-track-line div {
+    background: linear-gradient(90deg, var(--fun-mint), var(--fun-sky), var(--fun-pink));
+}
+:root[data-theme="dark"] .tq-rocket {
+    background: hsl(165 14% 17%);
+    color: var(--fun-pink);
+    box-shadow: 0 4px 10px rgba(255, 111, 165, 0.35);
+}
+:root[data-theme="dark"] .tq-flag {
+    color: hsl(142 75% 92%);
+}
+:root[data-theme="dark"] .tq-ring {
+    --ring: #1e9e55;
+}
+:root[data-theme="dark"] .tq-ring circle {
+    fill: #fff;
+}
+:root[data-theme="dark"] .tq-ring-track {
+    stroke: #e8f1ec;
+}
+:root[data-theme="dark"] .tq-ring-fill {
+    fill: none !important;
+    stroke: var(--ring);
+}
+:root[data-theme="dark"] .tq-ring b {
+    color: var(--ring);
+}
+:root[data-theme="dark"] .tq-ring.is-mid {
+    --ring: #e0a100;
+}
+:root[data-theme="dark"] .tq-ring.is-low {
+    --ring: #d6336c;
+}
+:root[data-theme="dark"] .tq-count {
+    background: hsl(137 33% 19%);
+}
+:root[data-theme="dark"] .tq-keys {
+    color: hsl(165 12% 67%);
+}
+:root[data-theme="dark"] .tq-keys kbd {
+    border: 1px solid hsl(146 20% 25%);
+    background: hsl(165 14% 17%);
+}
+:root[data-theme="dark"] .tq-choice {
+    --tile: #1e9e55;
+    border: none;
+    background: var(--tile);
+    color: #fff;
+    box-shadow: 0 6px 0 color-mix(in srgb, var(--tile) 70%, #000);
+}
+:root[data-theme="dark"] .tq-c0 {
+    --tile: #e0457b;
+}
+:root[data-theme="dark"] .tq-c1 {
+    --tile: #2f74c0;
+}
+:root[data-theme="dark"] .tq-c2 {
+    --tile: #d48a00;
+}
+:root[data-theme="dark"] .tq-c3 {
+    --tile: #11916f;
+}
+:root[data-theme="dark"] .tq-c4 {
+    --tile: #7a4fc4;
+}
+:root[data-theme="dark"] .tq-c5 {
+    --tile: #d4572b;
+}
+:root[data-theme="dark"] .tq-choice:active:not(:disabled) {
+    box-shadow: 0 2px 0 color-mix(in srgb, var(--tile) 70%, #000);
+}
+:root[data-theme="dark"] .tq-choice:focus-visible {
+    outline: 4px solid #ffe66b;
+}
+:root[data-theme="dark"] .tq-shape {
+    background: rgba(255, 255, 255, 0.22);
+}
+:root[data-theme="dark"] .tq-letter {
+    background: rgba(255, 255, 255, 0.25);
+}
+:root[data-theme="dark"] .tq-choice.is-picked {
+    box-shadow: 0 0 0 4px hsl(165 14% 17%), 0 0 0 8px var(--tile);
+}
+:root[data-theme="dark"] .tq-countdown {
+    background: rgba(2, 71, 61, 0.88);
+}
+:root[data-theme="dark"] .tq-countdown span {
+    background: hsl(165 14% 17%);
+    color: var(--fun-pink);
+    box-shadow: 0 0 0 14px rgba(255, 255, 255, 0.2);
+}
+:root[data-theme="dark"] .tq-countdown span.is-go {
+    background: var(--fun-sun);
+    color: #00260e;
 }
 
 /* ---------- from update-password.html ---------- */

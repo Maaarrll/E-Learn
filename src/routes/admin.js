@@ -201,6 +201,13 @@ router.get('/students/:id', async (req, res, next) => {
       'SELECT type, description, created_at FROM activity_log WHERE user_id = $1 ORDER BY created_at DESC LIMIT 20',
       [id]
     );
+    const { rows: quizzes } = await pool.query(
+      `SELECT q.title, a.score, jsonb_array_length(q.questions) AS total, a.finished_at
+       FROM quiz_attempts a JOIN quizzes q ON q.id = a.quiz_id
+       WHERE a.user_id = $1 AND a.finished_at IS NOT NULL
+       ORDER BY a.finished_at DESC`,
+      [id]
+    );
     const today = todayLocal();
     const { rows: dayRows } = await pool.query(
       'SELECT day, answers, correct, videos, topics_read FROM daily_activity WHERE user_id = $1 AND day >= $2',
@@ -231,6 +238,7 @@ router.get('/students/:id', async (req, res, next) => {
       mistakes: mistakes.map(m => ({ source: m.source, itemKey: m.item_key, wrongCount: m.wrong_count, lastWrongAt: m.last_wrong_at })),
       badges: getBadges(content.totals).map(b => ({ id: b.id, name: b.name, icon: b.icon, color: b.color, earnedAt: earnedAt.get(b.id) || null })),
       recentActivity: activity,
+      quizzes: quizzes.map(q => ({ title: q.title, score: q.score, total: q.total, finishedAt: q.finished_at })),
       last14,
     });
   } catch (err) {
