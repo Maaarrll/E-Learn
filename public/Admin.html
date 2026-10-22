@@ -8,8 +8,8 @@
     <link rel="icon" href="favicon-32.png?v=2" type="image/png" sizes="32x32">
     <link rel="apple-touch-icon" href="apple-touch-icon.png?v=2">
     <meta name="theme-color" content="#02473d">
-    <link rel="stylesheet" href="style.css?v=82">
-    <link rel="stylesheet" href="dark.css?v=46">
+    <link rel="stylesheet" href="style.css?v=89">
+    <link rel="stylesheet" href="dark.css?v=53">
     <script src="js/theme.js?v=3"></script>
     <!-- FontAwesome para sa icons -->
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
@@ -274,11 +274,11 @@
         </aside>
     </div>
 
-    <script src="js/api.js?v=11"></script>
+    <script src="js/api.js?v=12"></script>
     <script src="js/richtext.js?v=1"></script>
     <script src="js/admin-content.js?v=6"></script>
     <script src="js/quiz-import.js?v=1"></script>
-    <script src="js/admin-quizzes.js?v=3"></script>
+    <script src="js/admin-quizzes.js?v=8"></script>
     <script>
         const ACTIVITY_LABELS = { case_study: 'Situation Quiz', study_card: 'Quiz Card', video: 'Video', lesson: 'Lesson' };
         const AUDIT_ICONS = {
@@ -289,7 +289,7 @@
             reset_instructor_password: 'fa-key', remove_instructor: 'fa-user-minus', clear_audit: 'fa-trash',
             open_class: 'fa-lock-open', close_class: 'fa-lock',
             create_quiz: 'fa-stopwatch', update_quiz: 'fa-stopwatch', publish_quiz: 'fa-upload', unpublish_quiz: 'fa-eye-slash',
-            delete_quiz: 'fa-trash-can', allow_quiz_retake: 'fa-rotate-left',
+            delete_quiz: 'fa-trash-can', allow_quiz_retake: 'fa-rotate-left', schedule_quiz: 'fa-calendar-days',
         };
         const AUDIT_LABELS = {
             open_class: () => 'Opened the class',
@@ -318,6 +318,7 @@
             unpublish_quiz: (e) => `Unpublished quiz "${e.details}"`,
             delete_quiz: (e) => `Deleted quiz "${e.details}"`,
             allow_quiz_retake: (e) => `Let ${e.targetName || 'a student'} retake "${e.details}"`,
+            schedule_quiz: (e) => `Changed the time frame or sections of quiz "${e.details}"`,
         };
 
         let students = [];
@@ -347,7 +348,7 @@
         }
 
         function sectionOf(s) {
-            return [s.program, s.yearSection].filter(Boolean).join(' ') || 'No section';
+            return s.yearSection || 'No section';
         }
 
         function progressBar(percent) {
@@ -469,6 +470,8 @@
             const programs = [...new Set(students.map(s => s.program).filter(Boolean))].sort();
             const sections = [...new Set(students.map(s => s.yearSection).filter(Boolean))].sort();
             $('filterProgram').insertAdjacentHTML('beforeend', programs.map(p => `<option>${escapeHtml(p)}</option>`).join(''));
+            // "Program" is the school name; with one school there's nothing to filter
+            $('filterProgram').hidden = programs.length < 2;
             $('filterSection').insertAdjacentHTML('beforeend', sections.map(s => `<option>${escapeHtml(s)}</option>`).join(''));
         }
 
@@ -655,7 +658,7 @@
         }
 
         // ---------------- Announcements ----------------
-        const sectionLabel = (sec) => `${sec.program} ${sec.yearSection}`;
+        const sectionLabel = (sec) => sec.yearSection || sec.program;
 
         async function loadAnnouncements() {
             try {
@@ -1090,7 +1093,7 @@
             $('noSectionsNote').hidden = instructor.isAdmin || instructor.sections.length > 0;
             if (!instructor.isAdmin) {
                 sectionSubtitle = instructor.sections.length
-                    ? `Your sections: ${instructor.sections.map(sec => `${sec.program} ${sec.yearSection}`).join(', ')}`
+                    ? `Your sections: ${instructor.sections.map(sec => sec.yearSection || sec.program).join(', ')}`
                     : 'How the students in your sections are doing.';
             }
             $('sidebarAvatar').textContent = initials(instructor.fullName) || 'IN';

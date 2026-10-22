@@ -9,8 +9,8 @@
     <link rel="icon" href="favicon-32.png?v=2" type="image/png" sizes="32x32">
     <link rel="apple-touch-icon" href="apple-touch-icon.png?v=2">
     <meta name="theme-color" content="#02473d">
-    <link rel="stylesheet" href="style.css?v=73">
-    <link rel="stylesheet" href="dark.css?v=37">
+    <link rel="stylesheet" href="style.css?v=88">
+    <link rel="stylesheet" href="dark.css?v=52">
     <script src="js/theme.js?v=3"></script>
 
     <link
@@ -315,7 +315,7 @@
     </div>
 
 
-    <script src="js/api.js?v=11"></script>
+    <script src="js/api.js?v=12"></script>
     <script src="js/notifications.js?v=2"></script>
     <script src="js/sfx.js?v=8"></script>
     <script src="js/gamify.js?v=3"></script>
@@ -377,7 +377,7 @@
             const name = els.fullName.value.trim() || 'Your Account';
             document.getElementById('profileName').textContent = name;
 
-            const meta = [els.program.value.trim(), els.yearSection.value.trim()].filter(Boolean).join(' · ');
+            const meta = els.yearSection.value.trim();
             document.getElementById('profileMeta').textContent = meta || 'ValuesLearn student';
 
             const id = els.studentId.value.trim();

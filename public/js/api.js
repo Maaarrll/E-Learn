@@ -57,7 +57,7 @@ function renderSidebarUser(user) {
     if (!nameEl) return;
 
     nameEl.textContent = user.fullName || 'My Account';
-    const meta = [user.program, user.yearSection].filter(Boolean).join(' · ');
+    const meta = user.yearSection || '';
     document.getElementById('sidebarMeta').textContent = meta || 'View profile';
 
     const avatar = document.getElementById('sidebarAvatar');
