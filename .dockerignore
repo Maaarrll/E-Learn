@@ -1,0 +1,9 @@
+# Secrets and local data must never be baked into the image
+.env
+.localdb/
+*.log
+node_modules/
+.git/
+.github/
+.claude/
+public/uploads/*

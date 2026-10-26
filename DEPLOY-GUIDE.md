@@ -25,8 +25,12 @@ sa Supabase at Cloudinary — hindi na sa disk ng server mismo.
 1. I-push ang code na ito sa isang GitHub repo.
 2. Sa https://render.com, gumawa ng bagong **Web Service**, ikonekta ang repo mo.
 3. Settings:
-   - **Build command:** `npm install`
-   - **Start command:** `node server.js`
+   - **Language / Runtime:** `Docker` (gagamitin ni Render ang `Dockerfile`;
+     wala nang build o start command na ilalagay)
+   - Ang `.env`, `.localdb/` at logs ay hindi kasama sa image (`.dockerignore`),
+     kaya ang mga secret ay sa **Environment** tab lang ilalagay.
+   - Habang testing pa lang, may `public/robots.txt` para hindi ma-index ng
+     Google ang site. **Burahin ito kapag totoong launch na.**
 4. Sa **Environment** tab, idagdag ang mga sumusunod (huwag i-commit ang mga ito sa
    Git — dito lang sila ilalagay, sa dashboard ng Render):
    - `DATABASE_URL` = yung Supabase connection string mo
