@@ -42,7 +42,7 @@ router.get('/lessons', async (req, res, next) => {
 router.get('/case-studies', async (req, res, next) => {
   try {
     const { cases } = await getContent();
-    res.json({ scenarios: cases.map(c => ({ ...pick(c, ['number', 'text', 'question', 'options', 'answer']), key: Number(c.key) })) });
+    res.json({ scenarios: cases.map(c => ({ ...pick(c, ['number', 'text', 'question', 'options', 'answer', 'explanation']), key: Number(c.key) })) });
   } catch (err) {
     next(err);
   }
