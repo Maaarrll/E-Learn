@@ -5138,6 +5138,108 @@
     border-color: #1e9e55;
     background: hsl(144 45% 20%);
 }
+:root[data-theme="dark"] .sb-points {
+    border: 2px solid var(--sb-ink);
+    background: hsl(165 14% 17%);
+    color: var(--sb-ink);
+    box-shadow: 2px 2px 0 var(--sb-ink);
+}
+:root[data-theme="dark"] .sb-points i {
+    color: hsl(45 75% 72%);
+}
+:root[data-theme="dark"] .sb-stickers {
+    border: 3px solid var(--sb-ink);
+    background: hsl(165 14% 17%);
+}
+:root[data-theme="dark"] .sb-stickers h3 {
+    color: var(--sb-ink);
+}
+:root[data-theme="dark"] .sb-stickers > p {
+    color: hsl(165 12% 78%);
+}
+:root[data-theme="dark"] .sb-sticker {
+    color: hsl(211 12% 64%);
+}
+:root[data-theme="dark"] .sb-sticker-face {
+    border: 3px dashed hsl(210 18% 29%);
+    background: hsl(210 20% 19%);
+}
+:root[data-theme="dark"] .sb-sticker.is-earned {
+    color: var(--sb-ink);
+}
+:root[data-theme="dark"] .sb-sticker.is-earned .sb-sticker-face {
+    border: 4px solid hsl(165 14% 17%);
+    background: var(--book);
+    color: #fff;
+    box-shadow: 0 0 0 3px var(--sb-ink), 4px 4px 0 3px var(--sb-ink);
+}
+:root[data-theme="dark"] .sb-sticker.is-earned small {
+    color: var(--book);
+}
+:root[data-theme="dark"] .sb-pop {
+    border: 2px solid var(--sb-ink);
+    background: #ffe66b;
+    color: var(--sb-ink);
+}
+:root[data-theme="dark"] .sb-check {
+    border: 3px solid var(--sb-ink);
+    background: hsl(50 45% 22%);
+    box-shadow: 5px 5px 0 var(--sb-ink);
+}
+:root[data-theme="dark"] .sb-check-title {
+    color: var(--book);
+}
+:root[data-theme="dark"] .sb-check-q {
+    color: var(--sb-ink);
+}
+:root[data-theme="dark"] .sb-check-options button {
+    border: 2px solid var(--sb-ink);
+    background: hsl(165 14% 17%);
+    color: var(--sb-ink);
+    box-shadow: 2px 2px 0 var(--sb-ink);
+}
+:root[data-theme="dark"] .sb-check-options button span {
+    background: var(--book);
+    color: #fff;
+}
+:root[data-theme="dark"] .sb-check-options button.is-right {
+    background: hsl(137 45% 22%);
+    border-color: #1e7e45;
+}
+:root[data-theme="dark"] .sb-check-options button.is-right span {
+    background: #1e7e45;
+}
+:root[data-theme="dark"] .sb-check-options button.is-wrong {
+    background: hsl(0 45% 21%);
+}
+:root[data-theme="dark"] .sb-check-msg {
+    color: var(--sb-ink);
+}
+:root[data-theme="dark"] .sb-check.is-done .sb-check-msg {
+    color: hsl(144 62% 79%);
+}
+:root[data-theme="dark"] .sb-flip-hint {
+    color: hsl(165 12% 78%);
+}
+:root[data-theme="dark"] .sb-flip:focus-visible {
+    outline: 3px solid var(--book);
+}
+:root[data-theme="dark"] .sb-flip-front,
+:root[data-theme="dark"] .sb-flip-back {
+    border: 3px solid var(--sb-ink);
+    box-shadow: 4px 4px 0 var(--sb-ink);
+}
+:root[data-theme="dark"] .sb-flip-front {
+    background: var(--book);
+    color: #fff;
+}
+:root[data-theme="dark"] .sb-flip-back {
+    background: hsl(165 14% 17%);
+    color: var(--sb-ink);
+}
+:root[data-theme="dark"] .sb-flip-back b {
+    color: var(--book);
+}
 
 /* ---------- from update-password.html ---------- */
 :root[data-theme="dark"] body.update-password-page {
