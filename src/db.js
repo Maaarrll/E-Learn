@@ -649,6 +649,33 @@ async function init() {
         );
 
 
+        /* Signup confirmation codes sent by email. Only a hash of the code is kept. */
+        CREATE TABLE IF NOT EXISTS signup_codes (
+
+            email_hash
+                TEXT
+                PRIMARY KEY,
+
+            code_hash
+                TEXT
+                NOT NULL,
+
+            expires_at
+                TIMESTAMPTZ
+                NOT NULL,
+
+            attempts
+                INTEGER
+                NOT NULL
+                DEFAULT 0,
+
+            sent_at
+                TIMESTAMPTZ
+                NOT NULL
+                DEFAULT NOW()
+        );
+
+
         /* Timed quizzes made by teachers (not the quiz cards).
            questions = [{ text, choices: [..], answer: index, seconds }] */
         CREATE TABLE IF NOT EXISTS quizzes (
