@@ -1,7 +1,7 @@
 // src/utils/mailer.js
 
 /*
-    Sends ValuesLearn notification emails:
+    Sends ALLEARN notification emails:
 
     - Signup notification
     - Login notification
@@ -23,7 +23,7 @@ const nodemailer =
 
 
 const APP_NAME =
-    'ValuesLearn';
+    'ALLEARN';
 
 
 let smtpTransport =
@@ -466,6 +466,70 @@ function sendSignupNotification(
 
 
 /* =========================================================
+   SIGNUP CONFIRMATION CODE EMAIL
+   ========================================================= */
+
+
+/*
+    Sent before the account is created, to prove the
+    email belongs to the person signing up.
+*/
+function sendSignupCodeEmail(
+    toEmail,
+    firstName,
+    code,
+    minutesValid
+) {
+
+    const name =
+        firstName || 'there';
+
+
+    return sendMail({
+
+        label:
+            'signup code',
+
+        to:
+            toEmail,
+
+        subject:
+            `${code} is your ${APP_NAME} confirmation code`,
+
+        text:
+
+            `Hi ${name},\n\n` +
+
+            `Your ${APP_NAME} confirmation code is: ${code}\n\n` +
+
+            `Enter it on the sign-up page to create your account. It is valid for ${minutesValid} minutes.\n\n` +
+
+            `If you did NOT try to sign up, you can ignore this email.\n\n` +
+
+            `— ${APP_NAME}`,
+
+        html:
+            layout(
+
+                'Confirm your email',
+
+                `<p>Hi <strong>${esc(name)}</strong>,</p>` +
+
+                `<p>Enter this code on the sign-up page to create your <strong>${APP_NAME}</strong> account:</p>` +
+
+                `<p style="text-align: center; font-size: 32px; font-weight: bold; letter-spacing: 8px; margin: 24px 0;">${esc(code)}</p>` +
+
+                `<p style="font-size: 13px; color: #555;">This code is valid for <strong>${minutesValid} minutes</strong>.</p>` +
+
+                `<p>If you did <strong>NOT</strong> try to sign up, you can ignore this email.</p>`
+
+            )
+
+    });
+}
+
+
+/* =========================================================
    LOGIN EMAIL
    ========================================================= */
 
@@ -692,6 +756,8 @@ function sendInactiveReminder(
 module.exports = {
 
     sendSignupNotification,
+
+    sendSignupCodeEmail,
 
     sendLoginNotification,
 

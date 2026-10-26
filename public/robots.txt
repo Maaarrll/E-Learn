@@ -1,0 +1,3 @@
+# Test phase: keep search engines out. Remove this file at real launch.
+User-agent: *
+Disallow: /

@@ -177,7 +177,7 @@
   };
 
   // ---------- Confetti (visual reward, shown even when muted) ----------
-  var CONFETTI_COLORS = ['#ff6fa5', '#ff8a5c', '#ffc93c', '#3fcf9b', '#01c6ab', '#06994e'];
+  var CONFETTI_COLORS = ['#6fc3ff', '#ff8a5c', '#ffc93c', '#3f89cf', '#0185c6', '#064299'];
   var CONFETTI_AMOUNT = { correct: 40, levelUp: 80, mastered: 140, cardCorrect: 40, cardMastered: 140 };
 
   function confetti(amount) {
@@ -256,7 +256,7 @@
     btn.style.cssText = [
       'position:fixed', 'top:16px', 'right:16px', 'z-index:9999',
       'width:42px', 'height:42px', 'border-radius:50%',
-      'border:1px solid #cbdad6', 'background:#fff', 'color:#327064',
+      'border:1px solid #cbd4da', 'background:#fff', 'color:#325970',
       'font-size:17px', 'cursor:pointer',
       'box-shadow:0 2px 8px rgba(0,0,0,0.12)',
       'display:flex', 'align-items:center', 'justify-content:center'

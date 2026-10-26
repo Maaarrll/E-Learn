@@ -656,9 +656,11 @@ router.delete(
                 Also remove the profile photo from Cloudinary.
                 (Best effort: a failure here shouldn't block deletion.)
             */
-            cloudinary.uploader
-                .destroy(`hcilearn/profile_photos/user${req.userId}`, { resource_type: 'image' })
-                .catch(err => console.error('Could not delete profile photo:', err.message));
+            try {
+                cloudinary.uploader
+                    .destroy(`hcilearn/profile_photos/user${req.userId}`, { resource_type: 'image' })
+                    .catch(err => console.error('Could not delete profile photo:', err.message));
+            } catch (err) { /* Cloudinary not set up */ }
 
 
             clearSession(res);

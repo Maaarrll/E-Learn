@@ -4,25 +4,25 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
 
-    <title>Sign Up · ValuesLearn</title>
-    <meta name="description" content="Create your ValuesLearn account to start learning Values Education 7.">
+    <title>Sign Up · ALLEARN</title>
+    <meta name="description" content="Create your ALLEARN account to start learning Values Education 7.">
 
-    <link rel="icon" href="favicon-32.png?v=2" type="image/png" sizes="32x32">
-    <link rel="apple-touch-icon" href="apple-touch-icon.png?v=2">
-    <meta name="theme-color" content="#02473d">
+    <link rel="icon" href="favicon-32.png?v=3" type="image/png" sizes="32x32">
+    <link rel="apple-touch-icon" href="apple-touch-icon.png?v=3">
+    <meta name="theme-color" content="#023047">
     <link rel="stylesheet" href="style.css?v=94">
     <link rel="stylesheet" href="dark.css?v=58">
     <script src="js/theme.js?v=3"></script>
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
 
-    <meta property="og:title" content="ValuesLearn | Interactive Study Guide">
+    <meta property="og:title" content="ALLEARN | Interactive Study Guide">
     <meta property="og:description" content="The Values Education 7 learning platform of Allen National High School.">
     <meta property="og:type" content="website">
 </head>
 
 <body class="signup-page">
     <noscript>
-        <div class="noscript-note">ValuesLearn needs JavaScript to work. Please turn it on in your browser settings.</div>
+        <div class="noscript-note">ALLEARN needs JavaScript to work. Please turn it on in your browser settings.</div>
     </noscript>
 
     <div class="signup-container">
@@ -32,7 +32,7 @@
             <!-- HEADER -->
             <div class="header-text">
 
-                <img src="images.png" alt="ValuesLearn logo" class="signup-logo">
+                <img src="images.png" alt="ALLEARN logo" class="signup-logo">
 
                 <h2>Sign Up</h2>
 
@@ -215,6 +215,27 @@
                 </div>
 
 
+                <!-- EMAIL CONFIRMATION CODE (shown after the code is emailed) -->
+                <div class="input-group" id="codeGroup" hidden>
+                    <label for="signupCode">Confirmation code</label>
+                    <small class="password-note" id="codeNote" aria-live="polite"></small>
+                    <div class="field">
+                        <i class="fa-solid fa-key"></i>
+                        <input
+                            type="text"
+                            id="signupCode"
+                            inputmode="numeric"
+                            autocomplete="one-time-code"
+                            maxlength="6"
+                            placeholder="6-digit code"
+                        >
+                    </div>
+                    <button type="button" class="link-btn" id="resendCode" style="margin-top: 8px; font-size: 13px;">
+                        Send a new code
+                    </button>
+                </div>
+
+
                 <!-- SIGNUP BUTTON -->
                 <div class="button-container">
 
@@ -362,8 +383,64 @@
 
 
         /* ==========================================
+           EMAIL CONFIRMATION CODE
+           ========================================== */
+
+        const codeGroup = document.getElementById('codeGroup');
+        const codeInput = document.getElementById('signupCode');
+        let codeSent = false;
+
+        function showCodeStep(email) {
+            codeSent = true;
+            codeGroup.hidden = false;
+            document.getElementById('codeNote').textContent =
+                'We sent a 6-digit code to ' + email + '. It can take a few minutes to arrive. Check your inbox (and Spam).';
+            document.getElementById('signupBtn').textContent = 'Confirm & create account';
+            codeInput.focus();
+        }
+
+        // A different email needs its own code
+        document.getElementById('email').addEventListener('input', function () {
+            if (!codeSent) return;
+            codeSent = false;
+            codeGroup.hidden = true;
+            codeInput.value = '';
+            document.getElementById('signupBtn').textContent = 'Sign up';
+        });
+
+        codeInput.addEventListener('input', function () {
+            this.value = this.value.replace(/\D/g, '').substring(0, 6);
+        });
+
+        document.getElementById('resendCode').addEventListener('click', async function () {
+            this.disabled = true;
+            try {
+                await api.post('/auth/signup', readForm());
+                showCodeStep(document.getElementById('email').value.trim());
+                codeInput.value = '';
+            } catch (err) {
+                showError(err.message);
+            }
+            this.disabled = false;
+        });
+
+
+        /* ==========================================
            SIGNUP FORM
            ========================================== */
+
+        function readForm() {
+            return {
+                firstName: document.getElementById('firstName').value.trim(),
+                lastName: document.getElementById('lastName').value.trim(),
+                year: document.getElementById('year').value,
+                section: document.getElementById('section').value,
+                program: document.getElementById('program').value.trim(),
+                email: document.getElementById('email').value.trim(),
+                studentId: document.getElementById('studentId').value.trim(),
+                password: document.getElementById('password-input').value,
+            };
+        }
 
         document
             .getElementById('signupForm')
@@ -382,16 +459,7 @@
                         .remove('visible');
 
 
-                    const payload = {
-                        firstName: document.getElementById('firstName').value.trim(),
-                        lastName: document.getElementById('lastName').value.trim(),
-                        year: document.getElementById('year').value,
-                        section: document.getElementById('section').value,
-                        program: document.getElementById('program').value.trim(),
-                        email: document.getElementById('email').value.trim(),
-                        studentId: document.getElementById('studentId').value.trim(),
-                        password: document.getElementById('password-input').value,
-                    };
+                    const payload = readForm();
 
 
                     /* NAME VALIDATION */
@@ -444,19 +512,42 @@
                     }
 
 
+                    /* CODE VALIDATION (second step) */
+                    if (codeSent) {
+                        if (!/^[0-9]{6}$/.test(codeInput.value)) {
+                            showError(
+                                'Please enter the 6-digit code from your email.',
+                                'signupCode'
+                            );
+                            return;
+                        }
+                        payload.code = codeInput.value;
+                    }
+
+                    const btnLabel = btn.textContent;
+
+
                     /* DISABLE BUTTON */
                     btn.disabled = true;
-                    btn.innerHTML =
-                        '<span class="btn-spinner"></span> Signing up...';
+                    btn.innerHTML = codeSent
+                        ? '<span class="btn-spinner"></span> Creating account...'
+                        : '<span class="btn-spinner"></span> Sending code...';
 
 
                     try {
 
                         /* SEND TO BACKEND */
-                        await api.post(
+                        const data = await api.post(
                             '/auth/signup',
                             payload
                         );
+
+                        /* FIRST STEP: code emailed */
+                        if (data && data.codeSent) {
+                            btn.disabled = false;
+                            showCodeStep(payload.email);
+                            return;
+                        }
 
                         /* REDIRECT */
                         window.location.href =
@@ -467,7 +558,7 @@
                         showError(err.message);
 
                         btn.disabled = false;
-                        btn.textContent = 'Sign up';
+                        btn.textContent = btnLabel;
                     }
                 }
             );

@@ -28,6 +28,7 @@ const {
 
 const {
     sendSignupNotification,
+    sendSignupCodeEmail,
     sendLoginNotification,
     sendPasswordResetEmail,
 } = require('../utils/mailer');
@@ -38,6 +39,11 @@ const EMAIL_REGEX =
 const RESET_TOKEN_MINUTES = 30;
 
 const RESET_COOLDOWN_SECONDS = 60;
+
+// Signup confirmation code (also uses RESET_COOLDOWN_SECONDS between sends)
+// Long enough for slow Gmail delivery
+const SIGNUP_CODE_MINUTES = 30;
+const SIGNUP_CODE_TRIES = 5;
 
 const STUDENT_ID_REGEX = /^\d{12}$/;
 
@@ -82,6 +88,14 @@ const signupLimiter = rateLimit({
     max: 10,
     keyFn: (req) => `signup:${req.ip}`,
     message: 'Too many sign-up attempts. Please try again later.'
+});
+
+// Entering the code is limited per code too, so this one can be looser
+const signupCodeLimiter = rateLimit({
+    windowMs: 15 * MINUTE,
+    max: 30,
+    keyFn: (req) => `signup-code:${req.ip}`,
+    message: 'Too many attempts. Please wait 15 minutes and try again.'
 });
 
 const forgotLimiter = rateLimit({
@@ -194,12 +208,122 @@ function publicUser(row) {
 
 
 /* =========================================================
+   SIGNUP CONFIRMATION CODE
+   ========================================================= */
+
+// Keyed by the email hash so a code only works for the email it was sent to
+function signupCodeHash(emailHash, code) {
+
+    return sha256(`${emailHash}:${code}`);
+}
+
+
+/*
+    First signup submit: email a 6-digit code and stop.
+    Nothing about the account is saved yet.
+*/
+async function startSignupCode(res, email, emailHash, firstName) {
+
+    const { rows } = await pool.query(
+        'SELECT sent_at FROM signup_codes WHERE email_hash = $1',
+        [emailHash]
+    );
+
+    if (
+        rows[0] &&
+        Date.now() - new Date(rows[0].sent_at).getTime() < RESET_COOLDOWN_SECONDS * 1000
+    ) {
+
+        return res.status(429).json({
+            error: 'A code was just sent. Please wait a minute before asking for a new one.'
+        });
+    }
+
+    const code =
+        String(crypto.randomInt(0, 1000000)).padStart(6, '0');
+
+    await pool.query(
+        `INSERT INTO signup_codes (email_hash, code_hash, expires_at, attempts, sent_at)
+         VALUES ($1, $2, NOW() + make_interval(mins => $3), 0, NOW())
+         ON CONFLICT (email_hash) DO UPDATE
+         SET prev_code_hash = CASE WHEN signup_codes.expires_at > NOW() THEN signup_codes.code_hash END,
+             code_hash = EXCLUDED.code_hash, expires_at = EXCLUDED.expires_at, attempts = 0, sent_at = NOW()`,
+        [emailHash, signupCodeHash(emailHash, code), SIGNUP_CODE_MINUTES]
+    );
+
+    // Old unused codes are no longer needed
+    await pool.query("DELETE FROM signup_codes WHERE expires_at < NOW() - INTERVAL '1 day'");
+
+    const sent =
+        await sendSignupCodeEmail(email, firstName, code, SIGNUP_CODE_MINUTES);
+
+    if (!sent) {
+
+        if (IS_PRODUCTION) {
+
+            // Let them try again right away instead of waiting out the cooldown
+            await pool.query('DELETE FROM signup_codes WHERE email_hash = $1', [emailHash]);
+
+            return res.status(503).json({
+                error: "We couldn't send the confirmation email right now. Please try again in a few minutes."
+            });
+        }
+
+        // Local testing without email set up
+        console.log(`Signup code for ${email}: ${code} (email is off; shown here for local testing only)`);
+    }
+
+    res.status(202).json({ codeSent: true });
+}
+
+
+/*
+    Second signup submit: returns an error message, or null
+    when the code is right (the code is used up).
+*/
+async function useSignupCode(emailHash, code) {
+
+    const cleanCode =
+        String(code).trim();
+
+    if (!/^\d{6}$/.test(cleanCode)) {
+
+        return 'Please enter the 6-digit code from your email.';
+    }
+
+    // One statement, so the same code can't be used twice at the same time
+    const used = await pool.query(
+        `DELETE FROM signup_codes
+         WHERE email_hash = $1 AND $2 IN (code_hash, prev_code_hash) AND expires_at > NOW() AND attempts < $3`,
+        [emailHash, signupCodeHash(emailHash, cleanCode), SIGNUP_CODE_TRIES]
+    );
+
+    if (used.rowCount) return null;
+
+    const { rows } = await pool.query(
+        `UPDATE signup_codes SET attempts = attempts + 1
+         WHERE email_hash = $1
+         RETURNING expires_at > NOW() AND attempts <= $2 AS usable`,
+        [emailHash, SIGNUP_CODE_TRIES]
+    );
+
+    return rows[0] && rows[0].usable
+        ? 'That code is not correct. Please check your email and try again.'
+        : 'That code has expired or was tried too many times. Tap "Send a new code".';
+}
+
+
+/* =========================================================
    SIGN UP
    ========================================================= */
 
 router.post(
     '/signup',
-    signupLimiter,
+    (req, res, next) => (
+        req.body && req.body.code
+            ? signupCodeLimiter(req, res, next)
+            : signupLimiter(req, res, next)
+    ),
     async (req, res, next) => {
 
         try {
@@ -427,6 +551,39 @@ router.post(
 
                     error:
                         'An account with that email already exists.'
+
+                });
+            }
+
+
+            /*
+                Email confirmation.
+
+                Without a code: email one and stop here.
+                With a code: check it, then create the account.
+            */
+            if (!req.body.code) {
+
+                return startSignupCode(
+                    res,
+                    normalizedEmail,
+                    emailHash,
+                    cleanFirstName
+                );
+            }
+
+            const codeError =
+                await useSignupCode(
+                    emailHash,
+                    req.body.code
+                );
+
+            if (codeError) {
+
+                return res.status(400).json({
+
+                    error:
+                        codeError
 
                 });
             }
