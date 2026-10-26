@@ -16468,3 +16468,408 @@ button.cs-node:hover .cs-node-card {
         animation: none !important;
     }
 }
+
+/* ---------- Read Lesson: points, sticker book, quick checks, flip cards ---------- */
+.sb-points {
+    display: inline-flex;
+    align-items: center;
+    gap: 6px;
+    margin-top: 10px;
+    padding: 5px 12px;
+    border: 2px solid var(--sb-ink);
+    border-radius: 999px;
+    background: #fff;
+    color: var(--sb-ink);
+    font-size: 14px;
+    font-weight: 800;
+    box-shadow: 2px 2px 0 var(--sb-ink);
+}
+
+.sb-points i {
+    color: #e0a800;
+}
+
+/* Sticker book */
+.sb-stickers {
+    margin-bottom: 20px;
+    padding: 18px 22px;
+    border: 3px solid var(--sb-ink);
+    border-radius: 22px;
+    background: #fff;
+}
+
+.sb-stickers h3 {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    margin: 0;
+    color: var(--sb-ink);
+    font-size: 19px;
+}
+
+.sb-stickers > p {
+    margin: 4px 0 14px;
+    color: #555;
+    font-size: 14px;
+}
+
+.sb-sticker-grid {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 16px;
+}
+
+.sb-sticker {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    gap: 4px;
+    width: 110px;
+    text-align: center;
+    color: #8a96a3;
+}
+
+.sb-sticker-face {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    width: 84px;
+    height: 84px;
+    border: 3px dashed #c3ccd5;
+    border-radius: 50%;
+    background: #f3f5f7;
+    font-size: 30px;
+}
+
+.sb-sticker b {
+    font-size: 14px;
+}
+
+.sb-sticker small {
+    font-size: 12px;
+    font-weight: 700;
+}
+
+.sb-sticker.is-earned {
+    color: var(--sb-ink);
+}
+
+.sb-sticker.is-earned .sb-sticker-face {
+    border: 4px solid #fff;
+    background: var(--book);
+    color: #fff;
+    box-shadow: 0 0 0 3px var(--sb-ink), 4px 4px 0 3px var(--sb-ink);
+    transform: rotate(-6deg);
+}
+
+.sb-sticker.is-earned small {
+    color: var(--book);
+    font-size: 14px;
+    font-weight: 900;
+}
+
+.sb-sticker.is-new .sb-sticker-face {
+    animation: sbStickerIn 0.9s var(--fun-bounce) both;
+}
+
+/* "+10" that floats up in the reader's top bar */
+.sb-reader-top {
+    position: relative;
+}
+
+.sb-pop {
+    position: absolute;
+    left: 50%;
+    top: 100%;
+    z-index: 2;
+    padding: 2px 10px;
+    border: 2px solid var(--sb-ink);
+    border-radius: 999px;
+    background: #ffe66b;
+    color: var(--sb-ink);
+    font-size: 20px;
+    pointer-events: none;
+    animation: sbPointsUp 1.4s ease-out forwards;
+}
+
+/* Quick check at the end of a page */
+.sb-check {
+    margin-top: 22px;
+    padding: 18px;
+    border: 3px solid var(--sb-ink);
+    border-radius: 20px;
+    background: #fff8d6;
+    box-shadow: 5px 5px 0 var(--sb-ink);
+}
+
+.sb-check-title {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    color: var(--book);
+    font-size: 24px;
+}
+
+.sb-check-q {
+    margin: 6px 0 12px;
+    color: var(--sb-ink);
+    font-size: 17px;
+    font-weight: 800;
+    line-height: 1.4;
+}
+
+.sb-check-options {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 10px;
+}
+
+.sb-check-options button {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+    padding: 10px 12px;
+    border: 2px solid var(--sb-ink);
+    border-radius: 14px;
+    background: #fff;
+    color: var(--sb-ink);
+    font: inherit;
+    font-size: 15px;
+    font-weight: 700;
+    text-align: left;
+    cursor: pointer;
+    box-shadow: 2px 2px 0 var(--sb-ink);
+    transition: transform 0.15s;
+}
+
+.sb-check-options button span {
+    flex-shrink: 0;
+    width: 26px;
+    height: 26px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    border-radius: 50%;
+    background: var(--book);
+    color: #fff;
+    font-size: 13px;
+    font-weight: 900;
+}
+
+.sb-check-options button:hover:not(:disabled) {
+    transform: translate(-1px, -2px);
+}
+
+.sb-check-options button:disabled {
+    cursor: default;
+    opacity: 0.55;
+}
+
+.sb-check-options button.is-right {
+    background: #dcf5e3;
+    border-color: #1e7e45;
+    opacity: 1;
+}
+
+.sb-check-options button.is-right span {
+    background: #1e7e45;
+}
+
+.sb-check-options button.is-wrong {
+    background: #fde2e2;
+    animation: funShake 0.5s ease-in-out;
+}
+
+.sb-check-msg {
+    min-height: 1.4em;
+    margin: 10px 0 0;
+    color: var(--sb-ink);
+    font-weight: 900;
+}
+
+.sb-check.is-done .sb-check-msg {
+    color: #1e7e45;
+}
+
+/* Flip cards for key words */
+.sb-flip-hint {
+    margin: 0 0 12px;
+    color: #555;
+    font-size: 14px;
+    font-weight: 700;
+}
+
+.sb-flip-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fill, minmax(200px, 1fr));
+    gap: 14px;
+    margin-bottom: 16px;
+}
+
+.sb-flip {
+    height: 190px;
+    perspective: 900px;
+    cursor: pointer;
+    border-radius: 18px;
+}
+
+.sb-flip:focus-visible {
+    outline: 3px solid var(--book);
+    outline-offset: 3px;
+}
+
+.sb-flip-inner {
+    position: relative;
+    width: 100%;
+    height: 100%;
+    transform-style: preserve-3d;
+    transition: transform 0.5s var(--fun-bounce);
+}
+
+.sb-flip.is-flipped .sb-flip-inner {
+    transform: rotateY(180deg);
+}
+
+.sb-flip-front,
+.sb-flip-back {
+    position: absolute;
+    inset: 0;
+    display: flex;
+    flex-direction: column;
+    border: 3px solid var(--sb-ink);
+    border-radius: 18px;
+    box-shadow: 4px 4px 0 var(--sb-ink);
+    backface-visibility: hidden;
+    -webkit-backface-visibility: hidden;
+}
+
+.sb-flip-front {
+    align-items: center;
+    justify-content: center;
+    gap: 8px;
+    padding: 12px;
+    background: var(--book);
+    color: #fff;
+    text-align: center;
+}
+
+.sb-flip-front i {
+    font-size: 26px;
+}
+
+.sb-flip-front b {
+    font-size: 21px;
+    line-height: 1.2;
+}
+
+.sb-flip-front small {
+    font-size: 12px;
+    font-weight: 700;
+    opacity: 0.85;
+}
+
+.sb-flip-back {
+    padding: 12px 14px;
+    background: #fff;
+    color: var(--sb-ink);
+    font-size: 14px;
+    line-height: 1.45;
+    overflow-y: auto;
+    transform: rotateY(180deg);
+}
+
+.sb-flip-back b {
+    color: var(--book);
+    font-size: 15px;
+}
+
+.sb-flip-back p,
+.sb-flip-back ul {
+    margin: 6px 0 0;
+}
+
+@keyframes sbStickerIn {
+    0%   { transform: scale(0) rotate(-200deg); }
+    70%  { transform: scale(1.2) rotate(-2deg); }
+    100% { transform: scale(1) rotate(-6deg); }
+}
+
+@keyframes sbPointsUp {
+    0%   { transform: translate(-50%, 0) scale(0.6); opacity: 0; }
+    20%  { transform: translate(-50%, 6px) scale(1.1); opacity: 1; }
+    100% { transform: translate(-50%, 40px) scale(1); opacity: 0; }
+}
+
+@media screen and (max-width: 640px) {
+    .sb-check-options {
+        grid-template-columns: 1fr;
+    }
+
+    .sb-sticker {
+        width: 90px;
+    }
+
+    .sb-sticker-face {
+        width: 70px;
+        height: 70px;
+    }
+}
+
+@media (prefers-reduced-motion: reduce) {
+    .sb-flip-inner {
+        transition: none;
+    }
+
+    .sb-sticker.is-new .sb-sticker-face,
+    .sb-pop,
+    .sb-check-options button.is-wrong {
+        animation: none;
+    }
+}
+
+/* Situation Quizzes: 3-star rating per mission */
+.cs-stars {
+    display: inline-flex;
+    gap: 2px;
+    color: #f2a900;
+}
+
+.cs-stars .fa-regular {
+    color: #c9b98a;
+}
+
+.cs-star-earn {
+    display: flex;
+    align-items: center;
+    flex-wrap: wrap;
+    gap: 8px;
+    margin-bottom: 4px;
+}
+
+.cs-star-earn .cs-stars {
+    font-size: 24px;
+    gap: 4px;
+}
+
+.cs-star-earn .cs-stars i {
+    animation: funPop 0.4s var(--fun-bounce) both;
+}
+
+.cs-star-earn .cs-stars i:nth-child(2) { animation-delay: 0.15s; }
+.cs-star-earn .cs-stars i:nth-child(3) { animation-delay: 0.3s; }
+
+.cs-star-earn em {
+    padding: 2px 8px;
+    border-radius: 999px;
+    background: var(--fun-sun);
+    color: #3b2f00;
+    font-size: 12px;
+    font-style: normal;
+    font-weight: 800;
+}
+
+@media (prefers-reduced-motion: reduce) {
+    .cs-star-earn .cs-stars i {
+        animation: none;
+    }
+}

@@ -842,6 +842,11 @@ async function init() {
             'ALTER TABLE public.case_study_progress ADD COLUMN IF NOT EXISTS hero TEXT'
         );
 
+        // Best star rating per mission: { "<scenario key>": 1-3 }
+        await client.query(
+            "ALTER TABLE public.case_study_progress ADD COLUMN IF NOT EXISTS stars JSONB NOT NULL DEFAULT '{}'"
+        );
+
         /*
             Session version: stored inside each login cookie.
             Bumping it (password change/reset) logs out every

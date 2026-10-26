@@ -54,7 +54,8 @@ router.get('/study-cards', async (req, res, next) => {
     const { decks } = await getContent();
     res.json({
       decks: decks.map(d => ({
-        ...pick(d, ['number', 'title', 'icon', 'color']),
+        // lesson = module key, used for the Quick checks in Read Lesson
+        ...pick(d, ['number', 'title', 'icon', 'color', 'lesson']),
         key: Number(d.key),
         cards: d.cards.map(c => pick(c, ['key', 'question', 'options', 'answer'])),
       })),
