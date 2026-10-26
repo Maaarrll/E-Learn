@@ -28,6 +28,17 @@ const PORT = process.env.PORT || 3000;
 // Behind Render's proxy: makes req.protocol report https correctly.
 app.set('trust proxy', 1);
 
+// Render sits behind Cloudflare, so req.ip is a rotating Cloudflare server and
+// per-IP rate limits never trigger. Cloudflare puts the visitor's real address
+// in CF-Connecting-IP and overwrites any value a visitor sends.
+if (process.env.NODE_ENV === 'production') {
+  app.use((req, res, next) => {
+    const visitorIp = req.get('cf-connecting-ip');
+    if (visitorIp) Object.defineProperty(req, 'ip', { value: visitorIp });
+    next();
+  });
+}
+
 // Don't advertise that the server runs Express
 app.disable('x-powered-by');
 

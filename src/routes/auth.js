@@ -78,14 +78,14 @@ const loginLimiter = rateLimit({
 
 const loginIpLimiter = rateLimit({
     windowMs: 15 * MINUTE,
-    max: 50,
+    max: 300, // a whole class on one school Wi-Fi shares an IP
     keyFn: (req) => `login-ip:${req.ip}`,
     message: 'Too many login attempts. Please wait 15 minutes and try again.'
 });
 
 const signupLimiter = rateLimit({
     windowMs: 60 * MINUTE,
-    max: 10,
+    max: 100,
     keyFn: (req) => `signup:${req.ip}`,
     message: 'Too many sign-up attempts. Please try again later.'
 });
@@ -93,21 +93,21 @@ const signupLimiter = rateLimit({
 // Entering the code is limited per code too, so this one can be looser
 const signupCodeLimiter = rateLimit({
     windowMs: 15 * MINUTE,
-    max: 30,
+    max: 150,
     keyFn: (req) => `signup-code:${req.ip}`,
     message: 'Too many attempts. Please wait 15 minutes and try again.'
 });
 
 const forgotLimiter = rateLimit({
     windowMs: 15 * MINUTE,
-    max: 5,
+    max: 30,
     keyFn: (req) => `forgot:${req.ip}`,
     message: 'Too many reset requests. Please wait 15 minutes and try again.'
 });
 
 const resetLimiter = rateLimit({
     windowMs: 15 * MINUTE,
-    max: 10,
+    max: 50,
     keyFn: (req) => `reset:${req.ip}`,
     message: 'Too many attempts. Please wait 15 minutes and try again.'
 });
