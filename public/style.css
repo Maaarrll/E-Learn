@@ -6378,7 +6378,7 @@ p {
     width: 42px;
     height: 42px;
     flex-shrink: 0;
-    border-radius: 12px;
+    border-radius: 50%;
     box-shadow: 0 0 0 2px rgba(255, 255, 255, 0.22), 0 6px 14px rgba(0, 0, 0, 0.25);
 }
 
@@ -6754,7 +6754,7 @@ p {
     .sidebar-logo {
         width: 34px;
         height: 34px;
-        border-radius: 10px;
+        border-radius: 50%;
     }
 
     .sidebar .logo-text {
@@ -6913,7 +6913,7 @@ p {
     .drawer-brand img {
         width: 34px;
         height: 34px;
-        border-radius: 10px;
+        border-radius: 50%;
         box-shadow: 0 0 0 2px rgba(255, 255, 255, 0.22);
     }
 
@@ -12662,7 +12662,7 @@ fieldset.ce-field legend {
 .cert-logo {
     width: 56px;
     height: 56px;
-    border-radius: 14px;
+    border-radius: 50%;
 }
 
 .cert-paper p {
