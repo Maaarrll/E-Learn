@@ -15639,7 +15639,8 @@ button.cs-node {
     border-color: #fff;
     color: #fff;
     box-shadow: 0 6px 0 #4692c8, 0 0 0 6px rgba(111, 195, 255, 0.25);
-    animation: funPulse 1.6s ease-in-out infinite;
+    /* Not funPulse: that one also shifts by -50% (made for centered pop-ups) and pushed this dot off the path */
+    animation: csDotPulse 1.6s ease-in-out infinite;
 }
 
 .cs-node.is-locked .cs-node-dot {
@@ -16169,5 +16170,301 @@ button.cs-node:hover .cs-node-card {
 @media (prefers-reduced-motion: reduce) {
     .tour-spot {
         transition: none;
+    }
+}
+
+/* ---------- Situation Quizzes: story adventure (hero, values meter, Bakit?) ---------- */
+.cs-hero-face {
+    font-family: "Segoe UI Emoji", "Apple Color Emoji", "Noto Color Emoji", sans-serif;
+    line-height: 1;
+}
+
+.case-page .cs-hero .cs-hero-btn {
+    display: inline-flex;
+    align-items: center;
+    gap: 8px;
+    padding: 6px 14px 6px 8px;
+    border: none;
+    border-radius: 20px;
+    background: rgba(255, 255, 255, 0.15);
+    color: #fff;
+    font: inherit;
+    font-size: 13px;
+    font-weight: 700;
+    cursor: pointer;
+}
+
+.case-page .cs-hero .cs-hero-btn:hover {
+    background: rgba(255, 255, 255, 0.25);
+}
+
+.case-page .cs-hero .cs-hero-btn .cs-hero-face {
+    font-size: 22px;
+}
+
+/* The hero stands beside its mission's dot, on the side away from the card */
+.cs-hero-token {
+    position: absolute;
+    top: 50%;
+    left: calc(100% + 10px);
+    margin-top: -20px;
+    font-size: 34px;
+    pointer-events: none;
+    filter: drop-shadow(0 3px 2px rgba(0, 0, 0, 0.25));
+    animation: funBob 2.4s ease-in-out infinite;
+}
+
+.cs-node.is-right .cs-hero-token {
+    left: auto;
+    right: calc(100% + 10px);
+}
+
+.cs-journey-done {
+    display: flex;
+    align-items: center;
+    gap: 14px;
+    margin-bottom: 18px;
+    padding: 14px 18px;
+    border-radius: 18px;
+    background: #fff6d6;
+    border: 2px solid var(--fun-sun);
+    color: #3b2f00;
+    font-size: 15px;
+}
+
+.cs-journey-done .cs-hero-face {
+    font-size: 36px;
+}
+
+/* The hero walks along the track instead of the rocket */
+.case-page .tq-rocket.cs-hero-runner {
+    transform: none;
+    font-size: 20px;
+}
+
+/* Hero + values meter at the top of a mission */
+.cs-meter-row {
+    display: flex;
+    align-items: center;
+    gap: 16px;
+    margin: 4px 0 16px;
+}
+
+.cs-hero-mini {
+    position: relative;
+    display: flex;
+    align-items: center;
+    gap: 10px;
+    flex-shrink: 0;
+}
+
+.cs-hero-mini .cs-hero-face {
+    font-size: 42px;
+}
+
+.cs-hero-mini.is-happy .cs-hero-face {
+    animation: csHeroJump 0.6s ease-out;
+}
+
+.cs-hero-mini.is-sad .cs-hero-face {
+    animation: funShake 0.5s ease-in-out;
+}
+
+.cs-hero-bubble {
+    position: relative;
+    padding: 8px 12px;
+    border-radius: 14px;
+    background: #fff;
+    border: 2px solid #023047;
+    color: #023047;
+    font-size: 14px;
+    font-weight: 800;
+    white-space: nowrap;
+}
+
+/* Speech bubble tail pointing at the hero */
+.cs-hero-bubble::before {
+    content: "";
+    position: absolute;
+    left: -8px;
+    top: 50%;
+    width: 12px;
+    height: 12px;
+    margin-top: -6px;
+    background: #fff;
+    border-left: 2px solid #023047;
+    border-bottom: 2px solid #023047;
+    transform: rotate(45deg);
+}
+
+.cs-hero-bubble:empty {
+    display: none;
+}
+
+.cs-meter {
+    flex: 1;
+    min-width: 120px;
+}
+
+.cs-meter-label {
+    display: block;
+    margin-bottom: 6px;
+    font-size: 13px;
+    font-weight: 800;
+    color: #c2185b;
+}
+
+.cs-meter-bar {
+    height: 14px;
+    border-radius: 10px;
+    background: #e8ecef;
+    overflow: hidden;
+}
+
+.cs-meter-bar > div {
+    width: 50%;
+    height: 100%;
+    border-radius: 10px;
+    background: linear-gradient(90deg, #ff8a5c, #ffc93c, #3fcf9b);
+    background-size: 300px 100%;
+    transition: width 0.6s var(--fun-bounce);
+}
+
+/* "Bakit?" box under the feedback */
+.cs-why {
+    margin: -8px 0 20px;
+    padding: 12px 16px;
+    border-radius: 12px;
+    background: #fff8e1;
+    border-left: 5px solid var(--fun-sun);
+    color: #3b2f00;
+}
+
+.cs-why b {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    font-size: 15px;
+}
+
+.cs-why p {
+    margin: 6px 0 0;
+    font-size: 14px;
+    line-height: 1.5;
+}
+
+/* Hero picker */
+.cs-picker-overlay {
+    position: fixed;
+    inset: 0;
+    z-index: 10015;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    padding: 16px;
+    background: rgba(2, 18, 40, 0.6);
+}
+
+.cs-picker-overlay[hidden] {
+    display: none;
+}
+
+.cs-picker {
+    width: min(520px, 100%);
+    padding: 22px;
+    border-radius: 20px;
+    background: #fff;
+    color: #023047;
+    text-align: center;
+    box-shadow: 0 20px 50px rgba(0, 0, 0, 0.3);
+}
+
+.cs-picker h3 {
+    margin: 0 0 4px;
+    font-size: 24px;
+    font-weight: 900;
+}
+
+.cs-picker p {
+    margin: 0 0 16px;
+    color: #555;
+}
+
+.cs-picker-grid {
+    display: grid;
+    grid-template-columns: repeat(4, 1fr);
+    gap: 10px;
+    margin-bottom: 14px;
+}
+
+.cs-picker-hero {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    gap: 4px;
+    padding: 12px 4px;
+    border: 3px solid #e0e6ea;
+    border-radius: 16px;
+    background: #f6f8fa;
+    color: #023047;
+    font: inherit;
+    font-size: 13px;
+    font-weight: 800;
+    cursor: pointer;
+    transition: transform 0.2s var(--fun-bounce), border-color 0.2s;
+}
+
+.cs-picker-hero .cs-hero-face {
+    font-size: 40px;
+}
+
+.cs-picker-hero:hover,
+.cs-picker-hero:focus-visible {
+    border-color: var(--fun-sun);
+    transform: translateY(-3px) scale(1.04);
+}
+
+.cs-picker-hero.is-picked {
+    border-color: #1e9e55;
+    background: #e9f8ef;
+}
+
+@keyframes csDotPulse {
+    0%, 100% { transform: scale(1); }
+    50%      { transform: scale(1.08); }
+}
+
+@keyframes csHeroJump {
+    0%, 100% { transform: translateY(0) scale(1); }
+    40%      { transform: translateY(-14px) scale(1.15); }
+    70%      { transform: translateY(0) scale(0.95); }
+}
+
+/* Phones: one column map (dot left, card right), so the hero sits on the dot's corner */
+@media screen and (max-width: 768px) {
+    .cs-hero-token,
+    .cs-node.is-right .cs-hero-token {
+        top: -14px;
+        left: -12px;
+        right: auto;
+        margin-top: 0;
+        font-size: 26px;
+    }
+}
+
+@media screen and (max-width: 640px) {
+    .cs-picker-grid {
+        grid-template-columns: repeat(2, 1fr);
+    }
+
+    .cs-meter-row {
+        flex-wrap: wrap;
+    }
+}
+
+@media (prefers-reduced-motion: reduce) {
+    .cs-hero-token,
+    .cs-hero-mini .cs-hero-face {
+        animation: none !important;
     }
 }

@@ -837,6 +837,11 @@ async function init() {
             'ALTER TABLE public.signup_codes ADD COLUMN IF NOT EXISTS prev_code_hash TEXT'
         );
 
+        // Hero the student picked for the Situation Quizzes adventure
+        await client.query(
+            'ALTER TABLE public.case_study_progress ADD COLUMN IF NOT EXISTS hero TEXT'
+        );
+
         /*
             Session version: stored inside each login cookie.
             Bumping it (password change/reset) logs out every

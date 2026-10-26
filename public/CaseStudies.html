@@ -9,8 +9,8 @@
     <link rel="apple-touch-icon" href="apple-touch-icon.png?v=3">
     <meta name="theme-color" content="#023047">
     <!-- Link to the separated CSS file -->
-    <link rel="stylesheet" href="style.css?v=94">
-    <link rel="stylesheet" href="dark.css?v=58">
+    <link rel="stylesheet" href="style.css?v=95">
+    <link rel="stylesheet" href="dark.css?v=59">
     <script src="js/theme.js?v=3"></script>
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.2/css/all.min.css">
 </head>
@@ -113,12 +113,15 @@
                         </div>
                         <div class="cs-header-text">
                             <h2>Situation Quizzes</h2>
-                            <p>Read the scenario and choose the best answer</p>
+                            <p>Go on missions: help each friend make the right choice!</p>
                             <div class="cs-hero-bar" aria-hidden="true"><div id="csHeroBar"></div></div>
                         </div>
                     </div>
                     <div class="cs-header-side" id="csHeaderSide">
-                        <span class="cs-solved-chip"><i class="fa-solid fa-circle-check"></i> <span>Solved <strong id="solvedCount">0</strong>/<span id="solvedTotal">0</span></span></span>
+                        <button type="button" class="cs-hero-btn" id="heroBtn" hidden title="Change your hero">
+                            <span class="cs-hero-face" id="heroBtnFace" aria-hidden="true"></span> <span>Change hero</span>
+                        </button>
+                        <span class="cs-solved-chip"><i class="fa-solid fa-circle-check"></i> <span>Missions <strong id="solvedCount">0</strong>/<span id="solvedTotal">0</span></span></span>
                         <button type="button" class="review-btn" id="reviewBtn" hidden>
                             <i class="fa-solid fa-rotate-left"></i> <span id="reviewText">Review mistakes</span>
                         </button>
@@ -137,21 +140,33 @@
                 <!-- VIEW 2: SCENARIO QUIZ CARD -->
                 <div id="scenarioView" class="quiz-container cs-play" style="display: none;">
 
-                    <!-- Rocket moves along the track as scenarios are solved -->
+                    <!-- The hero walks along the track as missions are solved -->
                     <div class="tq-track" aria-hidden="true">
                         <div class="tq-track-line"><div id="csTrack"></div></div>
-                        <span class="tq-rocket" id="csRocket"><i class="fa-solid fa-rocket"></i></span>
+                        <span class="tq-rocket cs-hero-runner" id="csRocket"><i class="fa-solid fa-rocket"></i></span>
                         <span class="tq-flag"><i class="fa-solid fa-flag-checkered"></i></span>
                     </div>
 
                     <div class="quiz-topbar">
                         <button type="button" class="quiz-back-link" onclick="closeScenario()">
-                            <i class="fa-solid fa-arrow-left"></i> All scenarios
+                            <i class="fa-solid fa-arrow-left"></i> Mission map
                         </button>
                         <span class="quiz-status" id="quizStatus"></span>
                     </div>
 
                     <h3 class="scenario-title" id="scenarioTitle">Loading...</h3>
+
+                    <!-- The hero reacts to each choice; the values meter fills or drops -->
+                    <div class="cs-meter-row">
+                        <div class="cs-hero-mini" id="heroMini" aria-hidden="true">
+                            <span class="cs-hero-face" id="heroMiniFace"></span>
+                            <span class="cs-hero-bubble" id="heroBubble"></span>
+                        </div>
+                        <div class="cs-meter">
+                            <span class="cs-meter-label"><i class="fa-solid fa-heart"></i> Values meter</span>
+                            <div class="cs-meter-bar" role="meter" aria-label="Values meter" aria-valuemin="0" aria-valuemax="100" id="meterBar"><div id="meterFill"></div></div>
+                        </div>
+                    </div>
 
                     <div class="scenario-box">
                         <div class="scenario-box-label"><i class="fa-solid fa-book-open-reader"></i> Situation</div>
@@ -199,6 +214,10 @@
 
                     <!-- Feedback message -->
                     <div class="quiz-feedback" id="quizFeedback" role="status" hidden></div>
+                    <div class="cs-why" id="csWhy" hidden>
+                        <b><i class="fa-solid fa-lightbulb"></i> Bakit?</b>
+                        <p id="csWhyText"></p>
+                    </div>
 
                     <!-- Action Buttons -->
                     <div class="quiz-actions">
@@ -218,6 +237,16 @@
         </main>
     </div>
 
+    <!-- Hero picker (first visit, or "Change hero") -->
+    <div class="cs-picker-overlay" id="heroPicker" hidden>
+        <div class="cs-picker" role="dialog" aria-modal="true" aria-labelledby="heroPickerTitle">
+            <h3 id="heroPickerTitle">Choose your hero!</h3>
+            <p>Your hero goes on every mission with you.</p>
+            <div class="cs-picker-grid" id="heroGrid"></div>
+            <button type="button" class="btn-back" id="heroPickerClose" hidden>Cancel</button>
+        </div>
+    </div>
+
     <!-- JAVASCRIPT -->
     <script>
         // Scenarios galing sa server (inaayos ng instructor sa Admin Dashboard).
@@ -231,6 +260,19 @@
         let selectedAnswer = null;
         let isAnswerSubmitted = false;
         let saveChain = Promise.resolve(); // para sunod-sunod ang pag-save sa server
+
+        // Story adventure: the hero the student picked (saved on the server)
+        const HEROES = [
+            { id: 'fox', face: '🦊', name: 'Fox' }, { id: 'panda', face: '🐼', name: 'Panda' },
+            { id: 'lion', face: '🦁', name: 'Lion' }, { id: 'frog', face: '🐸', name: 'Frog' },
+            { id: 'penguin', face: '🐧', name: 'Penguin' }, { id: 'tiger', face: '🐯', name: 'Tiger' },
+            { id: 'koala', face: '🐨', name: 'Koala' }, { id: 'owl', face: '🦉', name: 'Owl' },
+        ];
+        const HAPPY = ['Ang galing!', 'Tama ka!', 'Mahusay!', 'Yehey!'];
+        const SAD = ['Hmm... isipin ulit!', 'Subukan ulit!', 'Malapit na!'];
+        const pickOne = (list) => list[Math.floor(Math.random() * list.length)];
+        let hero = null;
+        const heroFace = () => (HEROES.find(h => h.id === hero) || HEROES[0]).face;
 
         // Review my mistakes
         let mistakeIds = [];            // mga scenario na nagkamali (hindi pa na-clear)
@@ -264,15 +306,70 @@
                 unlockedIds = progress.unlockedIds;
                 solvedIds = progress.solvedIds;
                 lessonLocks = new Map(progress.lessonLocks.map(l => [l.key, l]));
+                hero = progress.hero;
             } else if (scenarios.length) {
                 unlockedIds = [scenarios[0].key];
             }
             if (mistakes) {
                 mistakeIds = mistakes.mistakes.map(m => Number(m.itemKey)).filter(k => scenarioByKey.has(k));
             }
+            renderHero();
             renderScenariosList();
-            openFromHash();
+            if (progress && !hero) openHeroPicker(true);
+            else openFromHash();
         });
+
+        // ---------- Hero ----------
+        function renderHero() {
+            document.getElementById('heroBtn').hidden = false;
+            document.getElementById('heroBtnFace').textContent = heroFace();
+            document.getElementById('heroMiniFace').textContent = heroFace();
+            document.getElementById('csRocket').textContent = heroFace();
+        }
+
+        // first = no hero yet, so there is nothing to cancel back to
+        function openHeroPicker(first) {
+            const grid = document.getElementById('heroGrid');
+            grid.innerHTML = HEROES.map(h => `<button type="button" class="cs-picker-hero${h.id === hero ? ' is-picked' : ''}" data-hero="${h.id}">
+                <span class="cs-hero-face" aria-hidden="true">${h.face}</span><span>${h.name}</span></button>`).join('');
+            document.getElementById('heroPickerClose').hidden = first;
+            document.getElementById('heroPicker').hidden = false;
+            grid.querySelector('button').focus();
+        }
+
+        function closeHeroPicker() {
+            document.getElementById('heroPicker').hidden = true;
+            document.getElementById('heroBtn').focus();
+        }
+
+        document.getElementById('heroGrid').addEventListener('click', (e) => {
+            const btn = e.target.closest('[data-hero]');
+            if (!btn) return;
+            hero = btn.dataset.hero;
+            renderHero();
+            renderScenariosList();
+            closeHeroPicker();
+            HCISfx.play('correct');
+            api.put('/progress/case-studies/hero', { hero }).catch(err => console.error('Could not save hero:', err));
+        });
+        document.getElementById('heroBtn').addEventListener('click', () => openHeroPicker(false));
+        document.getElementById('heroPickerClose').addEventListener('click', closeHeroPicker);
+        document.getElementById('heroPicker').addEventListener('keydown', (e) => {
+            if (e.key === 'Escape' && !document.getElementById('heroPickerClose').hidden) closeHeroPicker();
+        });
+
+        // The hero cheers or frowns, and the values meter fills or drops
+        let meter = 50;
+        function setMeter(value, mood, say) {
+            meter = value;
+            document.getElementById('meterFill').style.width = `${value}%`;
+            document.getElementById('meterBar').setAttribute('aria-valuenow', String(value));
+            const mini = document.getElementById('heroMini');
+            mini.classList.remove('is-happy', 'is-sad');
+            void mini.offsetWidth; // restart the animation
+            if (mood) mini.classList.add(`is-${mood}`);
+            document.getElementById('heroBubble').textContent = say;
+        }
 
         // Link mula sa Quick Search (CaseStudies.html#scenario-12):
         // buksan kung unlocked na, kung hindi ipakita lang ang card
@@ -326,6 +423,16 @@
             const listView = document.getElementById('scenariosListView');
             listView.innerHTML = '';
             const nextId = getNextScenario();
+            const allDone = scenarios.length > 0 && solvedIds.length === scenarios.length;
+            // The hero stands on the next mission, or on the last one when the journey is done
+            const heroAt = nextId !== null ? nextId : allDone ? scenarios[scenarios.length - 1].key : null;
+            if (allDone) {
+                const done = document.createElement('div');
+                done.className = 'cs-journey-done';
+                done.innerHTML = `<span class="cs-hero-face" aria-hidden="true">${heroFace()}</span>
+                    <span><b>Journey complete!</b> You finished all ${scenarios.length} missions. You can replay any mission below.</span>`;
+                listView.appendChild(done);
+            }
 
             scenarios.forEach((sc, index) => {
                 const i = sc.key;
@@ -360,16 +467,16 @@
                 scenarioDiv.className = `cs-node is-${state}${index % 2 ? ' is-right' : ''}`;
                 scenarioDiv.id = `scenario-${i}`;
                 if (unlocked) scenarioDiv.type = 'button';
-                else scenarioDiv.title = `Solve Scenario ${index} to unlock`;
+                else scenarioDiv.title = `Finish Mission ${index} to unlock`;
 
                 const isMissed = unlocked && mistakeIds.includes(i);
                 if (isMissed) scenarioDiv.classList.add('is-missed');
 
                 scenarioDiv.innerHTML = `
-                    <span class="cs-node-dot">${DOT[state]}${state === 'next' ? '<span class="cs-node-go">Start!</span>' : ''}</span>
+                    <span class="cs-node-dot">${DOT[state]}${state === 'next' ? '<span class="cs-node-go">Start!</span>' : ''}${i === heroAt ? `<span class="cs-hero-token" aria-hidden="true">${heroFace()}</span>` : ''}</span>
                     <span class="cs-node-card">
                         <span class="cs-node-head">
-                            <strong>Scenario ${sc.number}</strong>
+                            <strong>Mission ${sc.number}</strong>
                             <span class="cs-node-status">${STATUS[state]}</span>
                             ${isMissed ? '<span class="missed-chip"><i class="fa-solid fa-rotate-left"></i> Review</span>' : ''}
                         </span>
@@ -396,7 +503,7 @@
                 continueBtn.hidden = false;
             } else if (nextId) {
                 document.getElementById('continueText').textContent =
-                    solvedIds.length ? `Continue: Scenario ${scenarioByKey.get(nextId).number}` : 'Start Scenario 1';
+                    solvedIds.length ? `Continue: Mission ${scenarioByKey.get(nextId).number}` : 'Start Mission 1';
                 continueBtn.onclick = () => openScenario(nextId);
                 continueBtn.hidden = false;
             } else {
@@ -431,7 +538,10 @@
             const data = scenarioByKey.get(id);
 
             // Set Text
-            document.getElementById('scenarioTitle').innerText = `Scenario ${data.number}`;
+            document.getElementById('scenarioTitle').innerText = `Mission ${data.number}`;
+            const friend = /\b(?:si|ni)\s+([A-Z][a-z]+)/.exec(data.text);
+            setMeter(50, '', friend ? `Tulungan natin si ${friend[1]}!` : 'Kaya natin ito!');
+            document.getElementById('csWhy').hidden = true;
             document.getElementById('scenarioText').innerText = data.text;
             document.getElementById('questionText').innerText = data.question;
             const quizStatus = document.getElementById('quizStatus');
@@ -567,10 +677,16 @@
 
                 // Sound: mas malaking reward kapag first time na-solve (nag-unlock ng susunod)
                 HCISfx.play(firstTime ? 'levelUp' : 'correct');
+                setMeter(100, 'happy', pickOne(HAPPY));
 
                 showFeedback('correct', unlocksNext && hasNext
-                    ? `<i class="fa-solid fa-circle-check"></i> Correct! Scenario ${scenarioByKey.get(nextId).number} is now unlocked.`
-                    : '<i class="fa-solid fa-circle-check"></i> Correct! Great job.');
+                    ? `<i class="fa-solid fa-circle-check"></i> Mission complete! Mission ${scenarioByKey.get(nextId).number} is now unlocked.`
+                    : '<i class="fa-solid fa-circle-check"></i> Mission complete! Great job.');
+                // Teacher's explanation, as plain text
+                if (data.explanation) {
+                    document.getElementById('csWhyText').textContent = data.explanation;
+                    document.getElementById('csWhy').hidden = false;
+                }
 
                 if (reviewQueue) {
                     // Review mode: tama sa unang subok = cleared na ang mistake
@@ -589,10 +705,10 @@
                         submitBtn.onclick = closeScenario;
                     }
                 } else if (hasNext) {
-                    submitBtn.innerHTML = 'Next Scenario <i class="fa-solid fa-arrow-right"></i>';
+                    submitBtn.innerHTML = 'Next Mission <i class="fa-solid fa-arrow-right"></i>';
                     submitBtn.onclick = () => openScenario(nextId);
                 } else {
-                    submitBtn.innerText = "Back to List";
+                    submitBtn.innerText = "Back to map";
                     submitBtn.onclick = closeScenario;
                 }
                 isAnswerSubmitted = true; // Lock the choices
@@ -619,6 +735,7 @@
                 // MALI ANG SAGOT Logic
                 labels[selectedAnswer].classList.add('wrong-answer');
                 HCISfx.play('wrong');
+                setMeter(Math.max(10, meter - 20), 'sad', pickOne(SAD));
                 HCIGamify.record('answer', false);
 
                 // Itala para sa "Review mistakes" (isang beses lang bawat bukas)

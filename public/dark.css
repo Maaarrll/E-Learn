@@ -5076,6 +5076,68 @@
 :root[data-theme="dark"] .tour-card h3 {
     color: hsl(200 75% 88%);
 }
+:root[data-theme="dark"] .case-page .cs-hero .cs-hero-btn {
+    border: none;
+    background: rgba(255, 255, 255, 0.15);
+    color: #fff;
+}
+:root[data-theme="dark"] .case-page .cs-hero .cs-hero-btn:hover {
+    background: rgba(255, 255, 255, 0.25);
+}
+:root[data-theme="dark"] .cs-journey-done {
+    background: hsl(47 45% 22%);
+    border: 2px solid var(--fun-sun);
+    color: hsl(48 75% 90%);
+}
+:root[data-theme="dark"] .cs-hero-bubble {
+    background: hsl(165 14% 17%);
+    border: 2px solid #023047;
+    color: hsl(200 75% 88%);
+}
+:root[data-theme="dark"] .cs-hero-bubble::before {
+    background: hsl(165 14% 17%);
+    border-left: 2px solid #023047;
+    border-bottom: 2px solid #023047;
+}
+:root[data-theme="dark"] .cs-meter-label {
+    color: hsl(336 75% 72%);
+}
+:root[data-theme="dark"] .cs-meter-bar {
+    background: hsl(206 18% 22%);
+}
+:root[data-theme="dark"] .cs-meter-bar > div {
+    background: linear-gradient(90deg, #ff8a5c, #ffc93c, #3fcf9b);
+    background-size: 300px 100%;
+}
+:root[data-theme="dark"] .cs-why {
+    background: hsl(46 45% 21%);
+    border-left: 5px solid var(--fun-sun);
+    color: hsl(48 75% 90%);
+}
+:root[data-theme="dark"] .cs-picker-overlay {
+    background: rgba(2, 18, 40, 0.6);
+}
+:root[data-theme="dark"] .cs-picker {
+    background: hsl(165 14% 17%);
+    color: hsl(200 75% 88%);
+    box-shadow: 0 20px 50px rgba(0, 0, 0, 0.3);
+}
+:root[data-theme="dark"] .cs-picker p {
+    color: hsl(165 12% 78%);
+}
+:root[data-theme="dark"] .cs-picker-hero {
+    border: 3px solid hsl(204 19% 23%);
+    background: hsl(210 29% 19%);
+    color: hsl(200 75% 88%);
+}
+:root[data-theme="dark"] .cs-picker-hero:hover,
+:root[data-theme="dark"] .cs-picker-hero:focus-visible {
+    border-color: var(--fun-sun);
+}
+:root[data-theme="dark"] .cs-picker-hero.is-picked {
+    border-color: #1e9e55;
+    background: hsl(144 45% 20%);
+}
 
 /* ---------- from update-password.html ---------- */
 :root[data-theme="dark"] body.update-password-page {

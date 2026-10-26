@@ -98,6 +98,8 @@ function validate(kind, data) {
         text: text(data.text, 'Scenario', { max: 2000 }),
         question: text(data.question, 'Question', { max: 400 }),
         ...choices(data),
+        // "Bakit?" box students see after answering (optional)
+        explanation: text(data.explanation, 'Explanation', { max: 1000, required: false }),
         lesson: lessonKey(data.lesson),
       };
     case 'card':

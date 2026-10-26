@@ -338,7 +338,9 @@ const HCIContentEditor = (function () {
              ${field('Color', `<select name="color">${data.deckColors.map(c => `<option value="${c}" ${d.color === c ? 'selected' : ''}>${c.replace('-icon', '')}</option>`).join('')}</select>`)}</div>`
           + lessonBox(d.lesson || '');
       case 'case':
-        return field('Scenario', textBox('text', d.text, 4)) + field('Question', inputBox('question', d.question)) + choiceFields(d) + lessonBox(d.lesson || '');
+        return field('Scenario', textBox('text', d.text, 4)) + field('Question', inputBox('question', d.question)) + choiceFields(d)
+          + field('Bakit? <small>(optional)</small>', textBox('explanation', d.explanation || '', 3), 'Why the right answer is right. Students see it after they answer correctly.')
+          + lessonBox(d.lesson || '');
       case 'card':
         return field('Question', textBox('question', d.question, 2)) + choiceFields(d);
       case 'topic':
@@ -358,7 +360,7 @@ const HCIContentEditor = (function () {
     video: { title: '', topic: 'pagtitipid', duration: '' },
     module: { title: '', icon: 'fa-book-open' },
     deck: { title: '', icon: 'fa-clone', color: 'video-icon', lesson: '' },
-    case: { text: '', question: '', options: ['', '', '', ''], answer: 0, lesson: '' },
+    case: { text: '', question: '', options: ['', '', '', ''], answer: 0, explanation: '', lesson: '' },
     card: { question: '', options: ['', '', '', ''], answer: 0 },
     topic: { title: '', sections: [{ icon: 'fa-book-open', heading: '', body: '' }] },
   };
@@ -373,7 +375,7 @@ const HCIContentEditor = (function () {
       case 'card': {
         const checked = form.querySelector('input[name="answer"]:checked');
         const base = { question: v('question'), options: [0, 1, 2, 3].map(i => v(`option${i}`)), answer: checked ? Number(checked.value) : -1 };
-        return kind === 'case' ? { text: v('text'), ...base, lesson: v('lesson') } : base;
+        return kind === 'case' ? { text: v('text'), ...base, explanation: v('explanation'), lesson: v('lesson') } : base;
       }
       case 'topic': return { title: v('title'), sections: readSections(form) };
       default: return {};

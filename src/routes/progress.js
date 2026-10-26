@@ -119,7 +119,21 @@ router.get('/case-studies', async (req, res, next) => {
     res.json({
       ...caseProgress(content, JSON.parse(row.solved_ids)),
       lessonLocks: lessonLocks(content, content.cases, await getReadTopics(req.userId)),
+      hero: row.hero || null,
     });
+  } catch (err) {
+    next(err);
+  }
+});
+
+// PUT /api/progress/case-studies/hero  { hero }  The page keeps the list of heroes
+router.put('/case-studies/hero', async (req, res, next) => {
+  try {
+    const hero = String((req.body && req.body.hero) || '');
+    if (!/^[a-z]{2,20}$/.test(hero)) return res.status(400).json({ error: 'Pick a hero.' });
+    await getCaseStudyRow(req.userId);
+    await pool.query('UPDATE case_study_progress SET hero = $1 WHERE user_id = $2', [hero, req.userId]);
+    res.json({ hero });
   } catch (err) {
     next(err);
   }
