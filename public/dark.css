@@ -5240,6 +5240,16 @@
 :root[data-theme="dark"] .sb-flip-back b {
     color: var(--book);
 }
+:root[data-theme="dark"] .cs-stars {
+    color: hsl(42 75% 70%);
+}
+:root[data-theme="dark"] .cs-stars .fa-regular {
+    color: #c9b98a;
+}
+:root[data-theme="dark"] .cs-star-earn em {
+    background: var(--fun-sun);
+    color: #3b2f00;
+}
 
 /* ---------- from update-password.html ---------- */
 :root[data-theme="dark"] body.update-password-page {

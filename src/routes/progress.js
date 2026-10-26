@@ -111,13 +111,20 @@ function caseProgress(content, solvedIds) {
   return { solvedIds: solved, unlockedIds: unlockedKeys(content.caseOrder, solved) };
 }
 
+// Best stars per solved mission; missions solved before stars existed count as 1
+function caseStars(saved, solvedIds) {
+  return Object.fromEntries(solvedIds.map(id => [id, (saved && saved[id]) || 1]));
+}
+
 // GET /api/progress/case-studies
 router.get('/case-studies', async (req, res, next) => {
   try {
     const content = await getContent();
     const row = await getCaseStudyRow(req.userId);
+    const progress = caseProgress(content, JSON.parse(row.solved_ids));
     res.json({
-      ...caseProgress(content, JSON.parse(row.solved_ids)),
+      ...progress,
+      stars: caseStars(row.stars, progress.solvedIds),
       lessonLocks: lessonLocks(content, content.cases, await getReadTopics(req.userId)),
       hero: row.hero || null,
     });
@@ -139,10 +146,11 @@ router.put('/case-studies/hero', async (req, res, next) => {
   }
 });
 
-// POST /api/progress/case-studies/submit  { scenarioId, correct }
+// POST /api/progress/case-studies/submit  { scenarioId, correct, misses }
+// Stars: 3 = right on the first try, 2 = one miss, 1 = more misses
 router.post('/case-studies/submit', async (req, res, next) => {
   try {
-    const { scenarioId, correct } = req.body || {};
+    const { scenarioId, correct, misses } = req.body || {};
     const id = Number(scenarioId);
     const content = await getContent();
     const scenario = content.caseByKey.get(id);
@@ -158,16 +166,24 @@ router.post('/case-studies/submit', async (req, res, next) => {
       return res.status(403).json({ error: 'This scenario is still locked.' });
     }
 
-    if (correct && !solvedIds.includes(id)) {
+    const stars = row.stars || {};
+    const missCount = Number.isInteger(misses) && misses > 0 ? misses : 0;
+    const earned = correct ? Math.max(1, 3 - missCount) : 0;
+    const newlySolved = correct && !solvedIds.includes(id);
+    if (newlySolved) {
       solvedIds.push(id);
       await logActivity(req.userId, 'case_study', `Solved Situation Quiz Scenario ${scenario.number}`);
+    }
+    if (newlySolved || earned > (stars[id] || 0)) {
+      stars[id] = Math.max(earned, stars[id] || 0);
       await pool.query(
-        'UPDATE case_study_progress SET solved_ids = $1 WHERE user_id = $2',
-        [JSON.stringify(solvedIds), req.userId]
+        'UPDATE case_study_progress SET solved_ids = $1, stars = $2 WHERE user_id = $3',
+        [JSON.stringify(solvedIds), stars, req.userId]
       );
     }
 
-    res.json(caseProgress(content, solvedIds));
+    const progress = caseProgress(content, solvedIds);
+    res.json({ ...progress, stars: caseStars(stars, progress.solvedIds) });
   } catch (err) {
     next(err);
   }

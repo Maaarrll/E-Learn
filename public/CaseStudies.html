@@ -9,8 +9,8 @@
     <link rel="apple-touch-icon" href="apple-touch-icon.png?v=3">
     <meta name="theme-color" content="#023047">
     <!-- Link to the separated CSS file -->
-    <link rel="stylesheet" href="style.css?v=96">
-    <link rel="stylesheet" href="dark.css?v=60">
+    <link rel="stylesheet" href="style.css?v=97">
+    <link rel="stylesheet" href="dark.css?v=61">
     <script src="js/theme.js?v=3"></script>
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.2/css/all.min.css">
 </head>
@@ -122,6 +122,7 @@
                             <span class="cs-hero-face" id="heroBtnFace" aria-hidden="true"></span> <span>Change hero</span>
                         </button>
                         <span class="cs-solved-chip"><i class="fa-solid fa-circle-check"></i> <span>Missions <strong id="solvedCount">0</strong>/<span id="solvedTotal">0</span></span></span>
+                        <span class="cs-solved-chip"><i class="fa-solid fa-star"></i> <span>Stars <strong id="starCount">0</strong>/<span id="starTotal">0</span></span></span>
                         <button type="button" class="review-btn" id="reviewBtn" hidden>
                             <i class="fa-solid fa-rotate-left"></i> <span id="reviewText">Review mistakes</span>
                         </button>
@@ -277,7 +278,13 @@
         // Review my mistakes
         let mistakeIds = [];            // mga scenario na nagkamali (hindi pa na-clear)
         let reviewQueue = null;         // mga natitirang scenario habang nagre-review, o null
-        let missedThisAttempt = false;  // nagkamali na ba sa scenario na ito ngayong bukas
+        let misses = 0;                 // ilang beses nagkamali sa scenario na ito ngayong bukas
+
+        // Best stars per solved mission (3 = right on the first try)
+        let stars = {};
+        const starsOf = (key) => stars[key] || 0;
+        const starsHtml = (n) => `<span class="cs-stars" role="img" aria-label="${n} of 3 stars">${[1, 2, 3].map(s =>
+            `<i class="fa-${s <= n ? 'solid' : 'regular'} fa-star"></i>`).join('')}</span>`;
 
         // Initialize Page: pull the user's real progress from the backend first.
         const isUnlocked = (key) => unlockedIds.includes(key);
@@ -305,6 +312,7 @@
             if (progress) {
                 unlockedIds = progress.unlockedIds;
                 solvedIds = progress.solvedIds;
+                stars = progress.stars || {};
                 lessonLocks = new Map(progress.lessonLocks.map(l => [l.key, l]));
                 hero = progress.hero;
             } else if (scenarios.length) {
@@ -430,7 +438,7 @@
                 const done = document.createElement('div');
                 done.className = 'cs-journey-done';
                 done.innerHTML = `<span class="cs-hero-face" aria-hidden="true">${heroFace()}</span>
-                    <span><b>Journey complete!</b> You finished all ${scenarios.length} missions. You can replay any mission below.</span>`;
+                    <span><b>Journey complete!</b> You finished all ${scenarios.length} missions. Replay any mission to earn all 3 stars.</span>`;
                 listView.appendChild(done);
             }
 
@@ -448,7 +456,7 @@
                 else if (unlocked) state = 'unlocked';
 
                 const STATUS = {
-                    solved:   'Solved',
+                    solved:   starsHtml(starsOf(i)),
                     next:     'Up next',
                     unlocked: 'Open',
                     lesson:   lock ? `Read Lesson ${lock.lesson} first` : '',
@@ -495,7 +503,11 @@
             document.getElementById('solvedCount').textContent = solvedIds.length;
             document.getElementById('solvedTotal').textContent = scenarios.length;
             document.getElementById('csHeroBar').style.width = `${scenarios.length ? (solvedIds.length / scenarios.length) * 100 : 0}%`;
+            document.getElementById('starCount').textContent = solvedIds.reduce((sum, key) => sum + starsOf(key), 0);
+            document.getElementById('starTotal').textContent = scenarios.length * 3;
 
+            // No new mission waiting: invite a replay of the first one under 3 stars
+            const retry = scenarios.find(sc => solvedIds.includes(sc.key) && starsOf(sc.key) < 3 && !lessonLocks.has(sc.key));
             const continueBtn = document.getElementById('continueBtn');
             if (nextId && lessonLocks.has(nextId)) {
                 document.getElementById('continueText').textContent = `Read Lesson ${lessonLocks.get(nextId).lesson} first`;
@@ -505,6 +517,10 @@
                 document.getElementById('continueText').textContent =
                     solvedIds.length ? `Continue: Mission ${scenarioByKey.get(nextId).number}` : 'Start Mission 1';
                 continueBtn.onclick = () => openScenario(nextId);
+                continueBtn.hidden = false;
+            } else if (retry) {
+                document.getElementById('continueText').textContent = `Go for 3 stars: Mission ${retry.number}`;
+                continueBtn.onclick = () => openScenario(retry.key);
                 continueBtn.hidden = false;
             } else {
                 continueBtn.hidden = true;
@@ -533,7 +549,7 @@
             currentActiveScenario = id;
             selectedAnswer = null;
             isAnswerSubmitted = false;
-            missedThisAttempt = false;
+            misses = 0;
 
             const data = scenarioByKey.get(id);
 
@@ -549,7 +565,7 @@
                 quizStatus.innerHTML = `<i class="fa-solid fa-rotate-left"></i> Reviewing mistakes · ${reviewQueue.length} left`;
             } else {
                 quizStatus.innerHTML = solvedIds.includes(id)
-                    ? '<i class="fa-solid fa-circle-check"></i> Already solved'
+                    ? `Best ${starsHtml(starsOf(id))}`
                     : `${data.number} of ${scenarios.length}`;
             }
             quizStatus.classList.toggle('is-solved', !reviewQueue && solvedIds.includes(id));
@@ -676,12 +692,17 @@
                 const unlocksNext = hasNext && !isUnlocked(nextId);
 
                 // Sound: mas malaking reward kapag first time na-solve (nag-unlock ng susunod)
-                HCISfx.play(firstTime ? 'levelUp' : 'correct');
+                const earned = Math.max(1, 3 - misses);
+                const newBest = earned > starsOf(currentActiveScenario);
+                HCISfx.play(firstTime ? 'levelUp' : earned === 3 && newBest ? 'mastered' : 'correct');
                 setMeter(100, 'happy', pickOne(HAPPY));
 
-                showFeedback('correct', unlocksNext && hasNext
-                    ? `<i class="fa-solid fa-circle-check"></i> Mission complete! Mission ${scenarioByKey.get(nextId).number} is now unlocked.`
-                    : '<i class="fa-solid fa-circle-check"></i> Mission complete! Great job.');
+                const starLine = `<span class="cs-star-earn">${starsHtml(earned)} <b>${earned === 3 ? 'Perfect! 3 stars!'
+                    : `${earned} star${earned > 1 ? 's' : ''}! Replay for 3.`}</b>${newBest && !firstTime ? ' <em>New best!</em>' : ''}</span>`;
+                showFeedback('correct', starLine + (unlocksNext && hasNext
+                    ? `Mission complete! Mission ${scenarioByKey.get(nextId).number} is now unlocked.`
+                    : 'Mission complete! Great job.'));
+                if (newBest) stars = { ...stars, [currentActiveScenario]: earned };
                 // Teacher's explanation, as plain text
                 if (data.explanation) {
                     document.getElementById('csWhyText').textContent = data.explanation;
@@ -691,11 +712,11 @@
                 if (reviewQueue) {
                     // Review mode: tama sa unang subok = cleared na ang mistake
                     reviewQueue = reviewQueue.filter(id => id !== currentActiveScenario);
-                    if (!missedThisAttempt) {
+                    if (!misses) {
                         clearMistake(currentActiveScenario);
-                        showFeedback('correct', '<i class="fa-solid fa-circle-check"></i> Correct! Mistake cleared.');
+                        showFeedback('correct', `${starLine}Correct! Mistake cleared.`);
                     } else {
-                        showFeedback('correct', '<i class="fa-solid fa-circle-check"></i> Correct! This one stays in your review list for next time.');
+                        showFeedback('correct', `${starLine}Correct! This one stays in your review list for next time.`);
                     }
                     if (reviewQueue.length) {
                         submitBtn.innerHTML = 'Next Mistake <i class="fa-solid fa-arrow-right"></i>';
@@ -720,11 +741,13 @@
 
                 // Persist progress on the backend, then refresh local state from its response.
                 const scenarioId = currentActiveScenario;
+                const earnedMisses = misses;
                 saveChain = saveChain
-                    .then(() => api.post('/progress/case-studies/submit', { scenarioId, correct: true }))
+                    .then(() => api.post('/progress/case-studies/submit', { scenarioId, correct: true, misses: earnedMisses }))
                     .then(result => {
                         unlockedIds = result.unlockedIds;
                         solvedIds = result.solvedIds;
+                        stars = result.stars;
                         renderScenariosList();
                     })
                     .catch(err => console.error('Could not save situation quiz progress:', err))
@@ -739,10 +762,8 @@
                 HCIGamify.record('answer', false);
 
                 // Itala para sa "Review mistakes" (isang beses lang bawat bukas)
-                if (!missedThisAttempt) {
-                    missedThisAttempt = true;
-                    recordMistake(currentActiveScenario);
-                }
+                if (!misses) recordMistake(currentActiveScenario);
+                misses++;
 
                 showFeedback('wrong', '<i class="fa-solid fa-circle-xmark"></i> Not quite. Pick another answer and try again.');
 

@@ -16826,3 +16826,50 @@ button.cs-node:hover .cs-node-card {
         animation: none;
     }
 }
+
+/* Situation Quizzes: 3-star rating per mission */
+.cs-stars {
+    display: inline-flex;
+    gap: 2px;
+    color: #f2a900;
+}
+
+.cs-stars .fa-regular {
+    color: #c9b98a;
+}
+
+.cs-star-earn {
+    display: flex;
+    align-items: center;
+    flex-wrap: wrap;
+    gap: 8px;
+    margin-bottom: 4px;
+}
+
+.cs-star-earn .cs-stars {
+    font-size: 24px;
+    gap: 4px;
+}
+
+.cs-star-earn .cs-stars i {
+    animation: funPop 0.4s var(--fun-bounce) both;
+}
+
+.cs-star-earn .cs-stars i:nth-child(2) { animation-delay: 0.15s; }
+.cs-star-earn .cs-stars i:nth-child(3) { animation-delay: 0.3s; }
+
+.cs-star-earn em {
+    padding: 2px 8px;
+    border-radius: 999px;
+    background: var(--fun-sun);
+    color: #3b2f00;
+    font-size: 12px;
+    font-style: normal;
+    font-weight: 800;
+}
+
+@media (prefers-reduced-motion: reduce) {
+    .cs-star-earn .cs-stars i {
+        animation: none;
+    }
+}
