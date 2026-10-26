@@ -101,6 +101,9 @@
                     <a href="/api/admin/export.csv" class="tool-btn admin-export" id="exportBtn" hidden>
                         <i class="fa-solid fa-file-csv"></i> Export CSV
                     </a>
+                    <button type="button" class="tool-btn admin-tour-btn" id="tourBtn" hidden>
+                        <i class="fa-regular fa-circle-question"></i> Tour
+                    </button>
                 </div>
 
                 <p class="admin-loading" id="adminLoading"><span class="btn-spinner"></span> Loading student data...</p>
@@ -279,6 +282,7 @@
     <script src="js/admin-content.js?v=7"></script>
     <script src="js/quiz-import.js?v=1"></script>
     <script src="js/admin-quizzes.js?v=8"></script>
+    <script src="js/admin-tour.js?v=1"></script>
     <script>
         const ACTIVITY_LABELS = { case_study: 'Situation Quiz', study_card: 'Quiz Card', video: 'Video', lesson: 'Lesson' };
         const AUDIT_ICONS = {
@@ -1148,6 +1152,11 @@
                     return n ? `${n} at-risk student${n === 1 ? '' : 's'}` : 'Nobody looks at risk';
                 })();
                 showTab(location.hash.slice(1) || 'overview');
+
+                // Guided tour: replay button, and once by itself on a first visit
+                $('tourBtn').hidden = false;
+                $('tourBtn').addEventListener('click', () => HCIAdminTour.start());
+                HCIAdminTour.maybeStart();
             } catch (err) {
                 $('adminLoading').innerHTML = `<i class="fa-solid fa-circle-exclamation"></i> ${escapeHtml(err.message)}`;
             }

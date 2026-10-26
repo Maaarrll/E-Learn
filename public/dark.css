@@ -5053,6 +5053,29 @@
     background: hsl(217 45% 20%);
     color: hsl(213 58% 74%);
 }
+:root[data-theme="dark"] .tour-layer.is-dim {
+    background: rgba(2, 18, 40, 0.55);
+}
+:root[data-theme="dark"] .tour-spot {
+    box-shadow: 0 0 0 9999px rgba(2, 18, 40, 0.55);
+    outline: 3px solid #ffc93c;
+}
+:root[data-theme="dark"] .tour-card {
+    background: hsl(165 14% 17%);
+    color: hsl(211 33% 87%);
+    box-shadow: 0 18px 40px rgba(0, 0, 0, 0.25);
+}
+:root[data-theme="dark"] .tour-top {
+    color: hsl(212 16% 73%);
+}
+:root[data-theme="dark"] .tour-skip {
+    border: none;
+    background: none;
+    color: inherit;
+}
+:root[data-theme="dark"] .tour-card h3 {
+    color: hsl(200 75% 88%);
+}
 
 /* ---------- from update-password.html ---------- */
 :root[data-theme="dark"] body.update-password-page {
