@@ -127,6 +127,6 @@ app.use((err, req, res, next) => {
 
 ready.then(() => {
   app.listen(PORT, () => {
-    console.log(`ValuesLearn server running at http://localhost:${PORT}`);
+    console.log(`ALLEARN server running at http://localhost:${PORT}`);
   });
 });

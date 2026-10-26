@@ -177,7 +177,7 @@
       <div class="qs-panel" role="dialog" aria-modal="true" aria-label="Quick search">
         <div class="qs-input-row">
           <i class="fa-solid fa-magnifying-glass"></i>
-          <input type="text" class="qs-input" placeholder="Search ValuesLearn..." autocomplete="off" spellcheck="false"
+          <input type="text" class="qs-input" placeholder="Search ALLEARN..." autocomplete="off" spellcheck="false"
                  role="combobox" aria-expanded="true" aria-controls="qsResults" aria-autocomplete="list">
           <button type="button" class="qs-close" aria-label="Close search" title="Close (Esc)">
             <i class="fa-solid fa-xmark"></i>

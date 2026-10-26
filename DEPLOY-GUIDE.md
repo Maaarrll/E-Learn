@@ -1,4 +1,4 @@
-# Pag-deploy ng ValuesLearn (Render + Supabase + Cloudinary) — LIBRE, hindi nawawala ang data
+# Pag-deploy ng ALLEARN (Render + Supabase + Cloudinary) — LIBRE, hindi nawawala ang data
 
 Na-convert na ang backend mula SQLite (local file) papuntang Postgres (hosted, hiwalay
 sa server). Kahit matulog o mag-restart ang free web service mo sa Render, hindi

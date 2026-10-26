@@ -1,4 +1,4 @@
-# ValuesLearn
+# ALLEARN
 
 A Values Education 7 study hub (MATATAG curriculum) for Allen National High
 School. Students sign up, read the lessons, answer situation quizzes and quiz

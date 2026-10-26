@@ -1,7 +1,7 @@
 // src/utils/mailer.js
 
 /*
-    Sends ValuesLearn notification emails:
+    Sends ALLEARN notification emails:
 
     - Signup notification
     - Login notification
@@ -23,7 +23,7 @@ const nodemailer =
 
 
 const APP_NAME =
-    'ValuesLearn';
+    'ALLEARN';
 
 
 let smtpTransport =
