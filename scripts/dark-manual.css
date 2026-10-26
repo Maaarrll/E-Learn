@@ -2,12 +2,12 @@
 /* Base: page colours, native controls and scrollbars */
 :root[data-theme="dark"] {
     color-scheme: dark;
-    --fun-bg: #09170d;
+    --fun-bg: #090d17;
 }
 
 :root[data-theme="dark"] body {
-    background-color: #09170d;
-    color: #deebe1;
+    background-color: #090d17;
+    color: #dee1eb;
 }
 
 :root[data-theme="dark"] .main-content,
@@ -17,7 +17,7 @@
 
 :root[data-theme="dark"] input::placeholder,
 :root[data-theme="dark"] textarea::placeholder {
-    color: #7c9682;
+    color: #7c8296;
 }
 
 /* Inline colours written straight into the HTML */
@@ -50,12 +50,12 @@
 
 /* Dashboard progress ring: empty part of the track */
 :root[data-theme="dark"] {
-    --ring-track: #1a3221;
+    --ring-track: #1a2132;
 }
 
 /* Quick search: keep highlighted words dark on the yellow highlight */
 :root[data-theme="dark"] .qs-result mark {
-    color: #00260e;
+    color: #000c26;
 }
 
 /* Dark mode switch: keep the knob white on the coloured track */

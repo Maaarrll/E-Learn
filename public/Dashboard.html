@@ -7,7 +7,7 @@
     <meta name="description" content="Your ALLEARN dashboard: progress, recent activity and quick actions.">
     <link rel="icon" href="favicon-32.png?v=3" type="image/png" sizes="32x32">
     <link rel="apple-touch-icon" href="apple-touch-icon.png?v=3">
-    <meta name="theme-color" content="#02473d">
+    <meta name="theme-color" content="#023047">
     <link rel="stylesheet" href="style.css?v=94">
     <link rel="stylesheet" href="dark.css?v=58">
     <script src="js/theme.js?v=3"></script>
@@ -405,7 +405,7 @@
                 const value = target * eased;
                 label.textContent = `${Math.round(value)}%`;
                 if (ring) {
-                    ring.style.background = `conic-gradient(#1e7e45 ${value * 3.6}deg, var(--ring-track, #e0e0e0) 0deg)`;
+                    ring.style.background = `conic-gradient(#1e407e ${value * 3.6}deg, var(--ring-track, #e0e0e0) 0deg)`;
                 }
                 if (t < 1) requestAnimationFrame(frame);
             }
