@@ -832,6 +832,11 @@ async function init() {
             'ALTER TABLE public.users ADD COLUMN IF NOT EXISTS email_hash TEXT'
         );
 
+        // Previous code stays valid after "Send a new code", in case its email arrives late
+        await client.query(
+            'ALTER TABLE public.signup_codes ADD COLUMN IF NOT EXISTS prev_code_hash TEXT'
+        );
+
         /*
             Session version: stored inside each login cookie.
             Bumping it (password change/reset) logs out every

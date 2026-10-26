@@ -41,7 +41,8 @@ const RESET_TOKEN_MINUTES = 30;
 const RESET_COOLDOWN_SECONDS = 60;
 
 // Signup confirmation code (also uses RESET_COOLDOWN_SECONDS between sends)
-const SIGNUP_CODE_MINUTES = 10;
+// Long enough for slow Gmail delivery
+const SIGNUP_CODE_MINUTES = 30;
 const SIGNUP_CODE_TRIES = 5;
 
 const STUDENT_ID_REGEX = /^\d{12}$/;
@@ -245,7 +246,8 @@ async function startSignupCode(res, email, emailHash, firstName) {
         `INSERT INTO signup_codes (email_hash, code_hash, expires_at, attempts, sent_at)
          VALUES ($1, $2, NOW() + make_interval(mins => $3), 0, NOW())
          ON CONFLICT (email_hash) DO UPDATE
-         SET code_hash = EXCLUDED.code_hash, expires_at = EXCLUDED.expires_at, attempts = 0, sent_at = NOW()`,
+         SET prev_code_hash = CASE WHEN signup_codes.expires_at > NOW() THEN signup_codes.code_hash END,
+             code_hash = EXCLUDED.code_hash, expires_at = EXCLUDED.expires_at, attempts = 0, sent_at = NOW()`,
         [emailHash, signupCodeHash(emailHash, code), SIGNUP_CODE_MINUTES]
     );
 
@@ -292,7 +294,7 @@ async function useSignupCode(emailHash, code) {
     // One statement, so the same code can't be used twice at the same time
     const used = await pool.query(
         `DELETE FROM signup_codes
-         WHERE email_hash = $1 AND code_hash = $2 AND expires_at > NOW() AND attempts < $3`,
+         WHERE email_hash = $1 AND $2 IN (code_hash, prev_code_hash) AND expires_at > NOW() AND attempts < $3`,
         [emailHash, signupCodeHash(emailHash, cleanCode), SIGNUP_CODE_TRIES]
     );
 
