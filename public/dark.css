@@ -5086,6 +5086,12 @@
     background: var(--fun-coral);
     color: #fff;
 }
+@media screen and (max-width: 768px) {
+    :root[data-theme="dark"] .case-page .cs-play .quiz-actions {
+        background: hsl(165 14% 17%);
+        box-shadow: 0 -6px 18px rgba(2, 48, 71, 0.12);
+    }
+}
 :root[data-theme="dark"] .sb-points {
     border: 2px solid var(--sb-ink);
     background: hsl(165 14% 17%);

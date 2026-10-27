@@ -9,8 +9,8 @@
     <link rel="apple-touch-icon" href="apple-touch-icon.png?v=3">
     <meta name="theme-color" content="#023047">
     <!-- Link to the separated CSS file -->
-    <link rel="stylesheet" href="style.css?v=98">
-    <link rel="stylesheet" href="dark.css?v=62">
+    <link rel="stylesheet" href="style.css?v=99">
+    <link rel="stylesheet" href="dark.css?v=63">
     <script src="js/theme.js?v=3"></script>
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.2/css/all.min.css">
 </head>
@@ -449,6 +449,12 @@
             document.getElementById('quizFeedback').hidden = true;
         }
 
+        // On phones the feedback sits below the answers, out of view
+        function revealFeedback() {
+            const why = document.getElementById('csWhy');
+            (why.hidden ? document.getElementById('quizFeedback') : why).scrollIntoView({ block: 'nearest', behavior: 'smooth' });
+        }
+
         // Open a specific scenario
         function openScenario(id) {
             if (lessonLocks.has(id)) return showLessonLock(lessonLocks.get(id));
@@ -569,6 +575,7 @@
         function submitCaseStudy() {
             if (selectedAnswer === null) {
                 showFeedback('info', '<i class="fa-solid fa-hand-pointer"></i> Please select an answer before submitting.');
+                revealFeedback();
                 return;
             }
 
@@ -674,6 +681,7 @@
                 submitBtn.innerText = "Try Again";
                 // Ang isAnswerSubmitted ay mananatiling FALSE para makapindot ulit ang user ng ibang sagot!
             }
+            revealFeedback();
         }
 
         // PAG-TRACK NG LAST VISITED LESSON PARA SA DASHBOARD
