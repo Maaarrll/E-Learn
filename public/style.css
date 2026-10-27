@@ -15558,8 +15558,8 @@ body.sb-reading .main-content {
     box-shadow: 0 5px 0 #ffc2a6;
 }
 
-/* Level map: a path down the middle, cards on alternating sides */
-.case-page .scenarios-list.cs-map {
+/* Situation list: number dot on the left, card on the right */
+.case-page .scenarios-list.cs-list {
     display: flex;
     flex-direction: column;
     gap: 0;
@@ -15569,10 +15569,9 @@ body.sb-reading .main-content {
 .cs-node {
     position: relative;
     display: grid;
-    grid-template-columns: minmax(0, 1fr) 84px minmax(0, 1fr);
+    grid-template-columns: 72px minmax(0, 1fr);
     align-items: center;
     width: 100%;
-    min-height: 104px;
     padding: 0;
     border: none;
     background: none;
@@ -15586,28 +15585,9 @@ button.cs-node {
     cursor: pointer;
 }
 
-/* Path segment behind each dot (green once solved) */
-.cs-node::before {
-    content: "";
-    position: absolute;
-    left: 50%;
-    top: 0;
-    bottom: 0;
-    width: 8px;
-    margin-left: -4px;
-    background: repeating-linear-gradient(180deg, #d5e6dc 0 12px, transparent 12px 20px);
-}
-
-.cs-node.is-solved::before {
-    background: linear-gradient(180deg, var(--fun-mint), var(--fun-sky));
-}
-
-.cs-node:first-child::before { top: 50%; }
-.cs-node:last-child::before { bottom: 50%; }
-
 .cs-node-dot {
     position: relative;
-    grid-column: 2;
+    grid-column: 1;
     grid-row: 1;
     justify-self: center;
     width: 64px;
@@ -15626,10 +15606,10 @@ button.cs-node {
 }
 
 .cs-node.is-solved .cs-node-dot {
-    background: var(--fun-sun);
+    background: var(--fun-mint);
     border-color: #fff;
     color: #fff;
-    box-shadow: 0 5px 0 #c99a12, 0 0 0 4px #ffe9a8;
+    box-shadow: 0 5px 0 #3c9a6f;
 }
 
 .cs-node.is-next .cs-node-dot {
@@ -15659,48 +15639,19 @@ button.cs-node:hover .cs-node-dot {
     transform: scale(1.1);
 }
 
-.cs-node-go {
-    position: absolute;
-    bottom: calc(100% + 8px);
-    left: 50%;
-    padding: 4px 10px;
-    border-radius: 10px;
-    background: #000c26;
-    color: #fff;
-    font-size: 12px;
-    font-weight: 900;
-    white-space: nowrap;
-    transform: translateX(-50%);
-}
-
-.cs-node-go::after {
-    content: "";
-    position: absolute;
-    top: 100%;
-    left: 50%;
-    margin-left: -6px;
-    border: 6px solid transparent;
-    border-top-color: #000c26;
-}
-
 .cs-node-card {
-    grid-column: 1;
+    grid-column: 2;
     grid-row: 1;
     display: flex;
     flex-direction: column;
     gap: 6px;
-    margin: 10px 14px 10px 0;
+    margin: 8px 0 8px 10px;
     padding: 14px 16px;
     border: 2px solid #e0e5ee;
     border-radius: 18px;
     background: #fff;
     box-shadow: 0 6px 16px rgba(2, 48, 71, 0.06);
     transition: transform 0.25s var(--fun-bounce), border-color 0.2s;
-}
-
-.cs-node.is-right .cs-node-card {
-    grid-column: 3;
-    margin: 10px 0 10px 14px;
 }
 
 button.cs-node:hover .cs-node-card {
@@ -15734,7 +15685,7 @@ button.cs-node:hover .cs-node-card {
     font-weight: 800;
 }
 
-.cs-node.is-solved .cs-node-status { background: #fff4d1; color: #8a6200; }
+.cs-node.is-solved .cs-node-status { background: #dcf5e8; color: #1f6b47; }
 .cs-node.is-next .cs-node-status   { background: #e3f3ff; color: #307bb0; }
 
 .cs-node .missed-chip {
@@ -15847,38 +15798,6 @@ button.cs-node:hover .cs-node-card {
 
     .case-page .cs-hero .cs-header-text h2 {
         font-size: 24px;
-    }
-
-    /* Map: path on the left, every card on the right */
-    .cs-node,
-    .cs-node.is-right {
-        grid-template-columns: 72px minmax(0, 1fr);
-    }
-
-    .cs-node::before {
-        left: 36px;
-    }
-
-    .cs-node-dot {
-        grid-column: 1;
-    }
-
-    .cs-node-card,
-    .cs-node.is-right .cs-node-card {
-        grid-column: 2;
-        margin: 10px 0 10px 10px;
-    }
-
-    .cs-node-go {
-        bottom: auto;
-        top: calc(100% + 6px);
-    }
-
-    .cs-node-go::after {
-        top: auto;
-        bottom: 100%;
-        border-top-color: transparent;
-        border-bottom-color: #000c26;
     }
 
     .case-page .cs-play .scenario-box {
@@ -16017,14 +15936,9 @@ button.cs-node:hover .cs-node-card {
         margin-left: 55px;
     }
 
-    /* Level map: smaller dots so cards get the width */
-    .cs-node,
-    .cs-node.is-right {
+    /* Situation list: smaller dots so cards get the width */
+    .cs-node {
         grid-template-columns: 60px minmax(0, 1fr);
-    }
-
-    .cs-node::before {
-        left: 30px;
     }
 
     .cs-node-dot {
@@ -16038,8 +15952,7 @@ button.cs-node:hover .cs-node-card {
         height: 60px;
     }
 
-    .cs-node-card,
-    .cs-node.is-right .cs-node-card {
+    .cs-node-card {
         padding: 12px 14px;
     }
 
@@ -16173,163 +16086,7 @@ button.cs-node:hover .cs-node-card {
     }
 }
 
-/* ---------- Situation Quizzes: story adventure (hero, values meter, Bakit?) ---------- */
-.cs-hero-face {
-    font-family: "Segoe UI Emoji", "Apple Color Emoji", "Noto Color Emoji", sans-serif;
-    line-height: 1;
-}
-
-.case-page .cs-hero .cs-hero-btn {
-    display: inline-flex;
-    align-items: center;
-    gap: 8px;
-    padding: 6px 14px 6px 8px;
-    border: none;
-    border-radius: 20px;
-    background: rgba(255, 255, 255, 0.15);
-    color: #fff;
-    font: inherit;
-    font-size: 13px;
-    font-weight: 700;
-    cursor: pointer;
-}
-
-.case-page .cs-hero .cs-hero-btn:hover {
-    background: rgba(255, 255, 255, 0.25);
-}
-
-.case-page .cs-hero .cs-hero-btn .cs-hero-face {
-    font-size: 22px;
-}
-
-/* The hero stands beside its mission's dot, on the side away from the card */
-.cs-hero-token {
-    position: absolute;
-    top: 50%;
-    left: calc(100% + 10px);
-    margin-top: -20px;
-    font-size: 34px;
-    pointer-events: none;
-    filter: drop-shadow(0 3px 2px rgba(0, 0, 0, 0.25));
-    animation: funBob 2.4s ease-in-out infinite;
-}
-
-.cs-node.is-right .cs-hero-token {
-    left: auto;
-    right: calc(100% + 10px);
-}
-
-.cs-journey-done {
-    display: flex;
-    align-items: center;
-    gap: 14px;
-    margin-bottom: 18px;
-    padding: 14px 18px;
-    border-radius: 18px;
-    background: #fff6d6;
-    border: 2px solid var(--fun-sun);
-    color: #3b2f00;
-    font-size: 15px;
-}
-
-.cs-journey-done .cs-hero-face {
-    font-size: 36px;
-}
-
-/* The hero walks along the track instead of the rocket */
-.case-page .tq-rocket.cs-hero-runner {
-    transform: none;
-    font-size: 20px;
-}
-
-/* Hero + values meter at the top of a mission */
-.cs-meter-row {
-    display: flex;
-    align-items: center;
-    gap: 16px;
-    margin: 4px 0 16px;
-}
-
-.cs-hero-mini {
-    position: relative;
-    display: flex;
-    align-items: center;
-    gap: 10px;
-    flex-shrink: 0;
-}
-
-.cs-hero-mini .cs-hero-face {
-    font-size: 42px;
-}
-
-.cs-hero-mini.is-happy .cs-hero-face {
-    animation: csHeroJump 0.6s ease-out;
-}
-
-.cs-hero-mini.is-sad .cs-hero-face {
-    animation: funShake 0.5s ease-in-out;
-}
-
-.cs-hero-bubble {
-    position: relative;
-    padding: 8px 12px;
-    border-radius: 14px;
-    background: #fff;
-    border: 2px solid #023047;
-    color: #023047;
-    font-size: 14px;
-    font-weight: 800;
-    white-space: nowrap;
-}
-
-/* Speech bubble tail pointing at the hero */
-.cs-hero-bubble::before {
-    content: "";
-    position: absolute;
-    left: -8px;
-    top: 50%;
-    width: 12px;
-    height: 12px;
-    margin-top: -6px;
-    background: #fff;
-    border-left: 2px solid #023047;
-    border-bottom: 2px solid #023047;
-    transform: rotate(45deg);
-}
-
-.cs-hero-bubble:empty {
-    display: none;
-}
-
-.cs-meter {
-    flex: 1;
-    min-width: 120px;
-}
-
-.cs-meter-label {
-    display: block;
-    margin-bottom: 6px;
-    font-size: 13px;
-    font-weight: 800;
-    color: #c2185b;
-}
-
-.cs-meter-bar {
-    height: 14px;
-    border-radius: 10px;
-    background: #e8ecef;
-    overflow: hidden;
-}
-
-.cs-meter-bar > div {
-    width: 50%;
-    height: 100%;
-    border-radius: 10px;
-    background: linear-gradient(90deg, #ff8a5c, #ffc93c, #3fcf9b);
-    background-size: 300px 100%;
-    transition: width 0.6s var(--fun-bounce);
-}
-
+/* ---------- Situation Quizzes: "Bakit?" box and combo ---------- */
 /* "Bakit?" box under the feedback */
 .cs-why {
     margin: -8px 0 20px;
@@ -16353,119 +16110,101 @@ button.cs-node:hover .cs-node-card {
     line-height: 1.5;
 }
 
-/* Hero picker */
-.cs-picker-overlay {
-    position: fixed;
-    inset: 0;
-    z-index: 10015;
-    display: flex;
-    align-items: center;
-    justify-content: center;
-    padding: 16px;
-    background: rgba(2, 18, 40, 0.6);
-}
-
-.cs-picker-overlay[hidden] {
-    display: none;
-}
-
-.cs-picker {
-    width: min(520px, 100%);
-    padding: 22px;
-    border-radius: 20px;
-    background: #fff;
-    color: #023047;
-    text-align: center;
-    box-shadow: 0 20px 50px rgba(0, 0, 0, 0.3);
-}
-
-.cs-picker h3 {
-    margin: 0 0 4px;
-    font-size: 24px;
-    font-weight: 900;
-}
-
-.cs-picker p {
-    margin: 0 0 16px;
-    color: #555;
-}
-
-.cs-picker-grid {
-    display: grid;
-    grid-template-columns: repeat(4, 1fr);
-    gap: 10px;
-    margin-bottom: 14px;
-}
-
-.cs-picker-hero {
-    display: flex;
-    flex-direction: column;
-    align-items: center;
-    gap: 4px;
-    padding: 12px 4px;
-    border: 3px solid #e0e6ea;
-    border-radius: 16px;
-    background: #f6f8fa;
-    color: #023047;
-    font: inherit;
-    font-size: 13px;
-    font-weight: 800;
-    cursor: pointer;
-    transition: transform 0.2s var(--fun-bounce), border-color 0.2s;
-}
-
-.cs-picker-hero .cs-hero-face {
-    font-size: 40px;
-}
-
-.cs-picker-hero:hover,
-.cs-picker-hero:focus-visible {
-    border-color: var(--fun-sun);
-    transform: translateY(-3px) scale(1.04);
-}
-
-.cs-picker-hero.is-picked {
-    border-color: #1e9e55;
-    background: #e9f8ef;
-}
-
 @keyframes csDotPulse {
     0%, 100% { transform: scale(1); }
     50%      { transform: scale(1.08); }
 }
 
-@keyframes csHeroJump {
-    0%, 100% { transform: translateY(0) scale(1); }
-    40%      { transform: translateY(-14px) scale(1.15); }
-    70%      { transform: translateY(0) scale(0.95); }
+/* Combo box: x multiplier, run of right answers, points */
+.cs-combo {
+    display: flex;
+    align-items: center;
+    flex-wrap: wrap;
+    gap: 10px 14px;
+    margin: 0 0 18px;
+    padding: 10px 14px;
+    border: 2px solid #e0e5ee;
+    border-radius: 16px;
+    background: #fff;
+    color: #000c26;
+    font-weight: 800;
 }
 
-/* Phones: one column map (dot left, card right), so the hero sits on the dot's corner */
-@media screen and (max-width: 768px) {
-    .cs-hero-token,
-    .cs-node.is-right .cs-hero-token {
-        top: -14px;
-        left: -12px;
-        right: auto;
-        margin-top: 0;
-        font-size: 26px;
-    }
+.cs-combo-x {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    min-width: 44px;
+    padding: 4px 10px;
+    border-radius: 12px;
+    background: var(--fun-sun);
+    color: #3b2f00;
+    font-size: 18px;
+    font-weight: 900;
 }
 
-@media screen and (max-width: 640px) {
-    .cs-picker-grid {
-        grid-template-columns: repeat(2, 1fr);
-    }
+.cs-combo-text i {
+    color: #9aa1ab;
+}
 
-    .cs-meter-row {
-        flex-wrap: wrap;
-    }
+.cs-combo-pts {
+    margin-left: auto;
+}
+
+.cs-combo-pts i {
+    color: #f2a900;
+}
+
+.cs-combo.is-hot {
+    border-color: var(--fun-coral);
+}
+
+.cs-combo.is-hot .cs-combo-text i {
+    color: var(--fun-coral);
+}
+
+.cs-combo.is-up .cs-combo-x {
+    animation: funPop 0.4s var(--fun-bounce);
+}
+
+.cs-combo.is-drop {
+    animation: csComboShake 0.4s ease;
+}
+
+@keyframes csComboShake {
+    0%, 100% { transform: translateX(0); }
+    25%      { transform: translateX(-6px); }
+    75%      { transform: translateX(6px); }
+}
+
+/* Points line in the feedback after a right answer */
+.cs-earn {
+    display: flex;
+    align-items: center;
+    flex-wrap: wrap;
+    gap: 8px;
+    margin-bottom: 4px;
+}
+
+.cs-earn .cs-combo-x {
+    animation: funPop 0.4s var(--fun-bounce) both;
+}
+
+.cs-earn em {
+    padding: 2px 8px;
+    border-radius: 999px;
+    background: var(--fun-coral);
+    color: #fff;
+    font-size: 12px;
+    font-style: normal;
+    font-weight: 800;
 }
 
 @media (prefers-reduced-motion: reduce) {
-    .cs-hero-token,
-    .cs-hero-mini .cs-hero-face {
-        animation: none !important;
+    .cs-combo.is-up .cs-combo-x,
+    .cs-combo.is-drop,
+    .cs-earn .cs-combo-x {
+        animation: none;
     }
 }
 
@@ -16823,53 +16562,6 @@ button.cs-node:hover .cs-node-card {
     .sb-sticker.is-new .sb-sticker-face,
     .sb-pop,
     .sb-check-options button.is-wrong {
-        animation: none;
-    }
-}
-
-/* Situation Quizzes: 3-star rating per mission */
-.cs-stars {
-    display: inline-flex;
-    gap: 2px;
-    color: #f2a900;
-}
-
-.cs-stars .fa-regular {
-    color: #c9b98a;
-}
-
-.cs-star-earn {
-    display: flex;
-    align-items: center;
-    flex-wrap: wrap;
-    gap: 8px;
-    margin-bottom: 4px;
-}
-
-.cs-star-earn .cs-stars {
-    font-size: 24px;
-    gap: 4px;
-}
-
-.cs-star-earn .cs-stars i {
-    animation: funPop 0.4s var(--fun-bounce) both;
-}
-
-.cs-star-earn .cs-stars i:nth-child(2) { animation-delay: 0.15s; }
-.cs-star-earn .cs-stars i:nth-child(3) { animation-delay: 0.3s; }
-
-.cs-star-earn em {
-    padding: 2px 8px;
-    border-radius: 999px;
-    background: var(--fun-sun);
-    color: #3b2f00;
-    font-size: 12px;
-    font-style: normal;
-    font-weight: 800;
-}
-
-@media (prefers-reduced-motion: reduce) {
-    .cs-star-earn .cs-stars i {
         animation: none;
     }
 }

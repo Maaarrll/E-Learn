@@ -847,6 +847,14 @@ async function init() {
             "ALTER TABLE public.case_study_progress ADD COLUMN IF NOT EXISTS stars JSONB NOT NULL DEFAULT '{}'"
         );
 
+        // Combo points per solved situation { "<scenario key>": 10-50 }, and the longest run of right answers
+        await client.query(
+            "ALTER TABLE public.case_study_progress ADD COLUMN IF NOT EXISTS points JSONB NOT NULL DEFAULT '{}'"
+        );
+        await client.query(
+            'ALTER TABLE public.case_study_progress ADD COLUMN IF NOT EXISTS best_combo INT NOT NULL DEFAULT 0'
+        );
+
         /*
             Session version: stored inside each login cookie.
             Bumping it (password change/reset) logs out every
