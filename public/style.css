@@ -16208,6 +16208,100 @@ button.cs-node:hover .cs-node-card {
     }
 }
 
+/* Points line gets its own row above the message */
+.case-page .cs-play .quiz-feedback {
+    flex-wrap: wrap;
+}
+
+.cs-earn {
+    flex-basis: 100%;
+}
+
+/* Phones: Submit/Next always in reach at the bottom of the screen.
+   Fixed, not sticky: .main-content has overflow-x hidden on phones, which breaks sticky */
+@media screen and (max-width: 768px) {
+    .case-page .cs-play {
+        margin-bottom: 84px;
+    }
+
+    .case-page .cs-play .quiz-actions {
+        position: fixed;
+        left: 0;
+        right: 0;
+        bottom: 0;
+        z-index: 40;
+        padding: 10px 16px calc(10px + env(safe-area-inset-bottom));
+        background: #fff;
+        box-shadow: 0 -6px 18px rgba(2, 48, 71, 0.12);
+    }
+
+    /* "All situations" at the top already goes back (!important: the phone button rule forces inline-flex) */
+    .case-page .cs-play .btn-back {
+        display: none !important;
+    }
+
+    .case-page .cs-play .quiz-feedback,
+    .case-page .cs-play .cs-why {
+        scroll-margin-bottom: 96px;
+    }
+
+    .case-page:has(#scenarioView[style*="block"]) .to-top-global {
+        bottom: 88px;
+    }
+}
+
+@media screen and (max-width: 480px) {
+    /* Stat chips in one row; the buttons stay full width */
+    .case-page .cs-hero .cs-header-side > .cs-solved-chip {
+        flex: 1 1 0;
+        flex-direction: column;
+        align-self: stretch;
+        justify-content: center;
+        gap: 2px;
+        min-width: 0;
+        padding: 8px 4px;
+        font-size: 12px;
+        text-align: center;
+    }
+
+    .cs-combo {
+        flex-wrap: nowrap;
+        gap: 8px;
+        padding: 8px 10px;
+        font-size: 14px;
+    }
+
+    .cs-combo-x {
+        min-width: 38px;
+        padding: 3px 8px;
+        font-size: 16px;
+    }
+
+    .cs-combo-text,
+    .cs-combo-pts {
+        white-space: nowrap;
+    }
+}
+
+/* Small phones: smaller list dots so the question text gets the width */
+@media screen and (max-width: 374px) {
+    .cs-node {
+        grid-template-columns: 48px minmax(0, 1fr);
+    }
+
+    .cs-node-dot,
+    .cs-node.is-next .cs-node-dot {
+        width: 42px;
+        height: 42px;
+        border-width: 3px;
+        font-size: 15px;
+    }
+
+    .cs-node-card {
+        margin-left: 8px;
+    }
+}
+
 /* ---------- Read Lesson: points, sticker book, quick checks, flip cards ---------- */
 .sb-points {
     display: inline-flex;
