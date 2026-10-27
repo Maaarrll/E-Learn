@@ -111,38 +111,36 @@ function caseProgress(content, solvedIds) {
   return { solvedIds: solved, unlockedIds: unlockedKeys(content.caseOrder, solved) };
 }
 
+// Points: 10 per solved situation, times the combo (right answers in a row), up to x5.
+// Situations solved before points existed count as 10.
+const CASE_POINTS = 10;
+const MAX_MULTIPLIER = 5;
+function casePoints(saved, solvedIds) {
+  return solvedIds.reduce((sum, id) => sum + ((saved && saved[id]) || CASE_POINTS), 0);
+}
+
 // GET /api/progress/case-studies
 router.get('/case-studies', async (req, res, next) => {
   try {
     const content = await getContent();
     const row = await getCaseStudyRow(req.userId);
+    const progress = caseProgress(content, JSON.parse(row.solved_ids));
     res.json({
-      ...caseProgress(content, JSON.parse(row.solved_ids)),
+      ...progress,
+      points: casePoints(row.points, progress.solvedIds),
+      bestCombo: row.best_combo,
       lessonLocks: lessonLocks(content, content.cases, await getReadTopics(req.userId)),
-      hero: row.hero || null,
     });
   } catch (err) {
     next(err);
   }
 });
 
-// PUT /api/progress/case-studies/hero  { hero }  The page keeps the list of heroes
-router.put('/case-studies/hero', async (req, res, next) => {
-  try {
-    const hero = String((req.body && req.body.hero) || '');
-    if (!/^[a-z]{2,20}$/.test(hero)) return res.status(400).json({ error: 'Pick a hero.' });
-    await getCaseStudyRow(req.userId);
-    await pool.query('UPDATE case_study_progress SET hero = $1 WHERE user_id = $2', [hero, req.userId]);
-    res.json({ hero });
-  } catch (err) {
-    next(err);
-  }
-});
-
-// POST /api/progress/case-studies/submit  { scenarioId, correct }
+// POST /api/progress/case-studies/submit  { scenarioId, correct, combo }
+// combo = right answers in a row on the page, this one included
 router.post('/case-studies/submit', async (req, res, next) => {
   try {
-    const { scenarioId, correct } = req.body || {};
+    const { scenarioId, correct, combo } = req.body || {};
     const id = Number(scenarioId);
     const content = await getContent();
     const scenario = content.caseByKey.get(id);
@@ -158,16 +156,25 @@ router.post('/case-studies/submit', async (req, res, next) => {
       return res.status(403).json({ error: 'This scenario is still locked.' });
     }
 
-    if (correct && !solvedIds.includes(id)) {
+    const points = row.points || {};
+    const run = correct ? Math.max(1, Math.min(1000, Math.floor(Number(combo)) || 1)) : 0;
+    const bestCombo = Math.max(row.best_combo, run);
+    // Only the first solve earns points, so replays can't farm them
+    const newlySolved = correct && !solvedIds.includes(id);
+    if (newlySolved) {
       solvedIds.push(id);
+      points[id] = CASE_POINTS * Math.min(run, MAX_MULTIPLIER);
       await logActivity(req.userId, 'case_study', `Solved Situation Quiz Scenario ${scenario.number}`);
+    }
+    if (newlySolved || bestCombo > row.best_combo) {
       await pool.query(
-        'UPDATE case_study_progress SET solved_ids = $1 WHERE user_id = $2',
-        [JSON.stringify(solvedIds), req.userId]
+        'UPDATE case_study_progress SET solved_ids = $1, points = $2, best_combo = $3 WHERE user_id = $4',
+        [JSON.stringify(solvedIds), points, bestCombo, req.userId]
       );
     }
 
-    res.json(caseProgress(content, solvedIds));
+    const progress = caseProgress(content, solvedIds);
+    res.json({ ...progress, points: casePoints(points, progress.solvedIds), bestCombo });
   } catch (err) {
     next(err);
   }

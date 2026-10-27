@@ -4919,12 +4919,6 @@
     background: none;
     color: inherit;
 }
-:root[data-theme="dark"] .cs-node::before {
-    background: repeating-linear-gradient(180deg, hsl(145 25% 25%) 0 12px, transparent 12px 20px);
-}
-:root[data-theme="dark"] .cs-node.is-solved::before {
-    background: linear-gradient(180deg, var(--fun-mint), var(--fun-sky));
-}
 :root[data-theme="dark"] .cs-node-dot {
     background: hsl(165 14% 17%);
     color: hsl(200 75% 88%);
@@ -4932,10 +4926,10 @@
     box-shadow: 0 5px 0 hsl(216 26% 26%);
 }
 :root[data-theme="dark"] .cs-node.is-solved .cs-node-dot {
-    background: var(--fun-sun);
+    background: var(--fun-mint);
     border-color: hsl(165 14% 17%);
     color: #fff;
-    box-shadow: 0 5px 0 #c99a12, 0 0 0 4px #ffe9a8;
+    box-shadow: 0 5px 0 #3c9a6f;
 }
 :root[data-theme="dark"] .cs-node.is-next .cs-node-dot {
     background: var(--fun-pink);
@@ -4951,14 +4945,6 @@
 }
 :root[data-theme="dark"] .cs-node.is-missed .cs-node-dot {
     border-color: #ffb08f;
-}
-:root[data-theme="dark"] .cs-node-go {
-    background: #000c26;
-    color: #fff;
-}
-:root[data-theme="dark"] .cs-node-go::after {
-    border: 6px solid transparent;
-    border-top-color: #000c26;
 }
 :root[data-theme="dark"] .cs-node-card {
     border: 2px solid hsl(219 29% 23%);
@@ -4982,8 +4968,8 @@
     color: hsl(214 27% 78%);
 }
 :root[data-theme="dark"] .cs-node.is-solved .cs-node-status {
-    background: hsl(46 45% 22%);
-    color: hsl(43 75% 81%);
+    background: hsl(149 45% 22%);
+    color: hsl(152 55% 81%);
 }
 :root[data-theme="dark"] .cs-node.is-next .cs-node-status {
     background: hsl(206 45% 20%);
@@ -5030,12 +5016,6 @@
 :root[data-theme="dark"] .case-page .cs-play .btn-submit:active {
     box-shadow: 0 2px 0 #023047;
 }
-@media screen and (max-width: 768px) {
-    :root[data-theme="dark"] .cs-node-go::after {
-        border-top-color: transparent;
-        border-bottom-color: #000c26;
-    }
-}
 :root[data-theme="dark"] .cs-node.is-lesson .cs-node-dot {
     background: hsl(217 45% 20%);
     color: hsl(211 61% 70%);
@@ -5076,67 +5056,137 @@
 :root[data-theme="dark"] .tour-card h3 {
     color: hsl(200 75% 88%);
 }
-:root[data-theme="dark"] .case-page .cs-hero .cs-hero-btn {
-    border: none;
-    background: rgba(255, 255, 255, 0.15);
-    color: #fff;
-}
-:root[data-theme="dark"] .case-page .cs-hero .cs-hero-btn:hover {
-    background: rgba(255, 255, 255, 0.25);
-}
-:root[data-theme="dark"] .cs-journey-done {
-    background: hsl(47 45% 22%);
-    border: 2px solid var(--fun-sun);
-    color: hsl(48 75% 90%);
-}
-:root[data-theme="dark"] .cs-hero-bubble {
-    background: hsl(165 14% 17%);
-    border: 2px solid #023047;
-    color: hsl(200 75% 88%);
-}
-:root[data-theme="dark"] .cs-hero-bubble::before {
-    background: hsl(165 14% 17%);
-    border-left: 2px solid #023047;
-    border-bottom: 2px solid #023047;
-}
-:root[data-theme="dark"] .cs-meter-label {
-    color: hsl(336 75% 72%);
-}
-:root[data-theme="dark"] .cs-meter-bar {
-    background: hsl(206 18% 22%);
-}
-:root[data-theme="dark"] .cs-meter-bar > div {
-    background: linear-gradient(90deg, #ff8a5c, #ffc93c, #3fcf9b);
-    background-size: 300px 100%;
-}
 :root[data-theme="dark"] .cs-why {
     background: hsl(46 45% 21%);
     border-left: 5px solid var(--fun-sun);
     color: hsl(48 75% 90%);
 }
-:root[data-theme="dark"] .cs-picker-overlay {
-    background: rgba(2, 18, 40, 0.6);
-}
-:root[data-theme="dark"] .cs-picker {
+:root[data-theme="dark"] .cs-combo {
+    border: 2px solid hsl(219 29% 23%);
     background: hsl(165 14% 17%);
-    color: hsl(200 75% 88%);
-    box-shadow: 0 20px 50px rgba(0, 0, 0, 0.3);
+    color: hsl(221 75% 92%);
 }
-:root[data-theme="dark"] .cs-picker p {
+:root[data-theme="dark"] .cs-combo-x {
+    background: var(--fun-sun);
+    color: #3b2f00;
+}
+:root[data-theme="dark"] .cs-combo-text i {
+    color: #9aa1ab;
+}
+:root[data-theme="dark"] .cs-combo-pts i {
+    color: hsl(42 75% 70%);
+}
+:root[data-theme="dark"] .cs-combo.is-hot {
+    border-color: var(--fun-coral);
+}
+:root[data-theme="dark"] .cs-combo.is-hot .cs-combo-text i {
+    color: var(--fun-coral);
+}
+:root[data-theme="dark"] .cs-earn em {
+    background: var(--fun-coral);
+    color: #fff;
+}
+:root[data-theme="dark"] .sb-points {
+    border: 2px solid var(--sb-ink);
+    background: hsl(165 14% 17%);
+    color: var(--sb-ink);
+    box-shadow: 2px 2px 0 var(--sb-ink);
+}
+:root[data-theme="dark"] .sb-points i {
+    color: hsl(45 75% 72%);
+}
+:root[data-theme="dark"] .sb-stickers {
+    border: 3px solid var(--sb-ink);
+    background: hsl(165 14% 17%);
+}
+:root[data-theme="dark"] .sb-stickers h3 {
+    color: var(--sb-ink);
+}
+:root[data-theme="dark"] .sb-stickers > p {
     color: hsl(165 12% 78%);
 }
-:root[data-theme="dark"] .cs-picker-hero {
-    border: 3px solid hsl(204 19% 23%);
-    background: hsl(210 29% 19%);
-    color: hsl(200 75% 88%);
+:root[data-theme="dark"] .sb-sticker {
+    color: hsl(211 12% 64%);
 }
-:root[data-theme="dark"] .cs-picker-hero:hover,
-:root[data-theme="dark"] .cs-picker-hero:focus-visible {
-    border-color: var(--fun-sun);
+:root[data-theme="dark"] .sb-sticker-face {
+    border: 3px dashed hsl(210 18% 29%);
+    background: hsl(210 20% 19%);
 }
-:root[data-theme="dark"] .cs-picker-hero.is-picked {
-    border-color: #1e9e55;
-    background: hsl(144 45% 20%);
+:root[data-theme="dark"] .sb-sticker.is-earned {
+    color: var(--sb-ink);
+}
+:root[data-theme="dark"] .sb-sticker.is-earned .sb-sticker-face {
+    border: 4px solid hsl(165 14% 17%);
+    background: var(--book);
+    color: #fff;
+    box-shadow: 0 0 0 3px var(--sb-ink), 4px 4px 0 3px var(--sb-ink);
+}
+:root[data-theme="dark"] .sb-sticker.is-earned small {
+    color: var(--book);
+}
+:root[data-theme="dark"] .sb-pop {
+    border: 2px solid var(--sb-ink);
+    background: #ffe66b;
+    color: var(--sb-ink);
+}
+:root[data-theme="dark"] .sb-check {
+    border: 3px solid var(--sb-ink);
+    background: hsl(50 45% 22%);
+    box-shadow: 5px 5px 0 var(--sb-ink);
+}
+:root[data-theme="dark"] .sb-check-title {
+    color: var(--book);
+}
+:root[data-theme="dark"] .sb-check-q {
+    color: var(--sb-ink);
+}
+:root[data-theme="dark"] .sb-check-options button {
+    border: 2px solid var(--sb-ink);
+    background: hsl(165 14% 17%);
+    color: var(--sb-ink);
+    box-shadow: 2px 2px 0 var(--sb-ink);
+}
+:root[data-theme="dark"] .sb-check-options button span {
+    background: var(--book);
+    color: #fff;
+}
+:root[data-theme="dark"] .sb-check-options button.is-right {
+    background: hsl(137 45% 22%);
+    border-color: #1e7e45;
+}
+:root[data-theme="dark"] .sb-check-options button.is-right span {
+    background: #1e7e45;
+}
+:root[data-theme="dark"] .sb-check-options button.is-wrong {
+    background: hsl(0 45% 21%);
+}
+:root[data-theme="dark"] .sb-check-msg {
+    color: var(--sb-ink);
+}
+:root[data-theme="dark"] .sb-check.is-done .sb-check-msg {
+    color: hsl(144 62% 79%);
+}
+:root[data-theme="dark"] .sb-flip-hint {
+    color: hsl(165 12% 78%);
+}
+:root[data-theme="dark"] .sb-flip:focus-visible {
+    outline: 3px solid var(--book);
+}
+:root[data-theme="dark"] .sb-flip-front,
+:root[data-theme="dark"] .sb-flip-back {
+    border: 3px solid var(--sb-ink);
+    box-shadow: 4px 4px 0 var(--sb-ink);
+}
+:root[data-theme="dark"] .sb-flip-front {
+    background: var(--book);
+    color: #fff;
+}
+:root[data-theme="dark"] .sb-flip-back {
+    background: hsl(165 14% 17%);
+    color: var(--sb-ink);
+}
+:root[data-theme="dark"] .sb-flip-back b {
+    color: var(--book);
 }
 
 /* ---------- from update-password.html ---------- */

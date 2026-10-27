@@ -8,8 +8,8 @@
     <link rel="icon" href="favicon-32.png?v=3" type="image/png" sizes="32x32">
     <link rel="apple-touch-icon" href="apple-touch-icon.png?v=3">
     <meta name="theme-color" content="#023047">
-    <link rel="stylesheet" href="style.css?v=95">
-    <link rel="stylesheet" href="dark.css?v=59">
+    <link rel="stylesheet" href="style.css?v=98">
+    <link rel="stylesheet" href="dark.css?v=62">
     <script src="js/theme.js?v=3"></script>
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
     <!-- Comic lettering for the storybook titles -->
@@ -109,6 +109,7 @@
                         <span class="sb-kicker">Mga Kuwento ng Aralin</span>
                         <h2 class="sb-comic">Read Lesson</h2>
                         <p id="sbGreeting">Pick a book and read it page by page. Every page you read gets a ✓!</p>
+                        <span class="sb-points" id="sbPoints"><i class="fa-solid fa-star"></i> <b id="sbPointsNum">0</b> points</span>
                     </div>
                     <div class="sb-progress" id="sbProgress" role="img" aria-label="Pages read">
                         <b id="sbReadCount">0</b><small>/ <span id="sbTotal">0</span> pages read</small>
@@ -119,6 +120,13 @@
                 <div class="sb-shelf" id="sbShelf" aria-live="polite">
                     <p class="sb-loading"><span class="btn-spinner"></span> Loading lessons...</p>
                 </div>
+
+                <!-- Sticker book: one sticker per finished lesson -->
+                <section class="sb-stickers" aria-labelledby="sbStickersTitle">
+                    <h3 id="sbStickersTitle"><i class="fa-solid fa-award"></i> My sticker book</h3>
+                    <p>Read every page of an Aralin to earn its sticker.</p>
+                    <div class="sb-sticker-grid" id="sbStickers"></div>
+                </section>
 
                 <!-- Every page at once, so any topic is easy to find -->
                 <section class="sb-contents" aria-labelledby="sbContentsTitle">
@@ -213,8 +221,13 @@
 
             let modules = [];
             let user = null;
+            let decks = [];
             try {
-                [{ modules }, user] = await Promise.all([api.get('/content/lessons'), authReady]);
+                [{ modules }, user, { decks }] = await Promise.all([
+                    api.get('/content/lessons'),
+                    authReady,
+                    api.get('/content/study-cards').catch(() => ({ decks: [] })), // only for Quick checks
+                ]);
             } catch (err) {
                 $('sbShelf').innerHTML = '<p class="sb-loading"><i class="fa-solid fa-circle-exclamation"></i> Could not load the lessons. Please refresh the page.</p>';
                 return;
@@ -225,6 +238,18 @@
             modules.forEach((mod, m) => mod.topics.forEach(t => topics.push({ ...t, lesson: m, lessonTitle: mod.title })));
             const searchText = topics.map(t => normalizeText(`${t.title} ${t.sections.map(s => `${s.heading || ''} ${s.body || ''}`).join(' ')}`));
             const bookPages = (m) => topics.filter(t => t.lesson === m);
+
+            // Quick checks: cards from the quiz-card decks tied to each lesson (by module key)
+            const checkCards = new Map();
+            decks.forEach(d => {
+                if (d.lesson && d.cards.length) checkCards.set(String(d.lesson), [...(checkCards.get(String(d.lesson)) || []), ...d.cards]);
+            });
+
+            // Points come from pages read, so they never go out of sync:
+            // 10 per page, 50 more for each finished lesson (its sticker)
+            const PAGE_POINTS = 10;
+            const BOOK_POINTS = 50;
+            const STICKER_WORDS = ['Galing!', 'Astig!', 'Bida!', 'Panalo!'];
 
             // Pages read are saved on the server: reading a lesson unlocks its quizzes.
             let read = new Set();
@@ -259,6 +284,13 @@
                     </button>`;
                 }).join('');
 
+                $('sbStickers').innerHTML = modules.map((mod, m) => {
+                    const pages = bookPages(m);
+                    const done = pages.filter(t => read.has(t.key)).length;
+                    return stickerHtml(mod, m, bookDone(m), `${done} / ${pages.length} pages`);
+                }).join('');
+                $('sbPointsNum').textContent = points();
+
                 $('sbReadCount').textContent = read.size;
                 $('sbTotal').textContent = topics.length;
                 $('sbProgress').setAttribute('aria-label', `${read.size} of ${topics.length} pages read`);
@@ -267,6 +299,24 @@
                     : read.size === topics.length
                         ? 'You read every page. Amazing! Open any book to read again.'
                         : `Nice! ${topics.length - read.size} more page${topics.length - read.size === 1 ? '' : 's'} to go.`;
+            }
+
+            function bookDone(m) {
+                const pages = bookPages(m);
+                return pages.length > 0 && pages.every(t => read.has(t.key));
+            }
+
+            function points() {
+                return topics.filter(t => read.has(t.key)).length * PAGE_POINTS
+                    + modules.filter((_, m) => bookDone(m)).length * BOOK_POINTS;
+            }
+
+            function stickerHtml(mod, m, earned, lockedNote, extraClass = '') {
+                return `<div class="sb-sticker${earned ? ' is-earned' : ''}${extraClass}" style="--book: var(--sb-c${m % 4})">
+                    <span class="sb-sticker-face">${earned ? `<i class="fa-solid ${HCIRichText.safeIcon(mod.icon)}"></i>` : '<i class="fa-solid fa-question"></i>'}</span>
+                    <b>Aralin ${m + 1}</b>
+                    <small>${earned ? STICKER_WORDS[m % STICKER_WORDS.length] : lockedNote}</small>
+                </div>`;
             }
 
             function renderContents() {
@@ -312,6 +362,61 @@
             let lastFocus = null;
             let atEnd = false;            // showing the "Wakas!" page after a book's last page
             const countedThisVisit = new Set();
+            const finishedThisVisit = new Set();   // lessons whose sticker was just earned
+
+            // "+10" floats up in the top bar when a new page is read
+            function popPoints(text) {
+                const pop = document.createElement('span');
+                pop.className = 'sb-pop sb-comic';
+                pop.textContent = text;
+                $('sbBookName').after(pop);
+                setTimeout(() => pop.remove(), 1400);
+            }
+
+            function quickCheck(t, pos) {
+                const cards = checkCards.get(String(modules[t.lesson].key));
+                if (!cards) return '';
+                const card = cards[pos % cards.length];
+                return `<div class="sb-check" data-answer="${card.answer}">
+                    <b class="sb-check-title sb-comic"><i class="fa-solid fa-circle-question"></i> Quick check!</b>
+                    <p class="sb-check-q">${esc(card.question)}</p>
+                    <div class="sb-check-options">${card.options.map((o, k) => `<button type="button" data-choice="${k}"><span>${'ABCD'[k]}</span> ${esc(o)}</button>`).join('')}</div>
+                    <p class="sb-check-msg" aria-live="polite"></p>
+                </div>`;
+            }
+
+            function answerCheck(btn) {
+                const box = btn.closest('.sb-check');
+                const right = Number(btn.dataset.choice) === Number(box.dataset.answer);
+                btn.classList.add(right ? 'is-right' : 'is-wrong');
+                btn.disabled = true;
+                box.querySelector('.sb-check-msg').textContent = right ? 'Tama! Ang galing mo!' : 'Hindi pa. Subukan ulit!';
+                HCISfx.play(right ? 'correct' : 'wrong');
+                if (right) {
+                    box.classList.add('is-done');
+                    box.querySelectorAll('[data-choice]').forEach(b => { b.disabled = true; });
+                }
+            }
+
+            // Key-word pages ("Mga Susing Salita", "Mga Salita Mula sa...") show
+            // each section with a heading as a card to flip: word in front, meaning behind
+            const isWordPage = (t) => /salita/i.test(t.title);
+            function renderFlipCards(sections) {
+                const words = sections.filter(s => s.heading);
+                return `<p class="sb-flip-hint"><i class="fa-solid fa-hand-pointer"></i> Tap a card to see what the word means.</p>
+                    <div class="sb-flip-grid">${words.map(s => `<div class="sb-flip" role="button" tabindex="0" aria-pressed="false">
+                        <div class="sb-flip-inner">
+                            <div class="sb-flip-front"><i class="fa-solid ${HCIRichText.safeIcon(s.icon)}"></i><b>${esc(s.heading)}</b><small>Tap to flip</small></div>
+                            <div class="sb-flip-back"><b>${esc(s.heading)}</b>${HCIRichText.render(s.body)}</div>
+                        </div>
+                    </div>`).join('')}</div>`
+                    + sections.filter(s => !s.heading).map(HCIRichText.renderSection).join('');
+            }
+
+            function toggleFlip(card) {
+                const on = card.classList.toggle('is-flipped');
+                card.setAttribute('aria-pressed', String(on));
+            }
 
             function markRead(t) {
                 if (!countedThisVisit.has(t.key)) {
@@ -319,8 +424,11 @@
                     HCIGamify.record('read');      // daily goal / streak, once per page per visit
                 }
                 if (read.has(t.key)) return;
+                const wasDone = bookDone(t.lesson);
                 read.add(t.key);
                 saveRead([t.key]).catch(() => {});
+                popPoints(`+${PAGE_POINTS}`);
+                if (!wasDone && bookDone(t.lesson)) finishedThisVisit.add(t.lesson);
             }
 
             function renderBookmark() {
@@ -369,7 +477,8 @@
                 $('sbTopicTitle').textContent = t.title;
                 $('sbPageTag').textContent = `Pahina ${pos + 1} / ${pages.length}`;
                 // Each section is a speech bubble
-                $('sbContent').innerHTML = t.sections.map(HCIRichText.renderSection).join('');
+                $('sbContent').innerHTML = (isWordPage(t) ? renderFlipCards(t.sections) : t.sections.map(HCIRichText.renderSection).join(''))
+                    + quickCheck(t, pos);
                 $('sbDots').innerHTML = pages.map((p, k) => `<button type="button" data-page="${topics.indexOf(p)}"
                     class="${k === pos ? 'is-now' : ''} ${read.has(p.key) ? 'is-read' : ''}" aria-label="Page ${k + 1}${k === pos ? ' (this page)' : ''}"></button>`).join('');
                 const sheet = $('sbSheet');
@@ -393,12 +502,18 @@
                 $('sbTopicTitle').textContent = 'Wakas!';
                 $('sbPageTag').textContent = 'The End';
                 $('sbNote').hidden = true;
+                const skipped = bookPages(t.lesson).filter(p => !read.has(p.key)).length;
+                const isNew = finishedThisVisit.has(t.lesson);
                 $('sbContent').innerHTML = `<div class="sb-end">
                     <div class="sb-burst sb-comic">Galing!</div>
-                    <p>You finished <b>${esc(t.lessonTitle)}</b>.</p>
+                    ${skipped
+                        ? `<p>You reached the end of <b>${esc(t.lessonTitle)}</b>. Read the ${skipped} page${skipped === 1 ? '' : 's'} you skipped to earn its sticker.</p>`
+                        : `${stickerHtml(modules[t.lesson], t.lesson, true, '', isNew ? ' is-new' : '')}
+                           <p>You finished <b>${esc(t.lessonTitle)}</b>${isNew ? ` and earned its sticker! <b class="sb-end-points">+${BOOK_POINTS} points</b>` : '.'}</p>`}
                     <div class="sb-end-actions">
-                        ${nextBook ? `<button type="button" class="sb-end-btn is-main" data-page="${topics.indexOf(nextBook)}"><i class="fa-solid fa-book-open"></i> Read Aralin ${t.lesson + 2}</button>`
-                            : '<a href="StudyCards.html" class="sb-end-btn is-main"><i class="fa-solid fa-rotate"></i> Practice with Quiz Cards</a>'}
+                        ${skipped ? '' : '<a href="CaseStudies.html" class="sb-end-btn is-main"><i class="fa-solid fa-flag"></i> Go on missions</a>'}
+                        ${nextBook ? `<button type="button" class="sb-end-btn${skipped ? ' is-main' : ''}" data-page="${topics.indexOf(nextBook)}"><i class="fa-solid fa-book-open"></i> Read Aralin ${t.lesson + 2}</button>`
+                            : '<a href="StudyCards.html" class="sb-end-btn"><i class="fa-solid fa-rotate"></i> Practice with Quiz Cards</a>'}
                         <button type="button" class="sb-end-btn" data-close-book><i class="fa-solid fa-book"></i> Back to the bookshelf</button>
                     </div>
                 </div>`;
@@ -436,6 +551,10 @@
             $('sbPagesBtn').addEventListener('click', () => togglePages($('sbPages').hidden));
             // Dots, the page list and the "next book" button all jump to a page
             reader.addEventListener('click', (e) => {
+                const choice = e.target.closest('[data-choice]');
+                if (choice) return answerCheck(choice);
+                const flip = e.target.closest('.sb-flip');
+                if (flip) return toggleFlip(flip);
                 const jump = e.target.closest('[data-page]');
                 if (jump) {
                     const to = Number(jump.dataset.page);
@@ -445,6 +564,10 @@
             });
             document.addEventListener('keydown', (e) => {
                 if (reader.hidden || e.target.closest('input, textarea, .confirm-overlay')) return;
+                if ((e.key === 'Enter' || e.key === ' ') && e.target.closest('.sb-flip')) {
+                    e.preventDefault();
+                    return toggleFlip(e.target.closest('.sb-flip'));
+                }
                 if (e.key === 'Escape') { if (!$('sbPages').hidden) togglePages(false); else closeReader(); }
                 else if (e.key === 'ArrowRight') goNext();
                 else if (e.key === 'ArrowLeft') goPrev();

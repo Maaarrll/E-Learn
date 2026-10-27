@@ -15558,8 +15558,8 @@ body.sb-reading .main-content {
     box-shadow: 0 5px 0 #ffc2a6;
 }
 
-/* Level map: a path down the middle, cards on alternating sides */
-.case-page .scenarios-list.cs-map {
+/* Situation list: number dot on the left, card on the right */
+.case-page .scenarios-list.cs-list {
     display: flex;
     flex-direction: column;
     gap: 0;
@@ -15569,10 +15569,9 @@ body.sb-reading .main-content {
 .cs-node {
     position: relative;
     display: grid;
-    grid-template-columns: minmax(0, 1fr) 84px minmax(0, 1fr);
+    grid-template-columns: 72px minmax(0, 1fr);
     align-items: center;
     width: 100%;
-    min-height: 104px;
     padding: 0;
     border: none;
     background: none;
@@ -15586,28 +15585,9 @@ button.cs-node {
     cursor: pointer;
 }
 
-/* Path segment behind each dot (green once solved) */
-.cs-node::before {
-    content: "";
-    position: absolute;
-    left: 50%;
-    top: 0;
-    bottom: 0;
-    width: 8px;
-    margin-left: -4px;
-    background: repeating-linear-gradient(180deg, #d5e6dc 0 12px, transparent 12px 20px);
-}
-
-.cs-node.is-solved::before {
-    background: linear-gradient(180deg, var(--fun-mint), var(--fun-sky));
-}
-
-.cs-node:first-child::before { top: 50%; }
-.cs-node:last-child::before { bottom: 50%; }
-
 .cs-node-dot {
     position: relative;
-    grid-column: 2;
+    grid-column: 1;
     grid-row: 1;
     justify-self: center;
     width: 64px;
@@ -15626,10 +15606,10 @@ button.cs-node {
 }
 
 .cs-node.is-solved .cs-node-dot {
-    background: var(--fun-sun);
+    background: var(--fun-mint);
     border-color: #fff;
     color: #fff;
-    box-shadow: 0 5px 0 #c99a12, 0 0 0 4px #ffe9a8;
+    box-shadow: 0 5px 0 #3c9a6f;
 }
 
 .cs-node.is-next .cs-node-dot {
@@ -15659,48 +15639,19 @@ button.cs-node:hover .cs-node-dot {
     transform: scale(1.1);
 }
 
-.cs-node-go {
-    position: absolute;
-    bottom: calc(100% + 8px);
-    left: 50%;
-    padding: 4px 10px;
-    border-radius: 10px;
-    background: #000c26;
-    color: #fff;
-    font-size: 12px;
-    font-weight: 900;
-    white-space: nowrap;
-    transform: translateX(-50%);
-}
-
-.cs-node-go::after {
-    content: "";
-    position: absolute;
-    top: 100%;
-    left: 50%;
-    margin-left: -6px;
-    border: 6px solid transparent;
-    border-top-color: #000c26;
-}
-
 .cs-node-card {
-    grid-column: 1;
+    grid-column: 2;
     grid-row: 1;
     display: flex;
     flex-direction: column;
     gap: 6px;
-    margin: 10px 14px 10px 0;
+    margin: 8px 0 8px 10px;
     padding: 14px 16px;
     border: 2px solid #e0e5ee;
     border-radius: 18px;
     background: #fff;
     box-shadow: 0 6px 16px rgba(2, 48, 71, 0.06);
     transition: transform 0.25s var(--fun-bounce), border-color 0.2s;
-}
-
-.cs-node.is-right .cs-node-card {
-    grid-column: 3;
-    margin: 10px 0 10px 14px;
 }
 
 button.cs-node:hover .cs-node-card {
@@ -15734,7 +15685,7 @@ button.cs-node:hover .cs-node-card {
     font-weight: 800;
 }
 
-.cs-node.is-solved .cs-node-status { background: #fff4d1; color: #8a6200; }
+.cs-node.is-solved .cs-node-status { background: #dcf5e8; color: #1f6b47; }
 .cs-node.is-next .cs-node-status   { background: #e3f3ff; color: #307bb0; }
 
 .cs-node .missed-chip {
@@ -15847,38 +15798,6 @@ button.cs-node:hover .cs-node-card {
 
     .case-page .cs-hero .cs-header-text h2 {
         font-size: 24px;
-    }
-
-    /* Map: path on the left, every card on the right */
-    .cs-node,
-    .cs-node.is-right {
-        grid-template-columns: 72px minmax(0, 1fr);
-    }
-
-    .cs-node::before {
-        left: 36px;
-    }
-
-    .cs-node-dot {
-        grid-column: 1;
-    }
-
-    .cs-node-card,
-    .cs-node.is-right .cs-node-card {
-        grid-column: 2;
-        margin: 10px 0 10px 10px;
-    }
-
-    .cs-node-go {
-        bottom: auto;
-        top: calc(100% + 6px);
-    }
-
-    .cs-node-go::after {
-        top: auto;
-        bottom: 100%;
-        border-top-color: transparent;
-        border-bottom-color: #000c26;
     }
 
     .case-page .cs-play .scenario-box {
@@ -16017,14 +15936,9 @@ button.cs-node:hover .cs-node-card {
         margin-left: 55px;
     }
 
-    /* Level map: smaller dots so cards get the width */
-    .cs-node,
-    .cs-node.is-right {
+    /* Situation list: smaller dots so cards get the width */
+    .cs-node {
         grid-template-columns: 60px minmax(0, 1fr);
-    }
-
-    .cs-node::before {
-        left: 30px;
     }
 
     .cs-node-dot {
@@ -16038,8 +15952,7 @@ button.cs-node:hover .cs-node-card {
         height: 60px;
     }
 
-    .cs-node-card,
-    .cs-node.is-right .cs-node-card {
+    .cs-node-card {
         padding: 12px 14px;
     }
 
@@ -16173,163 +16086,7 @@ button.cs-node:hover .cs-node-card {
     }
 }
 
-/* ---------- Situation Quizzes: story adventure (hero, values meter, Bakit?) ---------- */
-.cs-hero-face {
-    font-family: "Segoe UI Emoji", "Apple Color Emoji", "Noto Color Emoji", sans-serif;
-    line-height: 1;
-}
-
-.case-page .cs-hero .cs-hero-btn {
-    display: inline-flex;
-    align-items: center;
-    gap: 8px;
-    padding: 6px 14px 6px 8px;
-    border: none;
-    border-radius: 20px;
-    background: rgba(255, 255, 255, 0.15);
-    color: #fff;
-    font: inherit;
-    font-size: 13px;
-    font-weight: 700;
-    cursor: pointer;
-}
-
-.case-page .cs-hero .cs-hero-btn:hover {
-    background: rgba(255, 255, 255, 0.25);
-}
-
-.case-page .cs-hero .cs-hero-btn .cs-hero-face {
-    font-size: 22px;
-}
-
-/* The hero stands beside its mission's dot, on the side away from the card */
-.cs-hero-token {
-    position: absolute;
-    top: 50%;
-    left: calc(100% + 10px);
-    margin-top: -20px;
-    font-size: 34px;
-    pointer-events: none;
-    filter: drop-shadow(0 3px 2px rgba(0, 0, 0, 0.25));
-    animation: funBob 2.4s ease-in-out infinite;
-}
-
-.cs-node.is-right .cs-hero-token {
-    left: auto;
-    right: calc(100% + 10px);
-}
-
-.cs-journey-done {
-    display: flex;
-    align-items: center;
-    gap: 14px;
-    margin-bottom: 18px;
-    padding: 14px 18px;
-    border-radius: 18px;
-    background: #fff6d6;
-    border: 2px solid var(--fun-sun);
-    color: #3b2f00;
-    font-size: 15px;
-}
-
-.cs-journey-done .cs-hero-face {
-    font-size: 36px;
-}
-
-/* The hero walks along the track instead of the rocket */
-.case-page .tq-rocket.cs-hero-runner {
-    transform: none;
-    font-size: 20px;
-}
-
-/* Hero + values meter at the top of a mission */
-.cs-meter-row {
-    display: flex;
-    align-items: center;
-    gap: 16px;
-    margin: 4px 0 16px;
-}
-
-.cs-hero-mini {
-    position: relative;
-    display: flex;
-    align-items: center;
-    gap: 10px;
-    flex-shrink: 0;
-}
-
-.cs-hero-mini .cs-hero-face {
-    font-size: 42px;
-}
-
-.cs-hero-mini.is-happy .cs-hero-face {
-    animation: csHeroJump 0.6s ease-out;
-}
-
-.cs-hero-mini.is-sad .cs-hero-face {
-    animation: funShake 0.5s ease-in-out;
-}
-
-.cs-hero-bubble {
-    position: relative;
-    padding: 8px 12px;
-    border-radius: 14px;
-    background: #fff;
-    border: 2px solid #023047;
-    color: #023047;
-    font-size: 14px;
-    font-weight: 800;
-    white-space: nowrap;
-}
-
-/* Speech bubble tail pointing at the hero */
-.cs-hero-bubble::before {
-    content: "";
-    position: absolute;
-    left: -8px;
-    top: 50%;
-    width: 12px;
-    height: 12px;
-    margin-top: -6px;
-    background: #fff;
-    border-left: 2px solid #023047;
-    border-bottom: 2px solid #023047;
-    transform: rotate(45deg);
-}
-
-.cs-hero-bubble:empty {
-    display: none;
-}
-
-.cs-meter {
-    flex: 1;
-    min-width: 120px;
-}
-
-.cs-meter-label {
-    display: block;
-    margin-bottom: 6px;
-    font-size: 13px;
-    font-weight: 800;
-    color: #c2185b;
-}
-
-.cs-meter-bar {
-    height: 14px;
-    border-radius: 10px;
-    background: #e8ecef;
-    overflow: hidden;
-}
-
-.cs-meter-bar > div {
-    width: 50%;
-    height: 100%;
-    border-radius: 10px;
-    background: linear-gradient(90deg, #ff8a5c, #ffc93c, #3fcf9b);
-    background-size: 300px 100%;
-    transition: width 0.6s var(--fun-bounce);
-}
-
+/* ---------- Situation Quizzes: "Bakit?" box and combo ---------- */
 /* "Bakit?" box under the feedback */
 .cs-why {
     margin: -8px 0 20px;
@@ -16353,118 +16110,458 @@ button.cs-node:hover .cs-node-card {
     line-height: 1.5;
 }
 
-/* Hero picker */
-.cs-picker-overlay {
-    position: fixed;
-    inset: 0;
-    z-index: 10015;
-    display: flex;
-    align-items: center;
-    justify-content: center;
-    padding: 16px;
-    background: rgba(2, 18, 40, 0.6);
-}
-
-.cs-picker-overlay[hidden] {
-    display: none;
-}
-
-.cs-picker {
-    width: min(520px, 100%);
-    padding: 22px;
-    border-radius: 20px;
-    background: #fff;
-    color: #023047;
-    text-align: center;
-    box-shadow: 0 20px 50px rgba(0, 0, 0, 0.3);
-}
-
-.cs-picker h3 {
-    margin: 0 0 4px;
-    font-size: 24px;
-    font-weight: 900;
-}
-
-.cs-picker p {
-    margin: 0 0 16px;
-    color: #555;
-}
-
-.cs-picker-grid {
-    display: grid;
-    grid-template-columns: repeat(4, 1fr);
-    gap: 10px;
-    margin-bottom: 14px;
-}
-
-.cs-picker-hero {
-    display: flex;
-    flex-direction: column;
-    align-items: center;
-    gap: 4px;
-    padding: 12px 4px;
-    border: 3px solid #e0e6ea;
-    border-radius: 16px;
-    background: #f6f8fa;
-    color: #023047;
-    font: inherit;
-    font-size: 13px;
-    font-weight: 800;
-    cursor: pointer;
-    transition: transform 0.2s var(--fun-bounce), border-color 0.2s;
-}
-
-.cs-picker-hero .cs-hero-face {
-    font-size: 40px;
-}
-
-.cs-picker-hero:hover,
-.cs-picker-hero:focus-visible {
-    border-color: var(--fun-sun);
-    transform: translateY(-3px) scale(1.04);
-}
-
-.cs-picker-hero.is-picked {
-    border-color: #1e9e55;
-    background: #e9f8ef;
-}
-
 @keyframes csDotPulse {
     0%, 100% { transform: scale(1); }
     50%      { transform: scale(1.08); }
 }
 
-@keyframes csHeroJump {
-    0%, 100% { transform: translateY(0) scale(1); }
-    40%      { transform: translateY(-14px) scale(1.15); }
-    70%      { transform: translateY(0) scale(0.95); }
+/* Combo box: x multiplier, run of right answers, points */
+.cs-combo {
+    display: flex;
+    align-items: center;
+    flex-wrap: wrap;
+    gap: 10px 14px;
+    margin: 0 0 18px;
+    padding: 10px 14px;
+    border: 2px solid #e0e5ee;
+    border-radius: 16px;
+    background: #fff;
+    color: #000c26;
+    font-weight: 800;
 }
 
-/* Phones: one column map (dot left, card right), so the hero sits on the dot's corner */
-@media screen and (max-width: 768px) {
-    .cs-hero-token,
-    .cs-node.is-right .cs-hero-token {
-        top: -14px;
-        left: -12px;
-        right: auto;
-        margin-top: 0;
-        font-size: 26px;
+.cs-combo-x {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    min-width: 44px;
+    padding: 4px 10px;
+    border-radius: 12px;
+    background: var(--fun-sun);
+    color: #3b2f00;
+    font-size: 18px;
+    font-weight: 900;
+}
+
+.cs-combo-text i {
+    color: #9aa1ab;
+}
+
+.cs-combo-pts {
+    margin-left: auto;
+}
+
+.cs-combo-pts i {
+    color: #f2a900;
+}
+
+.cs-combo.is-hot {
+    border-color: var(--fun-coral);
+}
+
+.cs-combo.is-hot .cs-combo-text i {
+    color: var(--fun-coral);
+}
+
+.cs-combo.is-up .cs-combo-x {
+    animation: funPop 0.4s var(--fun-bounce);
+}
+
+.cs-combo.is-drop {
+    animation: csComboShake 0.4s ease;
+}
+
+@keyframes csComboShake {
+    0%, 100% { transform: translateX(0); }
+    25%      { transform: translateX(-6px); }
+    75%      { transform: translateX(6px); }
+}
+
+/* Points line in the feedback after a right answer */
+.cs-earn {
+    display: flex;
+    align-items: center;
+    flex-wrap: wrap;
+    gap: 8px;
+    margin-bottom: 4px;
+}
+
+.cs-earn .cs-combo-x {
+    animation: funPop 0.4s var(--fun-bounce) both;
+}
+
+.cs-earn em {
+    padding: 2px 8px;
+    border-radius: 999px;
+    background: var(--fun-coral);
+    color: #fff;
+    font-size: 12px;
+    font-style: normal;
+    font-weight: 800;
+}
+
+@media (prefers-reduced-motion: reduce) {
+    .cs-combo.is-up .cs-combo-x,
+    .cs-combo.is-drop,
+    .cs-earn .cs-combo-x {
+        animation: none;
     }
+}
+
+/* ---------- Read Lesson: points, sticker book, quick checks, flip cards ---------- */
+.sb-points {
+    display: inline-flex;
+    align-items: center;
+    gap: 6px;
+    margin-top: 10px;
+    padding: 5px 12px;
+    border: 2px solid var(--sb-ink);
+    border-radius: 999px;
+    background: #fff;
+    color: var(--sb-ink);
+    font-size: 14px;
+    font-weight: 800;
+    box-shadow: 2px 2px 0 var(--sb-ink);
+}
+
+.sb-points i {
+    color: #e0a800;
+}
+
+/* Sticker book */
+.sb-stickers {
+    margin-bottom: 20px;
+    padding: 18px 22px;
+    border: 3px solid var(--sb-ink);
+    border-radius: 22px;
+    background: #fff;
+}
+
+.sb-stickers h3 {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    margin: 0;
+    color: var(--sb-ink);
+    font-size: 19px;
+}
+
+.sb-stickers > p {
+    margin: 4px 0 14px;
+    color: #555;
+    font-size: 14px;
+}
+
+.sb-sticker-grid {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 16px;
+}
+
+.sb-sticker {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    gap: 4px;
+    width: 110px;
+    text-align: center;
+    color: #8a96a3;
+}
+
+.sb-sticker-face {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    width: 84px;
+    height: 84px;
+    border: 3px dashed #c3ccd5;
+    border-radius: 50%;
+    background: #f3f5f7;
+    font-size: 30px;
+}
+
+.sb-sticker b {
+    font-size: 14px;
+}
+
+.sb-sticker small {
+    font-size: 12px;
+    font-weight: 700;
+}
+
+.sb-sticker.is-earned {
+    color: var(--sb-ink);
+}
+
+.sb-sticker.is-earned .sb-sticker-face {
+    border: 4px solid #fff;
+    background: var(--book);
+    color: #fff;
+    box-shadow: 0 0 0 3px var(--sb-ink), 4px 4px 0 3px var(--sb-ink);
+    transform: rotate(-6deg);
+}
+
+.sb-sticker.is-earned small {
+    color: var(--book);
+    font-size: 14px;
+    font-weight: 900;
+}
+
+.sb-sticker.is-new .sb-sticker-face {
+    animation: sbStickerIn 0.9s var(--fun-bounce) both;
+}
+
+/* "+10" that floats up in the reader's top bar */
+.sb-reader-top {
+    position: relative;
+}
+
+.sb-pop {
+    position: absolute;
+    left: 50%;
+    top: 100%;
+    z-index: 2;
+    padding: 2px 10px;
+    border: 2px solid var(--sb-ink);
+    border-radius: 999px;
+    background: #ffe66b;
+    color: var(--sb-ink);
+    font-size: 20px;
+    pointer-events: none;
+    animation: sbPointsUp 1.4s ease-out forwards;
+}
+
+/* Quick check at the end of a page */
+.sb-check {
+    margin-top: 22px;
+    padding: 18px;
+    border: 3px solid var(--sb-ink);
+    border-radius: 20px;
+    background: #fff8d6;
+    box-shadow: 5px 5px 0 var(--sb-ink);
+}
+
+.sb-check-title {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    color: var(--book);
+    font-size: 24px;
+}
+
+.sb-check-q {
+    margin: 6px 0 12px;
+    color: var(--sb-ink);
+    font-size: 17px;
+    font-weight: 800;
+    line-height: 1.4;
+}
+
+.sb-check-options {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 10px;
+}
+
+.sb-check-options button {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+    padding: 10px 12px;
+    border: 2px solid var(--sb-ink);
+    border-radius: 14px;
+    background: #fff;
+    color: var(--sb-ink);
+    font: inherit;
+    font-size: 15px;
+    font-weight: 700;
+    text-align: left;
+    cursor: pointer;
+    box-shadow: 2px 2px 0 var(--sb-ink);
+    transition: transform 0.15s;
+}
+
+.sb-check-options button span {
+    flex-shrink: 0;
+    width: 26px;
+    height: 26px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    border-radius: 50%;
+    background: var(--book);
+    color: #fff;
+    font-size: 13px;
+    font-weight: 900;
+}
+
+.sb-check-options button:hover:not(:disabled) {
+    transform: translate(-1px, -2px);
+}
+
+.sb-check-options button:disabled {
+    cursor: default;
+    opacity: 0.55;
+}
+
+.sb-check-options button.is-right {
+    background: #dcf5e3;
+    border-color: #1e7e45;
+    opacity: 1;
+}
+
+.sb-check-options button.is-right span {
+    background: #1e7e45;
+}
+
+.sb-check-options button.is-wrong {
+    background: #fde2e2;
+    animation: funShake 0.5s ease-in-out;
+}
+
+.sb-check-msg {
+    min-height: 1.4em;
+    margin: 10px 0 0;
+    color: var(--sb-ink);
+    font-weight: 900;
+}
+
+.sb-check.is-done .sb-check-msg {
+    color: #1e7e45;
+}
+
+/* Flip cards for key words */
+.sb-flip-hint {
+    margin: 0 0 12px;
+    color: #555;
+    font-size: 14px;
+    font-weight: 700;
+}
+
+.sb-flip-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fill, minmax(200px, 1fr));
+    gap: 14px;
+    margin-bottom: 16px;
+}
+
+.sb-flip {
+    height: 190px;
+    perspective: 900px;
+    cursor: pointer;
+    border-radius: 18px;
+}
+
+.sb-flip:focus-visible {
+    outline: 3px solid var(--book);
+    outline-offset: 3px;
+}
+
+.sb-flip-inner {
+    position: relative;
+    width: 100%;
+    height: 100%;
+    transform-style: preserve-3d;
+    transition: transform 0.5s var(--fun-bounce);
+}
+
+.sb-flip.is-flipped .sb-flip-inner {
+    transform: rotateY(180deg);
+}
+
+.sb-flip-front,
+.sb-flip-back {
+    position: absolute;
+    inset: 0;
+    display: flex;
+    flex-direction: column;
+    border: 3px solid var(--sb-ink);
+    border-radius: 18px;
+    box-shadow: 4px 4px 0 var(--sb-ink);
+    backface-visibility: hidden;
+    -webkit-backface-visibility: hidden;
+}
+
+.sb-flip-front {
+    align-items: center;
+    justify-content: center;
+    gap: 8px;
+    padding: 12px;
+    background: var(--book);
+    color: #fff;
+    text-align: center;
+}
+
+.sb-flip-front i {
+    font-size: 26px;
+}
+
+.sb-flip-front b {
+    font-size: 21px;
+    line-height: 1.2;
+}
+
+.sb-flip-front small {
+    font-size: 12px;
+    font-weight: 700;
+    opacity: 0.85;
+}
+
+.sb-flip-back {
+    padding: 12px 14px;
+    background: #fff;
+    color: var(--sb-ink);
+    font-size: 14px;
+    line-height: 1.45;
+    overflow-y: auto;
+    transform: rotateY(180deg);
+}
+
+.sb-flip-back b {
+    color: var(--book);
+    font-size: 15px;
+}
+
+.sb-flip-back p,
+.sb-flip-back ul {
+    margin: 6px 0 0;
+}
+
+@keyframes sbStickerIn {
+    0%   { transform: scale(0) rotate(-200deg); }
+    70%  { transform: scale(1.2) rotate(-2deg); }
+    100% { transform: scale(1) rotate(-6deg); }
+}
+
+@keyframes sbPointsUp {
+    0%   { transform: translate(-50%, 0) scale(0.6); opacity: 0; }
+    20%  { transform: translate(-50%, 6px) scale(1.1); opacity: 1; }
+    100% { transform: translate(-50%, 40px) scale(1); opacity: 0; }
 }
 
 @media screen and (max-width: 640px) {
-    .cs-picker-grid {
-        grid-template-columns: repeat(2, 1fr);
+    .sb-check-options {
+        grid-template-columns: 1fr;
     }
 
-    .cs-meter-row {
-        flex-wrap: wrap;
+    .sb-sticker {
+        width: 90px;
+    }
+
+    .sb-sticker-face {
+        width: 70px;
+        height: 70px;
     }
 }
 
 @media (prefers-reduced-motion: reduce) {
-    .cs-hero-token,
-    .cs-hero-mini .cs-hero-face {
-        animation: none !important;
+    .sb-flip-inner {
+        transition: none;
+    }
+
+    .sb-sticker.is-new .sb-sticker-face,
+    .sb-pop,
+    .sb-check-options button.is-wrong {
+        animation: none;
     }
 }
