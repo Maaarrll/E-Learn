@@ -343,7 +343,7 @@ router.post('/students/:id/remind', async (req, res, next) => {
     const { rows: [u] } = await pool.query(
       `SELECT first_name, email_enc, reminded_at > NOW() - make_interval(hours => $2) AS recent
        FROM users WHERE id = $1`, [student.id, REMIND_COOLDOWN_HOURS]);
-    if (!u.email_enc) return res.status(409).json({ error: 'No email on file yet. It is saved the next time this student logs in.' });
+    if (!u.email_enc) return res.status(409).json({ error: 'No email on file for this student (accounts made with an LRN have none).' });
     if (u.recent) return res.status(429).json({ error: 'A reminder was already sent in the last 24 hours.' });
 
     const base = (process.env.APP_URL || `${req.protocol}://${req.get('host')}`).replace(/\/+$/, '');
@@ -376,6 +376,52 @@ router.post('/students/:id/reset', studentAction('reset_progress', async (s) => 
     client.release();
   }
 }));
+
+
+// ---------- Allowed LRNs (who may sign up) ----------
+// GET /api/admin/lrns — the list, with the account using each LRN (if any)
+router.get('/lrns', async (req, res, next) => {
+  try {
+    const { rows } = await pool.query(
+      `SELECT a.lrn, a.added_at, u.full_name
+       FROM allowed_lrns a LEFT JOIN users u ON u.student_id = a.lrn
+       ORDER BY a.added_at DESC, a.lrn`
+    );
+    res.json({ lrns: rows.map(r => ({ lrn: r.lrn, addedAt: r.added_at, usedBy: r.full_name || null })) });
+  } catch (err) {
+    next(err);
+  }
+});
+
+// POST /api/admin/lrns  { text } — pasted LRNs, any separator (one per line from a spreadsheet)
+router.post('/lrns', async (req, res, next) => {
+  try {
+    const text = typeof (req.body && req.body.text) === 'string' ? req.body.text : '';
+    const parts = text.split(/[\s,;]+/).filter(Boolean);
+    const bad = parts.filter(p => !/^\d{12}$/.test(p));
+    if (!parts.length) return res.status(400).json({ error: 'Paste at least one LRN.' });
+    if (bad.length) return res.status(400).json({ error: `Each LRN must be exactly 12 digits. Check: ${bad.slice(0, 5).join(', ')}` });
+    const { rowCount } = await pool.query(
+      'INSERT INTO allowed_lrns (lrn) SELECT DISTINCT UNNEST($1::text[]) ON CONFLICT (lrn) DO NOTHING',
+      [parts]
+    );
+    if (rowCount) await audit(req.instructor.id, 'add_lrns', null, String(rowCount));
+    res.json({ added: rowCount, skipped: new Set(parts).size - rowCount });
+  } catch (err) {
+    next(err);
+  }
+});
+
+// DELETE /api/admin/lrns/:lrn — stops new signups with it (an existing account keeps working)
+router.delete('/lrns/:lrn', async (req, res, next) => {
+  try {
+    const { rowCount } = await pool.query('DELETE FROM allowed_lrns WHERE lrn = $1', [req.params.lrn]);
+    if (rowCount) await audit(req.instructor.id, 'remove_lrn', null, req.params.lrn);
+    res.json({ ok: true });
+  } catch (err) {
+    next(err);
+  }
+});
 
 
 // ---------- Announcements ----------

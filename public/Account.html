@@ -188,6 +188,7 @@
                                     <i class="fa-regular fa-user"></i>
                                     <input type="text" id="full-name" maxlength="160" autocomplete="name" required>
                                 </div>
+                                <small class="acct-hint">This is the name you log in with.</small>
                             </div>
 
                             <!-- Year and Section -->
@@ -215,7 +216,7 @@
                                     <i class="fa-regular fa-id-card"></i>
                                     <input type="text" id="student-id" maxlength="12" minlength="12" inputmode="numeric" pattern="[0-9]{12}" autocomplete="off" required>
                                 </div>
-                                <small class="acct-hint">LRN: exactly 12 digits.</small>
+                                <small class="acct-hint">LRN: exactly 12 digits. It can't be changed once saved; ask your teacher if it's wrong.</small>
                             </div>
 
                         </div>
@@ -491,6 +492,8 @@
             els.yearSection.value = user.yearSection || '';
             els.program.value = user.program || '';
             els.studentId.value = user.studentId || '';
+            // One account per LRN, so it can't be edited once saved
+            els.studentId.readOnly = !!user.studentId;
 
             savedValues = currentValues();
             updateProfileHeader();

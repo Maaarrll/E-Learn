@@ -649,27 +649,15 @@ async function init() {
         );
 
 
-        /* Signup confirmation codes sent by email. Only a hash of the code is kept. */
-        CREATE TABLE IF NOT EXISTS signup_codes (
+        /* LRNs instructors allow to sign up. A student can only
+           create an account with an LRN on this list. */
+        CREATE TABLE IF NOT EXISTS allowed_lrns (
 
-            email_hash
+            lrn
                 TEXT
                 PRIMARY KEY,
 
-            code_hash
-                TEXT
-                NOT NULL,
-
-            expires_at
-                TIMESTAMPTZ
-                NOT NULL,
-
-            attempts
-                INTEGER
-                NOT NULL
-                DEFAULT 0,
-
-            sent_at
+            added_at
                 TIMESTAMPTZ
                 NOT NULL
                 DEFAULT NOW()
@@ -832,10 +820,8 @@ async function init() {
             'ALTER TABLE public.users ADD COLUMN IF NOT EXISTS email_hash TEXT'
         );
 
-        // Previous code stays valid after "Send a new code", in case its email arrives late
-        await client.query(
-            'ALTER TABLE public.signup_codes ADD COLUMN IF NOT EXISTS prev_code_hash TEXT'
-        );
+        // Signup is verified by LRN now, so emailed signup codes are gone
+        await client.query('DROP TABLE IF EXISTS public.signup_codes');
 
         // Hero the student picked for the Situation Quizzes adventure
         await client.query(
@@ -1080,36 +1066,6 @@ async function init() {
 
 
         /* ----------------------------------------------
-           Make sure no user is missing the hash.
-           ---------------------------------------------- */
-
-        const missingCountResult =
-            await client.query(`
-
-                SELECT COUNT(*)::integer AS count
-
-                FROM public.users
-
-                WHERE
-                    email_hash IS NULL
-                    OR BTRIM(email_hash) = ''
-
-            `);
-
-
-        const missingCount =
-            missingCountResult.rows[0].count;
-
-
-        if (missingCount > 0) {
-
-            throw new Error(
-                `Cannot finish email security migration: ${missingCount} user(s) do not have an email_hash.`
-            );
-        }
-
-
-        /* ----------------------------------------------
            Make email_hash unique.
            ---------------------------------------------- */
 
@@ -1124,13 +1080,14 @@ async function init() {
 
 
         /* ----------------------------------------------
-           Make email_hash required.
+           Email is optional: accounts made after the switch
+           to LRN signup have none.
            ---------------------------------------------- */
 
         await client.query(`
 
             ALTER TABLE public.users
-            ALTER COLUMN email_hash SET NOT NULL
+            ALTER COLUMN email_hash DROP NOT NULL
 
         `);
 
@@ -1185,6 +1142,12 @@ async function init() {
 
 
         await client.query('COMMIT');
+
+        // One account per LRN. Outside the transaction so old duplicate LRNs
+        // only log a warning instead of stopping the server.
+        await pool.query(
+            'CREATE UNIQUE INDEX IF NOT EXISTS users_student_id_unique ON public.users(student_id)'
+        ).catch(err => console.warn('Could not make LRNs unique (duplicate LRNs in users?):', err.message));
 
         await seedContent();
 

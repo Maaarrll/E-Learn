@@ -9,8 +9,7 @@ const { pool } = require('../db');
 const {
     requireAuth,
     issueSession,
-    clearSession,
-    IS_PRODUCTION
+    clearSession
 } = require('../middleware/authGuard');
 
 const { rateLimit } = require('../middleware/rateLimit');
@@ -21,50 +20,26 @@ const {
 } = require('../utils/passwords');
 
 const {
-    normalizeEmail,
-    hashEmail,
-    encryptEmail
-} = require('../utils/emailSecurity');
-
-const {
-    sendSignupNotification,
-    sendSignupCodeEmail,
-    sendLoginNotification,
-    sendPasswordResetEmail,
-} = require('../utils/mailer');
-
-const EMAIL_REGEX =
-    /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
+    LRN_REGEX,
+    findByName,
+    nameTaken,
+    lrnProblem
+} = require('../utils/students');
 
 const RESET_TOKEN_MINUTES = 30;
-
-const RESET_COOLDOWN_SECONDS = 60;
-
-// Signup confirmation code (also uses RESET_COOLDOWN_SECONDS between sends)
-// Long enough for slow Gmail delivery
-const SIGNUP_CODE_MINUTES = 30;
-const SIGNUP_CODE_TRIES = 5;
-
-const STUDENT_ID_REGEX = /^\d{12}$/;
 
 // Maximum lengths for text fields (stops huge values being stored)
 const MAX_NAME = 60;
 const MAX_PROGRAM = 80;
-const MAX_EMAIL = 254;
 
-// Same reply whether or not the email is registered, so nobody can use
-// "Forgot password" to find out who has an account.
-const FORGOT_PASSWORD_REPLY =
-    'If that email is registered, a password reset link has been sent. Please check your inbox.';
-
-// Used when the email isn't registered so the login check takes about the
+// Used when the name isn't registered so the login check takes about the
 // same time either way (no timing hint that an account exists).
 const DUMMY_PASSWORD_HASH =
     bcrypt.hashSync(crypto.randomBytes(16).toString('hex'), 10);
 
 
 /* ---------------------------------------------------------
-   Rate limits (per IP address, plus per email for login)
+   Rate limits (per IP address, plus per name for login)
    --------------------------------------------------------- */
 
 const MINUTE = 60 * 1000;
@@ -72,7 +47,7 @@ const MINUTE = 60 * 1000;
 const loginLimiter = rateLimit({
     windowMs: 15 * MINUTE,
     max: 10,
-    keyFn: (req) => `login:${req.ip}:${String((req.body && req.body.email) || '').trim().toLowerCase()}`,
+    keyFn: (req) => `login:${req.ip}:${String((req.body && req.body.name) || '').trim().toLowerCase()}`,
     message: 'Too many login attempts. Please wait 15 minutes and try again.'
 });
 
@@ -90,14 +65,7 @@ const signupLimiter = rateLimit({
     message: 'Too many sign-up attempts. Please try again later.'
 });
 
-// Entering the code is limited per code too, so this one can be looser
-const signupCodeLimiter = rateLimit({
-    windowMs: 15 * MINUTE,
-    max: 150,
-    keyFn: (req) => `signup-code:${req.ip}`,
-    message: 'Too many attempts. Please wait 15 minutes and try again.'
-});
-
+// Also slows down guessing someone's LRN
 const forgotLimiter = rateLimit({
     windowMs: 15 * MINUTE,
     max: 30,
@@ -129,34 +97,8 @@ function sha256(value) {
 
 
 /*
-    Gets the website URL used inside password
-    reset emails.
-*/
-function getBaseUrl(req) {
-
-    if (process.env.APP_URL) {
-
-        return process.env.APP_URL
-            .replace(/\/+$/, '');
-    }
-
-    /*
-        In production the reset link must come from APP_URL. Building it
-        from the request's Host header would let someone send reset emails
-        that point to their own website.
-    */
-    if (IS_PRODUCTION) {
-
-        throw new Error('APP_URL must be set in production.');
-    }
-
-    return `${req.protocol}://${req.get('host')}`;
-}
-
-
-/*
     Allowed year choices. Values Education 7 is for Grade 7 learners.
-    
+
 */
 const VALID_YEARS =
     new Set([
@@ -208,122 +150,12 @@ function publicUser(row) {
 
 
 /* =========================================================
-   SIGNUP CONFIRMATION CODE
-   ========================================================= */
-
-// Keyed by the email hash so a code only works for the email it was sent to
-function signupCodeHash(emailHash, code) {
-
-    return sha256(`${emailHash}:${code}`);
-}
-
-
-/*
-    First signup submit: email a 6-digit code and stop.
-    Nothing about the account is saved yet.
-*/
-async function startSignupCode(res, email, emailHash, firstName) {
-
-    const { rows } = await pool.query(
-        'SELECT sent_at FROM signup_codes WHERE email_hash = $1',
-        [emailHash]
-    );
-
-    if (
-        rows[0] &&
-        Date.now() - new Date(rows[0].sent_at).getTime() < RESET_COOLDOWN_SECONDS * 1000
-    ) {
-
-        return res.status(429).json({
-            error: 'A code was just sent. Please wait a minute before asking for a new one.'
-        });
-    }
-
-    const code =
-        String(crypto.randomInt(0, 1000000)).padStart(6, '0');
-
-    await pool.query(
-        `INSERT INTO signup_codes (email_hash, code_hash, expires_at, attempts, sent_at)
-         VALUES ($1, $2, NOW() + make_interval(mins => $3), 0, NOW())
-         ON CONFLICT (email_hash) DO UPDATE
-         SET prev_code_hash = CASE WHEN signup_codes.expires_at > NOW() THEN signup_codes.code_hash END,
-             code_hash = EXCLUDED.code_hash, expires_at = EXCLUDED.expires_at, attempts = 0, sent_at = NOW()`,
-        [emailHash, signupCodeHash(emailHash, code), SIGNUP_CODE_MINUTES]
-    );
-
-    // Old unused codes are no longer needed
-    await pool.query("DELETE FROM signup_codes WHERE expires_at < NOW() - INTERVAL '1 day'");
-
-    const sent =
-        await sendSignupCodeEmail(email, firstName, code, SIGNUP_CODE_MINUTES);
-
-    if (!sent) {
-
-        if (IS_PRODUCTION) {
-
-            // Let them try again right away instead of waiting out the cooldown
-            await pool.query('DELETE FROM signup_codes WHERE email_hash = $1', [emailHash]);
-
-            return res.status(503).json({
-                error: "We couldn't send the confirmation email right now. Please try again in a few minutes."
-            });
-        }
-
-        // Local testing without email set up
-        console.log(`Signup code for ${email}: ${code} (email is off; shown here for local testing only)`);
-    }
-
-    res.status(202).json({ codeSent: true });
-}
-
-
-/*
-    Second signup submit: returns an error message, or null
-    when the code is right (the code is used up).
-*/
-async function useSignupCode(emailHash, code) {
-
-    const cleanCode =
-        String(code).trim();
-
-    if (!/^\d{6}$/.test(cleanCode)) {
-
-        return 'Please enter the 6-digit code from your email.';
-    }
-
-    // One statement, so the same code can't be used twice at the same time
-    const used = await pool.query(
-        `DELETE FROM signup_codes
-         WHERE email_hash = $1 AND $2 IN (code_hash, prev_code_hash) AND expires_at > NOW() AND attempts < $3`,
-        [emailHash, signupCodeHash(emailHash, cleanCode), SIGNUP_CODE_TRIES]
-    );
-
-    if (used.rowCount) return null;
-
-    const { rows } = await pool.query(
-        `UPDATE signup_codes SET attempts = attempts + 1
-         WHERE email_hash = $1
-         RETURNING expires_at > NOW() AND attempts <= $2 AS usable`,
-        [emailHash, SIGNUP_CODE_TRIES]
-    );
-
-    return rows[0] && rows[0].usable
-        ? 'That code is not correct. Please check your email and try again.'
-        : 'That code has expired or was tried too many times. Tap "Send a new code".';
-}
-
-
-/* =========================================================
    SIGN UP
    ========================================================= */
 
 router.post(
     '/signup',
-    (req, res, next) => (
-        req.body && req.body.code
-            ? signupCodeLimiter(req, res, next)
-            : signupLimiter(req, res, next)
-    ),
+    signupLimiter,
     async (req, res, next) => {
 
         try {
@@ -340,8 +172,6 @@ router.post(
 
                 program,
 
-                email,
-
                 studentId,
 
                 password
@@ -357,27 +187,28 @@ router.post(
                 !lastName ||
                 !year ||
                 !section ||
-                !email ||
+                !studentId ||
                 !password
             ) {
 
                 return res.status(400).json({
 
                     error:
-                        'First name, last name, year, section, email and password are required.'
+                        'First name, last name, year, section, LRN and password are required.'
 
                 });
             }
 
 
             /*
-                Clean user input.
+                Clean user input. Extra spaces are squeezed out because
+                the full name is what the student logs in with.
             */
             const cleanFirstName =
-                String(firstName).trim();
+                String(firstName).trim().replace(/\s+/g, ' ');
 
             const cleanLastName =
-                String(lastName).trim();
+                String(lastName).trim().replace(/\s+/g, ' ');
 
             const cleanYear =
                 String(year).trim();
@@ -386,6 +217,9 @@ router.post(
                 String(section)
                     .trim()
                     .toUpperCase();
+
+            const cleanStudentId =
+                String(studentId).trim();
 
 
             /*
@@ -414,8 +248,7 @@ router.post(
             if (
                 cleanFirstName.length > MAX_NAME ||
                 cleanLastName.length > MAX_NAME ||
-                cleanProgram.length > MAX_PROGRAM ||
-                String(email).length > MAX_EMAIL
+                cleanProgram.length > MAX_PROGRAM
             ) {
 
                 return res.status(400).json({
@@ -428,14 +261,10 @@ router.post(
 
 
             /*
-                Check LRN (exactly 12 digits).
+                Check LRN format (exactly 12 digits).
             */
-            const cleanStudentId =
-                studentId ? String(studentId).trim() : '';
-
             if (
-                cleanStudentId &&
-                !STUDENT_ID_REGEX.test(cleanStudentId)
+                !LRN_REGEX.test(cleanStudentId)
             ) {
 
                 return res.status(400).json({
@@ -480,31 +309,6 @@ router.post(
 
 
             /*
-                Normalize Gmail/email.
-            */
-            const normalizedEmail =
-                normalizeEmail(email);
-
-
-            /*
-                Check email format.
-            */
-            if (
-                !EMAIL_REGEX.test(
-                    normalizedEmail
-                )
-            ) {
-
-                return res.status(400).json({
-
-                    error:
-                        'Please enter a valid email address.'
-
-                });
-            }
-
-
-            /*
                 Check password.
             */
             if (
@@ -521,69 +325,41 @@ router.post(
 
 
             /*
-                Create HMAC hash of email.
-
-                The real email is NOT stored in users.
-                It is only used during this request
-                to send the signup notification.
+                The LRN must be on the instructors' list
+                and not used by another account yet.
             */
-            const emailHash =
-                hashEmail(
-                    normalizedEmail
-                );
+            const lrnError =
+                await lrnProblem(cleanStudentId);
 
+            if (lrnError) {
 
-            /*
-                Check if email already exists.
-            */
-            const existing =
-                await pool.query(
-                    'SELECT id FROM users WHERE email_hash = $1',
-                    [emailHash]
-                );
-
-
-            if (
-                existing.rows.length > 0
-            ) {
-
-                return res.status(409).json({
+                return res.status(lrnError.includes('already') ? 409 : 400).json({
 
                     error:
-                        'An account with that email already exists.'
+                        lrnError
 
                 });
             }
 
 
             /*
-                Email confirmation.
-
-                Without a code: email one and stop here.
-                With a code: check it, then create the account.
+                Combine first and last name.
             */
-            if (!req.body.code) {
+            const fullName =
+                `${cleanFirstName} ${cleanLastName}`;
 
-                return startSignupCode(
-                    res,
-                    normalizedEmail,
-                    emailHash,
-                    cleanFirstName
-                );
-            }
 
-            const codeError =
-                await useSignupCode(
-                    emailHash,
-                    req.body.code
-                );
+            /*
+                The name is the login, so it must be unique.
+            */
+            if (
+                await nameTaken(fullName)
+            ) {
 
-            if (codeError) {
-
-                return res.status(400).json({
+                return res.status(409).json({
 
                     error:
-                        codeError
+                        'An account with that name already exists. Add your middle initial to your first name (e.g. "Juan M.").'
 
                 });
             }
@@ -600,13 +376,6 @@ router.post(
 
 
             /*
-                Combine first and last name.
-            */
-            const fullName =
-                `${cleanFirstName} ${cleanLastName}`;
-
-
-            /*
                 Combine year and section.
             */
             const yearSection =
@@ -615,62 +384,71 @@ router.post(
 
             /*
                 Insert account.
-
-                NOTE:
-                There is NO email column here.
             */
-            const insert =
-                await pool.query(
+            let insert;
 
-                    `INSERT INTO users
-                    (
-                        full_name,
-                        first_name,
-                        last_name,
-                        year_section,
-                        program,
-                        email_hash,
-                        student_id,
-                        password_hash,
-                        email_enc
-                    )
+            try {
 
-                    VALUES
-                    (
-                        $1,
-                        $2,
-                        $3,
-                        $4,
-                        $5,
-                        $6,
-                        $7,
-                        $8,
-                        $9
-                    )
+                insert =
+                    await pool.query(
 
-                    RETURNING id`,
+                        `INSERT INTO users
+                        (
+                            full_name,
+                            first_name,
+                            last_name,
+                            year_section,
+                            program,
+                            student_id,
+                            password_hash
+                        )
 
-                    [
+                        VALUES
+                        (
+                            $1,
+                            $2,
+                            $3,
+                            $4,
+                            $5,
+                            $6,
+                            $7
+                        )
 
-                        fullName,
+                        RETURNING id`,
 
-                        cleanFirstName,
+                        [
 
-                        cleanLastName,
+                            fullName,
 
-                        yearSection,
+                            cleanFirstName,
 
-                        cleanProgram || null,
+                            cleanLastName,
 
-                        emailHash,
+                            yearSection,
 
-                        cleanStudentId || null,
+                            cleanProgram || null,
 
-                        passwordHash,
+                            cleanStudentId,
 
-                        encryptEmail(normalizedEmail)
-                    ]
-                );
+                            passwordHash
+                        ]
+                    );
+
+            } catch (err) {
+
+                // Two signups with the same LRN at the same moment
+                if (err.code === '23505') {
+
+                    return res.status(409).json({
+
+                        error:
+                            'An account with that LRN already exists.'
+
+                    });
+                }
+
+                throw err;
+            }
 
 
             const userId =
@@ -719,18 +497,6 @@ router.post(
             );
 
 
-            /*
-                Send signup email to the email
-                supplied in the current request.
-
-                It is not stored in users.
-            */
-            sendSignupNotification(
-                normalizedEmail,
-                rows[0].first_name
-            );
-
-
             res.status(201).json({
 
                 user:
@@ -759,13 +525,14 @@ router.post(
         try {
 
             const {
-                email,
+                name,
                 password
             } = req.body || {};
 
 
             if (
-                !email ||
+                !name ||
+                typeof name !== 'string' ||
                 !password ||
                 typeof password !== 'string'
             ) {
@@ -773,60 +540,52 @@ router.post(
                 return res.status(400).json({
 
                     error:
-                        'Email and password are required.'
+                        'Name and password are required.'
 
                 });
             }
 
 
-            const normalizedEmail =
-                normalizeEmail(email);
-
-
             /*
-                Find account using HMAC email hash.
+                Find the account by full name. Accounts made before
+                names had to be unique may share a name, so the
+                password decides which one it is.
             */
-            const {
-                rows
-            } = await pool.query(
+            const candidates =
+                await findByName(name);
 
-                `SELECT *
-                 FROM users
-                 WHERE email_hash = $1`,
+            let user = null;
 
-                [
-                    hashEmail(
-                        normalizedEmail
-                    )
-                ]
-            );
+            for (const row of candidates) {
 
+                if (await bcrypt.compare(password, row.password_hash)) {
 
-            const user =
-                rows[0];
+                    user = row;
+
+                    break;
+                }
+            }
 
 
             /*
-                Check password.
-
-                When the email isn't registered we still compare against a
+                When the name isn't registered we still compare against a
                 dummy hash, so the reply takes the same time either way.
             */
-            const passwordOk =
+            if (!candidates.length) {
+
                 await bcrypt.compare(
                     password,
-                    user ? user.password_hash : DUMMY_PASSWORD_HASH
+                    DUMMY_PASSWORD_HASH
                 );
+            }
 
-            if (
-                !user ||
-                !passwordOk
-            ) {
+
+            if (!user) {
 
                 return res.status(401).json({
 
                     error:
-                        'Invalid email or password.'
+                        'Invalid name or password.'
 
                 });
             }
@@ -854,28 +613,6 @@ router.post(
             );
 
 
-            /*
-                Keep the encrypted email current (older accounts only
-                get one here) so instructors can send reminders.
-            */
-            await pool.query(
-                'UPDATE users SET email_enc = $1 WHERE id = $2',
-                [encryptEmail(normalizedEmail), user.id]
-            );
-
-
-            /*
-                Login notification.
-
-                Email comes from the current request
-                instead of the database.
-            */
-            sendLoginNotification(
-                normalizedEmail,
-                user.first_name
-            );
-
-
             res.json({
 
                 user:
@@ -893,6 +630,10 @@ router.post(
 
 /* =========================================================
    FORGOT PASSWORD
+
+   The student proves who they are with their name and LRN,
+   then gets a short-lived token to set a new password on
+   update-password.html.
    ========================================================= */
 
 router.post(
@@ -902,121 +643,41 @@ router.post(
 
         try {
 
-            const email =
-                normalizeEmail(
-                    (req.body &&
-                        req.body.email) ||
-                    ''
-                );
+            const {
+                name,
+                lrn
+            } = req.body || {};
+
+            const cleanLrn =
+                String(lrn || '').trim();
 
 
-            /*
-                Validate email format.
-            */
             if (
-                !EMAIL_REGEX.test(email)
+                !name ||
+                typeof name !== 'string' ||
+                !LRN_REGEX.test(cleanLrn)
             ) {
 
                 return res.status(400).json({
 
                     error:
-                        'Please enter a valid email address.'
+                        'Please enter your full name and your 12-digit LRN.'
 
                 });
             }
-
-
-            /*
-                Search using the HMAC email hash.
-
-                The plaintext email is only kept in the
-                current request and is not stored in users.
-            */
-            const {
-                rows
-            } = await pool.query(
-
-                `SELECT
-                    id,
-                    first_name
-
-                 FROM users
-
-                 WHERE email_hash = $1`,
-
-                [
-                    hashEmail(email)
-                ]
-            );
 
 
             const user =
-                rows[0];
+                (await findByName(name, 'id, student_id'))
+                    .find(r => r.student_id === cleanLrn);
 
 
-            /*
-                EMAIL NOT REGISTERED
-
-                Same reply as a real request, so this can't be used to
-                check which emails have accounts.
-            */
             if (!user) {
 
-                return res.json({
+                return res.status(400).json({
 
-                    ok: true,
-
-                    message:
-                        FORGOT_PASSWORD_REPLY
-
-                });
-            }
-
-
-            /*
-                Prevent reset email spam.
-            */
-            const recent =
-                await pool.query(
-
-                    `SELECT 1
-
-                     FROM password_resets
-
-                     WHERE user_id = $1
-
-                     AND created_at >
-
-                     NOW() -
-
-                     ($2 || ' seconds')::interval`,
-
-                    [
-
-                        user.id,
-
-                        String(
-                            RESET_COOLDOWN_SECONDS
-                        )
-
-                    ]
-                );
-
-
-            /*
-                Recently requested a reset: don't send another email,
-                but reply the same way (no hint that the account exists).
-            */
-            if (
-                recent.rows.length > 0
-            ) {
-
-                return res.json({
-
-                    ok: true,
-
-                    message:
-                        FORGOT_PASSWORD_REPLY
+                    error:
+                        "That name and LRN don't match any account. Use the name you log in with, or ask your teacher."
 
                 });
             }
@@ -1079,41 +740,11 @@ router.post(
             );
 
 
-            /*
-                Create reset link.
-            */
-            const link =
-                `${getBaseUrl(req)}/update-password.html?token=${token}`;
-
-
-            /*
-                Send reset email.
-
-                The email comes from the current request,
-                not from the database.
-            */
-            sendPasswordResetEmail(
-
-                email,
-
-                user.first_name,
-
-                link,
-
-                RESET_TOKEN_MINUTES
-
-            );
-
-
-            /*
-                SUCCESS RESPONSE
-            */
             return res.json({
 
                 ok: true,
 
-                message:
-                    FORGOT_PASSWORD_REPLY
+                token
 
             });
 
