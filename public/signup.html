@@ -152,22 +152,6 @@
                         </div>
                     </div>
 
-                    <!-- EMAIL -->
-                    <div class="input-group">
-                        <label for="email">Email Address</label>
-                        <div class="field">
-                            <i class="fa-solid fa-envelope"></i>
-                            <input
-                                type="email"
-                                id="email"
-                                placeholder="you@gmail.com"
-                                maxlength="254"
-                                autocomplete="email"
-                                required
-                            >
-                        </div>
-                    </div>
-
                     <!-- STUDENT ID -->
                     <div class="input-group">
                         <label for="studentId">LRN (Learner Reference Number)</label>
@@ -184,6 +168,9 @@
                                 required
                             >
                         </div>
+                        <small class="password-note">
+                            Your teacher must add your LRN to the class list first. Your first and last name become your login name.
+                        </small>
                     </div>
 
                     <!-- PASSWORD -->
@@ -212,27 +199,6 @@
                         </small>
                     </div>
 
-                </div>
-
-
-                <!-- EMAIL CONFIRMATION CODE (shown after the code is emailed) -->
-                <div class="input-group" id="codeGroup" hidden>
-                    <label for="signupCode">Confirmation code</label>
-                    <small class="password-note" id="codeNote" aria-live="polite"></small>
-                    <div class="field">
-                        <i class="fa-solid fa-key"></i>
-                        <input
-                            type="text"
-                            id="signupCode"
-                            inputmode="numeric"
-                            autocomplete="one-time-code"
-                            maxlength="6"
-                            placeholder="6-digit code"
-                        >
-                    </div>
-                    <button type="button" class="link-btn" id="resendCode" style="margin-top: 8px; font-size: 13px;">
-                        Send a new code
-                    </button>
                 </div>
 
 
@@ -272,10 +238,6 @@
 
 
     <script>
-
-        const EMAIL_REGEX =
-            /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
-
 
         /* ==========================================
            STUDENT ID - NUMBERS ONLY / 6 DIGITS
@@ -383,49 +345,6 @@
 
 
         /* ==========================================
-           EMAIL CONFIRMATION CODE
-           ========================================== */
-
-        const codeGroup = document.getElementById('codeGroup');
-        const codeInput = document.getElementById('signupCode');
-        let codeSent = false;
-
-        function showCodeStep(email) {
-            codeSent = true;
-            codeGroup.hidden = false;
-            document.getElementById('codeNote').textContent =
-                'We sent a 6-digit code to ' + email + '. It can take a few minutes to arrive. Check your inbox (and Spam).';
-            document.getElementById('signupBtn').textContent = 'Confirm & create account';
-            codeInput.focus();
-        }
-
-        // A different email needs its own code
-        document.getElementById('email').addEventListener('input', function () {
-            if (!codeSent) return;
-            codeSent = false;
-            codeGroup.hidden = true;
-            codeInput.value = '';
-            document.getElementById('signupBtn').textContent = 'Sign up';
-        });
-
-        codeInput.addEventListener('input', function () {
-            this.value = this.value.replace(/\D/g, '').substring(0, 6);
-        });
-
-        document.getElementById('resendCode').addEventListener('click', async function () {
-            this.disabled = true;
-            try {
-                await api.post('/auth/signup', readForm());
-                showCodeStep(document.getElementById('email').value.trim());
-                codeInput.value = '';
-            } catch (err) {
-                showError(err.message);
-            }
-            this.disabled = false;
-        });
-
-
-        /* ==========================================
            SIGNUP FORM
            ========================================== */
 
@@ -436,7 +355,6 @@
                 year: document.getElementById('year').value,
                 section: document.getElementById('section').value,
                 program: document.getElementById('program').value.trim(),
-                email: document.getElementById('email').value.trim(),
                 studentId: document.getElementById('studentId').value.trim(),
                 password: document.getElementById('password-input').value,
             };
@@ -492,16 +410,6 @@
                     }
 
 
-                    /* EMAIL VALIDATION */
-                    if (!EMAIL_REGEX.test(payload.email)) {
-                        showError(
-                            'Please enter a valid email address.',
-                            'email'
-                        );
-                        return;
-                    }
-
-
                     /* PASSWORD VALIDATION */
                     if (!isValidPassword(payload.password)) {
                         showError(
@@ -512,42 +420,18 @@
                     }
 
 
-                    /* CODE VALIDATION (second step) */
-                    if (codeSent) {
-                        if (!/^[0-9]{6}$/.test(codeInput.value)) {
-                            showError(
-                                'Please enter the 6-digit code from your email.',
-                                'signupCode'
-                            );
-                            return;
-                        }
-                        payload.code = codeInput.value;
-                    }
-
-                    const btnLabel = btn.textContent;
-
-
                     /* DISABLE BUTTON */
                     btn.disabled = true;
-                    btn.innerHTML = codeSent
-                        ? '<span class="btn-spinner"></span> Creating account...'
-                        : '<span class="btn-spinner"></span> Sending code...';
+                    btn.innerHTML = '<span class="btn-spinner"></span> Creating account...';
 
 
                     try {
 
                         /* SEND TO BACKEND */
-                        const data = await api.post(
+                        await api.post(
                             '/auth/signup',
                             payload
                         );
-
-                        /* FIRST STEP: code emailed */
-                        if (data && data.codeSent) {
-                            btn.disabled = false;
-                            showCodeStep(payload.email);
-                            return;
-                        }
 
                         /* REDIRECT */
                         window.location.href =
@@ -558,7 +442,7 @@
                         showError(err.message);
 
                         btn.disabled = false;
-                        btn.textContent = btnLabel;
+                        btn.textContent = 'Sign up';
                     }
                 }
             );

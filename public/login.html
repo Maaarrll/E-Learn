@@ -54,28 +54,25 @@
                         <span id="loginErrorText"></span>
                     </div>
 
-                    <!-- EMAIL (student login) -->
-                    <div class="input-group" id="emailGroup">
+                    <!-- FULL NAME (student login) -->
+                    <div class="input-group" id="nameGroup">
 
-                        <label for="email">Email</label>
+                        <label for="loginName">Full name</label>
 
                         <div class="input-wrapper">
 
-                            <i class="fa-solid fa-envelope"></i>
+                            <i class="fa-regular fa-user"></i>
 
                             <input
-                                type="email"
-                                id="email"
-                                placeholder="you@gmail.com"
-                                autocomplete="email"
+                                type="text"
+                                id="loginName"
+                                placeholder="e.g. Juan Dela Cruz"
+                                autocomplete="username"
+                                maxlength="130"
                                 required
                             >
 
                         </div>
-
-                        <small class="field-error" id="emailError">
-                            <i class="fa-solid fa-circle-exclamation"></i> Please enter a valid email address
-                        </small>
 
                     </div>
 
@@ -201,18 +198,33 @@
             <h3 id="resetTitle">Reset Password</h3>
 
             <p class="modal-text">
-                Enter your email address and we will send you a password reset link.
+                Enter your full name and LRN to set a new password.
             </p>
 
             <p id="resetMsg" class="modal-msg"></p>
 
             <div class="input-wrapper">
-                <i class="fa-solid fa-envelope"></i>
+                <i class="fa-regular fa-user"></i>
                 <input
-                    type="email"
-                    id="resetEmailInput"
-                    placeholder="you@gmail.com"
-                    autocomplete="email"
+                    type="text"
+                    id="resetNameInput"
+                    placeholder="Full name"
+                    aria-label="Full name"
+                    autocomplete="username"
+                    maxlength="130"
+                >
+            </div>
+
+            <div class="input-wrapper" style="margin-top: 10px;">
+                <i class="fa-regular fa-id-card"></i>
+                <input
+                    type="text"
+                    id="resetLrnInput"
+                    placeholder="12-digit LRN"
+                    aria-label="LRN"
+                    inputmode="numeric"
+                    maxlength="12"
+                    autocomplete="off"
                 >
             </div>
 
@@ -223,7 +235,7 @@
                 </button>
 
                 <button type="button" class="modal-btn modal-btn-primary" id="sendResetBtn" onclick="sendResetLink()">
-                    Send Link
+                    Continue
                 </button>
 
             </div>
@@ -257,8 +269,8 @@
 
         function openForgotModal() {
 
-            document.getElementById('resetEmailInput').value =
-                document.getElementById('email').value.trim();
+            document.getElementById('resetNameInput').value =
+                document.getElementById('loginName').value.trim();
 
             document.getElementById('resetMsg').style.display =
                 'none';
@@ -266,7 +278,9 @@
             document.getElementById('forgotPasswordModal').style.display =
                 'flex';
 
-            document.getElementById('resetEmailInput').focus();
+            document.getElementById(
+                document.getElementById('resetNameInput').value ? 'resetLrnInput' : 'resetNameInput'
+            ).focus();
         }
 
 
@@ -275,7 +289,9 @@
             document.getElementById('forgotPasswordModal').style.display =
                 'none';
 
-            document.getElementById('resetEmailInput').value = '';
+            document.getElementById('resetNameInput').value = '';
+
+            document.getElementById('resetLrnInput').value = '';
 
             document.getElementById('resetMsg').style.display =
                 'none';
@@ -294,22 +310,30 @@
         });
 
 
+        document
+            .getElementById('resetLrnInput')
+            .addEventListener('input', function () {
+                this.value = this.value.replace(/\D/g, '').substring(0, 12);
+            });
+
+
+        // Name + LRN match an account -> go set a new password
         async function sendResetLink() {
 
-            const email =
-                document
-                    .getElementById('resetEmailInput')
-                    .value
-                    .trim();
+            const name =
+                document.getElementById('resetNameInput').value.trim();
+
+            const lrn =
+                document.getElementById('resetLrnInput').value.trim();
 
             const btn =
                 document.getElementById('sendResetBtn');
 
 
-            if (!email) {
+            if (!name || !/^[0-9]{12}$/.test(lrn)) {
 
                 showResetMsg(
-                    'Please enter your email address.',
+                    'Please enter your full name and your 12-digit LRN.',
                     true
                 );
 
@@ -318,23 +342,19 @@
 
 
             btn.disabled = true;
-            btn.textContent = 'Sending...';
+            btn.textContent = 'Checking...';
 
 
             try {
 
-                const data =
+                const { token } =
                     await api.post(
                         '/auth/forgot-password',
-                        { email }
+                        { name, lrn }
                     );
 
-
-                showResetMsg(
-                    data.message ||
-                    'Reset link sent! Please check your email.',
-                    false
-                );
+                window.location.href =
+                    'update-password.html?token=' + encodeURIComponent(token);
 
             } catch (err) {
 
@@ -343,10 +363,8 @@
                     true
                 );
 
-            } finally {
-
                 btn.disabled = false;
-                btn.textContent = 'Send Link';
+                btn.textContent = 'Continue';
             }
         }
 
@@ -405,8 +423,8 @@
             document.querySelector('.glass-panel').classList.toggle('is-admin-mode', adminMode);
             document.getElementById('adminBadge').hidden = !adminMode;
             document.getElementById('studentExtras').hidden = adminMode;
-            // Instructors log in with their Instructor ID, students with email
-            document.getElementById('emailGroup').hidden = adminMode;
+            // Instructors log in with their Instructor ID, students with their name
+            document.getElementById('nameGroup').hidden = adminMode;
             document.getElementById('instructorGroup').hidden = !adminMode;
             document.getElementById('formOptions').hidden = adminMode;
             document.getElementById('loginTitle').textContent = adminMode ? 'Admin login' : 'Hello, welcome!';
@@ -433,7 +451,7 @@
         document.getElementById('adminToggle').addEventListener('click', () => {
             adminMode = !adminMode;
             applyLoginMode();
-            document.getElementById(adminMode ? 'instructorId' : 'email').focus();
+            document.getElementById(adminMode ? 'instructorId' : 'loginName').focus();
         });
 
         applyLoginMode();
@@ -486,67 +504,35 @@
            ========================================== */
 
 
-        const EMAIL_PATTERN = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
-
-
         /* ==========================================
-           REMEMBER ME (email lang ang sine-save, hindi ang password)
+           REMEMBER ME (name lang ang sine-save, hindi ang password)
            ========================================== */
 
         // Auto-focus lang sa desktop para hindi biglang lumabas ang keyboard sa cellphone
         const isDesktop = window.matchMedia('(min-width: 769px)').matches;
 
         try {
-            const savedEmail = localStorage.getItem('rememberedEmail');
-            if (savedEmail) {
-                document.getElementById('email').value = savedEmail;
+            localStorage.removeItem('rememberedEmail'); // left over from the email login
+            const savedName = localStorage.getItem('rememberedName');
+            if (savedName) {
+                document.getElementById('loginName').value = savedName;
                 document.getElementById('rememberMe').checked = true;
             }
             if (isDesktop) {
-                document.getElementById(savedEmail ? 'password' : 'email').focus();
+                document.getElementById(savedName ? 'password' : 'loginName').focus();
             }
         } catch (e) { /* storage blocked */ }
 
-        function saveRememberedEmail(email) {
+        function saveRememberedName(name) {
             try {
                 if (document.getElementById('rememberMe').checked) {
-                    localStorage.setItem('rememberedEmail', email);
+                    localStorage.setItem('rememberedName', name);
                 } else {
-                    localStorage.removeItem('rememberedEmail');
+                    localStorage.removeItem('rememberedName');
                 }
             } catch (e) { /* storage blocked */ }
         }
 
-
-        /* ==========================================
-           INLINE EMAIL VALIDATION
-           ========================================== */
-
-        function setEmailInvalid(invalid) {
-            document
-                .getElementById('email')
-                .closest('.input-wrapper')
-                .classList
-                .toggle('invalid', invalid);
-
-            document
-                .getElementById('emailError')
-                .classList
-                .toggle('visible', invalid);
-        }
-
-        document
-            .getElementById('email')
-            .addEventListener('blur', function () {
-                const value = this.value.trim();
-                setEmailInvalid(value !== '' && !EMAIL_PATTERN.test(value));
-            });
-
-        document
-            .getElementById('email')
-            .addEventListener('input', function () {
-                if (EMAIL_PATTERN.test(this.value.trim())) setEmailInvalid(false);
-            });
 
         function showLoginError(message) {
 
@@ -586,9 +572,9 @@
                         .remove('visible');
 
 
-                    const email =
+                    const name =
                         document
-                            .getElementById('email')
+                            .getElementById('loginName')
                             .value
                             .trim();
 
@@ -597,21 +583,11 @@
                         document.getElementById('password').value;
 
 
-                    if (!email || !password) {
+                    if (!name || !password) {
 
                         showLoginError(
-                            'Please enter your email and password.'
+                            'Please enter your full name and password.'
                         );
-
-                        return;
-                    }
-
-
-                    if (!EMAIL_PATTERN.test(email)) {
-
-                        setEmailInvalid(true);
-
-                        document.getElementById('email').focus();
 
                         return;
                     }
@@ -627,13 +603,13 @@
                         await api.post(
                             '/auth/login',
                             {
-                                email,
+                                name,
                                 password
                             }
                         );
 
 
-                        saveRememberedEmail(email);
+                        saveRememberedName(name);
 
                         // Short success state bago mag-redirect
                         btn.classList.add('success');
