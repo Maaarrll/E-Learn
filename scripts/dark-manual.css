@@ -31,8 +31,7 @@
 }
 
 /* Photos: slightly dimmer so they don't glare */
-:root[data-theme="dark"] .thumbnail-container img,
-:root[data-theme="dark"] .image-section {
+:root[data-theme="dark"] .thumbnail-container img {
     filter: brightness(0.88);
 }
 
