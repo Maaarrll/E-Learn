@@ -201,8 +201,18 @@ router.get('/summary', async (req, res, next) => {
   }
 });
 
+// Is this a published practice question? (same keys as Review my mistakes)
+function isQuestion(content, source, itemKey) {
+  if (typeof itemKey !== 'string') return false;
+  if (source === 'case_study') return /^\d{1,6}$/.test(itemKey) && content.caseByKey.has(Number(itemKey));
+  if (source === 'study_card') return content.cardKeys.has(itemKey);
+  return false;
+}
+
 // POST /api/gamify/activity
-//   { type: 'answer', correct, combo? }   combo = correct answers in a row so far
+//   { type: 'answer', correct, combo?, source?, itemKey? }   combo = correct answers in a row so far.
+//   A right answer must name its question and counts once per question per day, so the
+//   leaderboard can't be pumped by a script or by replaying the same deck all day.
 //   { type: 'video' | 'read' | 'cleared' | 'perfect' }   perfect = deck with no mistakes
 router.post('/activity', async (req, res, next) => {
   try {
@@ -218,9 +228,22 @@ router.post('/activity', async (req, res, next) => {
 
     const inc = { answers: 0, correct: 0, videos: 0, topics_read: 0, mistakes_cleared: 0, perfect_decks: 0 };
     inc[columns[type]] = 1;
-    if (type === 'answer' && correct === true) inc.correct = 1;
+    let countsCorrect = false;
+    if (type === 'answer' && correct === true) {
+      const { source, itemKey } = req.body;
+      if (isQuestion(await getContent(), source, itemKey)) {
+        // Only today's rows matter; drop older ones as we go
+        await pool.query('DELETE FROM daily_correct WHERE user_id = $1 AND day < $2', [userId, today]);
+        countsCorrect = (await pool.query(
+          'INSERT INTO daily_correct (user_id, day, source, item_key) VALUES ($1, $2, $3, $4) ON CONFLICT DO NOTHING',
+          [userId, today, source, itemKey]
+        )).rowCount > 0;
+      }
+      // A repeat right answer counts as neither, so replaying doesn't lower accuracy either
+      if (countsCorrect) inc.correct = 1; else inc.answers = 0;
+    }
     // A run of correct answers can't be longer than today's correct answers
-    const combo = type === 'answer' && correct === true
+    const combo = countsCorrect
       ? Math.max(0, Math.min(1000, Math.floor(Number(req.body.combo) || 1)))
       : 0;
 

@@ -789,6 +789,37 @@ async function init() {
         );
 
 
+        /* Practice questions each student got right today: a question earns a
+           leaderboard point once per day (rows from earlier days are cleared). */
+        CREATE TABLE IF NOT EXISTS daily_correct (
+
+            user_id
+                INTEGER
+                NOT NULL
+                REFERENCES users(id)
+                ON DELETE CASCADE,
+
+            day
+                DATE
+                NOT NULL,
+
+            source
+                TEXT
+                NOT NULL,
+
+            item_key
+                TEXT
+                NOT NULL,
+
+            PRIMARY KEY (
+                user_id,
+                day,
+                source,
+                item_key
+            )
+        );
+
+
         /* Time each student spent on each lesson topic (for the teacher),
            and when they last opened it (a topic read too fast is refused). */
         CREATE TABLE IF NOT EXISTS topic_time (
@@ -939,6 +970,12 @@ async function init() {
            'instructor' (sees only their assigned sections). */
         await client.query(
             "ALTER TABLE public.instructors ADD COLUMN IF NOT EXISTS role TEXT NOT NULL DEFAULT 'instructor'"
+        );
+
+        /* Seconds of a video actually played (not skipped); a video counts as
+           watched only after most of it was played */
+        await client.query(
+            'ALTER TABLE public.video_positions ADD COLUMN IF NOT EXISTS watched_seconds INTEGER NOT NULL DEFAULT 0'
         );
 
         /* Instructor's own profile photo (Cloudinary URL), shown in the admin panel */
