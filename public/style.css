@@ -13571,976 +13571,6 @@ fieldset.ce-field legend {
     }
 }
 
-/* =========================================
-   Read Lesson: storybook / comic style
-   (bookshelf of lessons, list of every page, comic page reader)
-   ========================================= */
-
-:root {
-    --sb-ink: #102430;
-    --sb-paper: #fffaf0;
-    --sb-c0: #1168a3;
-    --sb-c1: #459fe0;
-    --sb-c2: #f2a007;
-    --sb-c3: #3d7fd6;
-}
-
-.sb-comic {
-    font-family: 'Bangers', 'Nunito', cursive;
-    font-weight: 400;
-    letter-spacing: 1px;
-}
-
-.sb-wrap {
-    max-width: 980px;
-    margin: 0 auto;
-}
-
-/* Title strip */
-.sb-hero {
-    display: flex;
-    align-items: center;
-    gap: 20px;
-    padding: 22px 26px;
-    margin-bottom: 22px;
-    border: 3px solid var(--sb-ink);
-    border-radius: 22px;
-    background-color: #ffe66b;
-    background-image: radial-gradient(rgba(16, 36, 48, 0.14) 1.6px, transparent 2px);
-    background-size: 12px 12px;
-    box-shadow: 6px 6px 0 var(--sb-ink);
-}
-
-.sb-hero > div:first-child {
-    flex: 1;
-    min-width: 0;
-}
-
-.sb-kicker {
-    display: inline-block;
-    padding: 3px 12px;
-    border: 2px solid var(--sb-ink);
-    border-radius: 999px;
-    background: #fff;
-    color: var(--sb-ink);
-    font-size: 12px;
-    font-weight: 900;
-    text-transform: uppercase;
-    letter-spacing: 0.5px;
-}
-
-.sb-hero h2 {
-    margin: 6px 0 2px;
-    font-size: 46px;
-    line-height: 1;
-    color: var(--sb-c1);
-    text-shadow: 3px 3px 0 var(--sb-ink);
-}
-
-.sb-hero p {
-    margin: 0;
-    font-size: 15px;
-    font-weight: 700;
-    color: var(--sb-ink);
-}
-
-.sb-progress {
-    flex-shrink: 0;
-    display: flex;
-    flex-direction: column;
-    align-items: center;
-    justify-content: center;
-    width: 110px;
-    height: 110px;
-    border: 3px solid var(--sb-ink);
-    border-radius: 50%;
-    background: #fff;
-    color: var(--sb-ink);
-    transform: rotate(6deg);
-    box-shadow: 4px 4px 0 var(--sb-ink);
-}
-
-.sb-progress b {
-    font-family: 'Bangers', 'Nunito', cursive;
-    font-size: 40px;
-    font-weight: 400;
-    line-height: 1;
-}
-
-.sb-progress small {
-    font-size: 11px;
-    font-weight: 800;
-    text-align: center;
-}
-
-/* Bookshelf */
-.sb-shelf {
-    display: grid;
-    grid-template-columns: repeat(auto-fit, minmax(230px, 1fr));
-    gap: 20px;
-    margin-bottom: 26px;
-}
-
-.sb-loading,
-.sb-empty {
-    display: flex;
-    align-items: center;
-    justify-content: center;
-    gap: 10px;
-    padding: 24px;
-    color: #666;
-}
-
-.sb-empty[hidden] {
-    display: none;
-}
-
-.sb-book {
-    position: relative;
-    display: flex;
-    flex-direction: column;
-    align-items: flex-start;
-    gap: 6px;
-    min-height: 250px;
-    padding: 20px 18px 18px 30px;
-    border: 3px solid var(--sb-ink);
-    border-radius: 8px 20px 20px 8px;
-    background: var(--book);
-    color: #fff;
-    font: inherit;
-    text-align: left;
-    cursor: pointer;
-    box-shadow: 6px 6px 0 var(--sb-ink);
-    transition: transform 0.25s var(--fun-bounce), box-shadow 0.2s;
-}
-
-.sb-book:hover {
-    transform: translate(-2px, -4px) rotate(-1deg);
-    box-shadow: 9px 10px 0 var(--sb-ink);
-}
-
-.sb-book:focus-visible {
-    outline: 4px solid #ffe66b;
-    outline-offset: 3px;
-}
-
-.sb-book-spine {
-    position: absolute;
-    left: 0;
-    top: 0;
-    bottom: 0;
-    width: 16px;
-    border-right: 3px solid var(--sb-ink);
-    background: repeating-linear-gradient(180deg, rgba(0, 0, 0, 0.18) 0 6px, transparent 6px 12px);
-}
-
-.sb-book-icon {
-    width: 54px;
-    height: 54px;
-    display: flex;
-    align-items: center;
-    justify-content: center;
-    border: 3px solid var(--sb-ink);
-    border-radius: 50%;
-    background: #fff;
-    color: var(--book);
-    font-size: 22px;
-}
-
-.sb-book-no {
-    margin-top: 6px;
-    font-size: 26px;
-    line-height: 1;
-    text-shadow: 2px 2px 0 var(--sb-ink);
-}
-
-.sb-book-title {
-    flex: 1;
-    font-size: 16px;
-    font-weight: 800;
-    line-height: 1.3;
-}
-
-.sb-book-bar {
-    width: 100%;
-    height: 10px;
-    overflow: hidden;
-    border: 2px solid var(--sb-ink);
-    border-radius: 999px;
-    background: rgba(255, 255, 255, 0.4);
-}
-
-.sb-book-bar span {
-    display: block;
-    height: 100%;
-    background: #ffe66b;
-}
-
-.sb-book-meta {
-    font-size: 13px;
-    font-weight: 800;
-}
-
-.sb-book-go {
-    padding: 6px 14px;
-    border: 2px solid var(--sb-ink);
-    border-radius: 999px;
-    background: #fff;
-    color: var(--sb-ink);
-    font-size: 14px;
-    font-weight: 900;
-}
-
-/* Every page, grouped by lesson */
-.sb-contents {
-    margin-bottom: 20px;
-    padding: 20px 22px;
-    border: 3px solid var(--sb-ink);
-    border-radius: 22px;
-    background: var(--sb-paper);
-}
-
-.sb-contents-head {
-    display: flex;
-    flex-wrap: wrap;
-    align-items: center;
-    justify-content: space-between;
-    gap: 12px;
-    margin-bottom: 14px;
-}
-
-.sb-contents-head h3 {
-    display: flex;
-    align-items: center;
-    gap: 8px;
-    font-size: 20px;
-    color: var(--sb-ink);
-}
-
-.sb-search {
-    position: relative;
-    flex: 1;
-    max-width: 320px;
-}
-
-.sb-search i {
-    position: absolute;
-    left: 14px;
-    top: 50%;
-    transform: translateY(-50%);
-    color: #5a6d7a;
-}
-
-.sb-search input {
-    width: 100%;
-    padding: 10px 14px 10px 38px;
-    border: 2px solid var(--sb-ink);
-    border-radius: 999px;
-    background: #fff;
-    color: var(--sb-ink);
-    font: inherit;
-    font-size: 16px;
-    outline: none;
-}
-
-.sb-search input:focus-visible {
-    box-shadow: 0 0 0 4px #ffe66b;
-}
-
-.sb-contents-list {
-    display: grid;
-    grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
-    gap: 18px;
-}
-
-.sb-chapter h4 {
-    display: flex;
-    align-items: center;
-    gap: 8px;
-    margin-bottom: 6px;
-    font-size: 15px;
-    color: var(--sb-ink);
-}
-
-.sb-chapter-no {
-    flex-shrink: 0;
-    width: 28px;
-    height: 28px;
-    display: flex;
-    align-items: center;
-    justify-content: center;
-    border: 2px solid var(--sb-ink);
-    border-radius: 8px;
-    background: var(--book);
-    color: #fff;
-    font-size: 14px;
-    font-weight: 900;
-}
-
-.sb-chapter ol,
-.sb-pages ol {
-    display: grid;
-    gap: 4px;
-    margin: 0;
-    padding: 0;
-    list-style: none;
-}
-
-.sb-chapter button,
-.sb-pages button {
-    display: flex;
-    align-items: center;
-    gap: 10px;
-    width: 100%;
-    min-height: 46px;
-    padding: 6px 10px;
-    border: none;
-    border-radius: 12px;
-    background: none;
-    color: var(--sb-ink);
-    font: inherit;
-    font-size: 15px;
-    font-weight: 700;
-    text-align: left;
-    cursor: pointer;
-}
-
-.sb-chapter button:hover,
-.sb-pages button:hover {
-    background: rgba(16, 36, 48, 0.06);
-}
-
-.sb-chapter button:focus-visible,
-.sb-pages button:focus-visible {
-    outline: 3px solid var(--sb-c1);
-    outline-offset: 1px;
-}
-
-.sb-page-no {
-    flex-shrink: 0;
-    width: 30px;
-    height: 30px;
-    display: flex;
-    align-items: center;
-    justify-content: center;
-    border: 2px solid var(--book, var(--sb-ink));
-    border-radius: 50%;
-    color: var(--book, var(--sb-ink));
-    font-size: 13px;
-    font-weight: 900;
-}
-
-.sb-chapter .is-read,
-.sb-pages .is-read {
-    color: #556670;
-}
-
-.sb-chapter .is-read .sb-page-no,
-.sb-pages .is-read .sb-page-no {
-    background: var(--book, var(--sb-c0));
-    color: #fff;
-}
-
-.sb-pages .is-now {
-    background: #ffe66b;
-}
-
-.sb-goals {
-    border: 3px solid var(--sb-ink);
-    border-radius: 18px;
-    background: #fff;
-}
-
-.sb-goals summary {
-    display: flex;
-    align-items: center;
-    gap: 10px;
-    padding: 14px 18px;
-    color: var(--sb-ink);
-    font-weight: 800;
-    list-style: none;
-    cursor: pointer;
-}
-
-.sb-goals summary::-webkit-details-marker {
-    display: none;
-}
-
-.sb-goals summary:focus-visible {
-    outline: 3px solid var(--sb-c1);
-    outline-offset: -4px;
-    border-radius: 16px;
-}
-
-.sb-goals-arrow {
-    margin-left: auto;
-    transition: transform 0.25s ease;
-}
-
-.sb-goals[open] .sb-goals-arrow {
-    transform: rotate(180deg);
-}
-
-.sb-goals ol {
-    display: grid;
-    gap: 8px;
-    margin: 0;
-    padding: 0 18px 16px 40px;
-    color: #444;
-    font-size: 15px;
-    line-height: 1.5;
-}
-
-/* Reader */
-body.sb-reading,
-body.sb-reading .main-content {
-    overflow: hidden;
-}
-
-.sb-reader {
-    position: fixed;
-    inset: 0;
-    z-index: 1000;
-    display: flex;
-    flex-direction: column;
-    background-color: var(--sb-paper);
-    background-image: radial-gradient(rgba(16, 36, 48, 0.08) 1.5px, transparent 2px);
-    background-size: 16px 16px;
-}
-
-.sb-reader[hidden] {
-    display: none;
-}
-
-.sb-reader-top,
-.sb-reader-bottom {
-    display: flex;
-    align-items: center;
-    gap: 12px;
-    padding: 10px 16px;
-    background: #fff;
-    border-bottom: 3px solid var(--sb-ink);
-}
-
-.sb-reader-bottom {
-    padding-bottom: max(10px, env(safe-area-inset-bottom));
-    border-top: 3px solid var(--sb-ink);
-    border-bottom: none;
-}
-
-.sb-book-name {
-    flex: 1;
-    min-width: 0;
-    overflow: hidden;
-    font-weight: 900;
-    color: var(--sb-ink);
-    white-space: nowrap;
-    text-overflow: ellipsis;
-    text-align: center;
-}
-
-.sb-icon-btn {
-    flex-shrink: 0;
-    width: 46px;
-    height: 46px;
-    display: flex;
-    align-items: center;
-    justify-content: center;
-    border: 3px solid var(--sb-ink);
-    border-radius: 50%;
-    background: #fff;
-    color: var(--sb-ink);
-    font-size: 18px;
-    cursor: pointer;
-    box-shadow: 2px 2px 0 var(--sb-ink);
-}
-
-.sb-icon-btn:active {
-    transform: translate(2px, 2px);
-    box-shadow: none;
-}
-
-.sb-icon-btn.is-on {
-    background: #e3f3ff;
-    color: var(--sb-c1);
-}
-
-.sb-icon-btn:focus-visible,
-.sb-turn:focus-visible,
-.sb-dots button:focus-visible {
-    outline: 3px solid var(--sb-c1);
-    outline-offset: 2px;
-}
-
-/* "Pages in this book" drop-down */
-.sb-pages {
-    position: absolute;
-    top: 72px;
-    right: 12px;
-    z-index: 2;
-    width: min(360px, calc(100% - 24px));
-    max-height: 60vh;
-    overflow-y: auto;
-    padding: 14px;
-    border: 3px solid var(--sb-ink);
-    border-radius: 18px;
-    background: #fff;
-    box-shadow: 6px 6px 0 var(--sb-ink);
-}
-
-.sb-pages[hidden] {
-    display: none;
-}
-
-.sb-pages strong {
-    display: block;
-    margin-bottom: 8px;
-    color: var(--sb-ink);
-}
-
-.sb-sheet {
-    flex: 1;
-    overflow-y: auto;
-    width: 100%;
-    max-width: 760px;
-    margin: 0 auto;
-    padding: 22px 18px 34px;
-    outline: none;
-    overscroll-behavior: contain;
-}
-
-.sb-sheet.is-from-right { animation: sbTurnRight 0.4s var(--fun-bounce); }
-.sb-sheet.is-from-left  { animation: sbTurnLeft 0.4s var(--fun-bounce); }
-
-@keyframes sbTurnRight {
-    from { opacity: 0; transform: perspective(900px) rotateY(-14deg) translateX(30px); }
-    to   { opacity: 1; transform: none; }
-}
-
-@keyframes sbTurnLeft {
-    from { opacity: 0; transform: perspective(900px) rotateY(14deg) translateX(-30px); }
-    to   { opacity: 1; transform: none; }
-}
-
-/* Comic title panel */
-.sb-panel {
-    position: relative;
-    margin-bottom: 22px;
-    padding: 30px 20px 18px;
-    border: 3px solid var(--sb-ink);
-    border-radius: 16px;
-    background-color: var(--book);
-    background-image: radial-gradient(rgba(255, 255, 255, 0.22) 1.6px, transparent 2px);
-    background-size: 12px 12px;
-    box-shadow: 6px 6px 0 var(--sb-ink);
-}
-
-.sb-badge {
-    position: absolute;
-    top: -16px;
-    left: 16px;
-    padding: 4px 14px;
-    border: 3px solid var(--sb-ink);
-    border-radius: 10px;
-    background: #ffe66b;
-    color: var(--sb-ink);
-    font-size: 20px;
-    transform: rotate(-4deg);
-}
-
-.sb-panel h3 {
-    font-size: 34px;
-    line-height: 1.1;
-    color: #fff;
-    text-shadow: 3px 3px 0 var(--sb-ink);
-}
-
-.sb-page-tag {
-    position: absolute;
-    right: 14px;
-    bottom: -16px;
-    padding: 3px 12px;
-    border: 3px solid var(--sb-ink);
-    border-radius: 999px;
-    background: #fff;
-    color: var(--sb-ink);
-    font-size: 13px;
-    font-weight: 900;
-}
-
-.sb-note {
-    margin: 0 0 18px;
-    padding: 12px 16px;
-    border: 2px dashed #c79a00;
-    border-radius: 14px;
-    background: #fff4c2;
-    color: #5a3d00;
-    transform: rotate(-0.6deg);
-}
-
-.sb-note[hidden] {
-    display: none;
-}
-
-.sb-note p {
-    margin: 4px 0 0;
-    white-space: pre-wrap;
-}
-
-/* Lesson sections become speech bubbles, tails alternating left/right */
-.sb-content {
-    display: grid;
-    gap: 26px;
-}
-
-.sb-reader .sb-content .sub-card,
-.sb-reader .sb-content .rt-loose {
-    position: relative;
-    padding: 18px 20px;
-    border: 3px solid var(--sb-ink);
-    border-radius: 26px;
-    background: #fff;
-    box-shadow: 4px 4px 0 var(--sb-ink);
-}
-
-.sb-reader .sb-content .sub-card::after,
-.sb-reader .sb-content .rt-loose::after {
-    content: "";
-    position: absolute;
-    bottom: -13px;
-    left: 40px;
-    width: 22px;
-    height: 22px;
-    background: #fff;
-    border-right: 3px solid var(--sb-ink);
-    border-bottom: 3px solid var(--sb-ink);
-    transform: rotate(45deg) skew(12deg, 12deg);
-}
-
-.sb-reader .sb-content > :nth-child(even)::after {
-    left: auto;
-    right: 40px;
-}
-
-.sb-reader .sb-content .sub-card-title i {
-    width: 34px;
-    height: 34px;
-    display: inline-flex;
-    align-items: center;
-    justify-content: center;
-    border: 2px solid var(--sb-ink);
-    border-radius: 50%;
-    background: var(--book);
-    color: #fff;
-    font-size: 15px;
-}
-
-.sb-reader .sb-content .sub-card-title h4 {
-    font-size: 18px;
-    color: var(--sb-ink);
-}
-
-.sb-reader .sb-content p,
-.sb-reader .sb-content li {
-    font-size: 17px;
-    line-height: 1.7;
-    color: #2b2b2b;
-}
-
-/* Presentation style: one section per slide, big enough to project */
-.sb-slide-bar {
-    display: flex;
-    gap: 6px;
-}
-
-.sb-slide-bar span {
-    flex: 1;
-    height: 8px;
-    border: 2px solid var(--sb-ink);
-    border-radius: 999px;
-    background: #fff;
-}
-
-.sb-slide-bar span.is-on {
-    background: var(--book);
-}
-
-.sb-sheet:has(.is-slides) {
-    max-width: 1040px;
-}
-
-/* Quick-check slide on tablets/laptops: as big as the other slides, for projecting */
-@media screen and (min-width: 641px) {
-    .sb-content.is-slides .sb-check {
-        margin-top: 0;
-        padding: clamp(22px, 3vw, 36px);
-    }
-
-    .sb-content.is-slides .sb-check-title {
-        font-size: clamp(26px, 3vw, 36px);
-    }
-
-    .sb-content.is-slides .sb-check-q {
-        margin: 10px 0 20px;
-        font-size: clamp(20px, 2.4vw, 28px);
-    }
-
-    .sb-content.is-slides .sb-check-options {
-        gap: 14px;
-    }
-
-    .sb-content.is-slides .sb-check-options button {
-        gap: 14px;
-        padding: 16px 18px;
-        font-size: clamp(17px, 1.9vw, 22px);
-    }
-
-    .sb-content.is-slides .sb-check-options button span {
-        width: 38px;
-        height: 38px;
-        font-size: 17px;
-    }
-
-    .sb-content.is-slides .sb-check-msg {
-        font-size: clamp(17px, 1.9vw, 22px);
-    }
-}
-
-.sb-slide {
-    min-height: 46vh;
-    display: flex;
-    flex-direction: column;
-    justify-content: center;
-}
-
-.sb-reader .sb-content .sb-slide .sub-card,
-.sb-reader .sb-content .sb-slide .rt-loose {
-    padding: clamp(22px, 4vw, 40px);
-}
-
-.sb-reader .sb-content .sb-slide .sub-card-title {
-    flex-direction: column;
-    align-items: flex-start;
-    gap: 14px;
-    margin-bottom: 14px;
-}
-
-.sb-reader .sb-content .sb-slide .sub-card-title i {
-    width: 64px;
-    height: 64px;
-    font-size: 28px;
-    border-width: 3px;
-}
-
-.sb-reader .sb-content .sb-slide .sub-card-title h4 {
-    font-size: clamp(24px, 3.4vw, 34px);
-    line-height: 1.2;
-}
-
-.sb-reader .sb-content .sb-slide p,
-.sb-reader .sb-content .sb-slide li {
-    font-size: clamp(19px, 2.4vw, 26px);
-    line-height: 1.6;
-}
-
-/* Bottom: page turners + dots */
-.sb-turn {
-    flex-shrink: 0;
-    width: 60px;
-    height: 60px;
-    display: flex;
-    align-items: center;
-    justify-content: center;
-    border: 3px solid var(--sb-ink);
-    border-radius: 18px;
-    background: #fff;
-    color: var(--sb-ink);
-    font-size: 30px;
-    cursor: pointer;
-    box-shadow: 3px 3px 0 var(--sb-ink);
-}
-
-.sb-turn.is-next {
-    background: var(--book, var(--sb-c0));
-    color: #fff;
-}
-
-.sb-turn:active:not(:disabled) {
-    transform: translate(3px, 3px);
-    box-shadow: none;
-}
-
-.sb-turn:disabled {
-    opacity: 0.35;
-    cursor: default;
-}
-
-.sb-middle {
-    flex: 1;
-    display: flex;
-    flex-direction: column;
-    align-items: center;
-    gap: 8px;
-}
-
-.sb-dots {
-    display: flex;
-    flex-wrap: wrap;
-    justify-content: center;
-    gap: 8px;
-}
-
-.sb-dots button {
-    width: 16px;
-    height: 16px;
-    padding: 0;
-    border: 2px solid var(--sb-ink);
-    border-radius: 50%;
-    background: #fff;
-    cursor: pointer;
-}
-
-.sb-dots .is-read {
-    background: #b9d0e6;
-}
-
-.sb-dots .is-now {
-    width: 30px;
-    border-radius: 999px;
-    background: var(--book, var(--sb-c0));
-}
-
-.sb-tools {
-    display: flex;
-    gap: 10px;
-}
-
-/* "Wakas!" (The End) page */
-.sb-end {
-    display: flex;
-    flex-direction: column;
-    align-items: center;
-    gap: 16px;
-    padding: 20px 10px;
-    text-align: center;
-}
-
-.sb-burst {
-    padding: 40px 34px;
-    background: #ffe66b;
-    color: var(--sb-c1);
-    font-size: 54px;
-    text-shadow: 3px 3px 0 var(--sb-ink);
-    clip-path: polygon(50% 0, 61% 18%, 82% 8%, 80% 30%, 100% 35%, 85% 52%, 98% 70%, 76% 72%, 74% 95%, 56% 82%, 40% 100%, 34% 80%, 12% 90%, 18% 68%, 0 58%, 16% 44%, 4% 22%, 26% 24%, 30% 2%);
-    animation: funPop 0.6s var(--fun-bounce) both;
-}
-
-.sb-end p {
-    font-size: 18px;
-    color: var(--sb-ink);
-}
-
-.sb-end-actions {
-    display: flex;
-    flex-wrap: wrap;
-    justify-content: center;
-    gap: 12px;
-}
-
-.sb-end-btn {
-    display: inline-flex;
-    align-items: center;
-    gap: 8px;
-    min-height: 50px;
-    padding: 10px 18px;
-    border: 3px solid var(--sb-ink);
-    border-radius: 999px;
-    background: #fff;
-    color: var(--sb-ink);
-    font: inherit;
-    font-weight: 900;
-    text-decoration: none;
-    cursor: pointer;
-    box-shadow: 3px 3px 0 var(--sb-ink);
-}
-
-.sb-end-btn.is-main {
-    background: var(--book, var(--sb-c0));
-    color: #fff;
-}
-
-@media screen and (max-width: 768px) {
-    .sb-hero {
-        padding: 18px;
-        gap: 12px;
-    }
-
-    .sb-hero h2 {
-        font-size: 38px;
-    }
-
-    .sb-progress {
-        width: 84px;
-        height: 84px;
-    }
-
-    .sb-progress b {
-        font-size: 30px;
-    }
-
-    .sb-progress small {
-        font-size: 9px;
-    }
-
-    /* Books scroll sideways like a real shelf */
-    .sb-shelf {
-        display: flex;
-        overflow-x: auto;
-        gap: 16px;
-        margin: 0 -16px 22px;
-        padding: 4px 16px 14px;
-        scroll-snap-type: x mandatory;
-        scroll-padding-left: 16px;
-        scrollbar-width: none;
-    }
-
-    .sb-book {
-        flex: 0 0 72%;
-        min-height: 230px;
-        scroll-snap-align: start;
-    }
-
-    .sb-contents {
-        padding: 16px 14px;
-    }
-
-    .sb-search {
-        max-width: none;
-        flex-basis: 100%;
-    }
-
-    .sb-panel h3 {
-        font-size: 28px;
-    }
-
-    .sb-turn {
-        width: 54px;
-        height: 54px;
-    }
-}
-
-@media (prefers-reduced-motion: reduce) {
-    .sb-sheet.is-from-right,
-    .sb-sheet.is-from-left,
-    .sb-burst {
-        animation: none;
-    }
-
-    .sb-book:hover {
-        transform: none;
-    }
-}
-
 /* Admin quizzes: import from a Word / PDF / text file */
 .qz-create {
     display: flex;
@@ -16473,409 +15503,546 @@ button.cs-node:hover .cs-node-card {
     }
 }
 
-/* ---------- Read Lesson: points, sticker book, quick checks, flip cards ---------- */
-.sb-points {
-    display: inline-flex;
-    align-items: center;
-    gap: 6px;
-    margin-top: 10px;
-    padding: 5px 12px;
-    border: 2px solid var(--sb-ink);
-    border-radius: 999px;
-    background: #fff;
-    color: var(--sb-ink);
-    font-size: 14px;
-    font-weight: 800;
-    box-shadow: 2px 2px 0 var(--sb-ink);
+
+/* =========================================
+   Read Lesson: topic cards + slide presentation
+   (same layout as Watch Videos and the video player)
+   ========================================= */
+
+.lesson-page {
+    --ls-c0: #046a9d;
+    --ls-c1: #013785;
+    --ls-c2: #4d67a3;
+    --ls-c3: #d68748;
 }
 
-.sb-points i {
-    color: #e0a800;
+.lesson-page [hidden] {
+    display: none !important;
 }
 
-/* Sticker book */
-.sb-stickers {
-    margin-bottom: 20px;
-    padding: 18px 22px;
-    border: 3px solid var(--sb-ink);
-    border-radius: 22px;
-    background: #fff;
-}
+/* Card thumbnail = a small title slide in the lesson's colour */
+.ls-c0 { --ls-color: var(--ls-c0); }
+.ls-c1 { --ls-color: var(--ls-c1); }
+.ls-c2 { --ls-color: var(--ls-c2); }
+.ls-c3 { --ls-color: var(--ls-c3); }
 
-.sb-stickers h3 {
-    display: flex;
-    align-items: center;
-    gap: 8px;
-    margin: 0;
-    color: var(--sb-ink);
-    font-size: 19px;
-}
-
-.sb-stickers > p {
-    margin: 4px 0 14px;
-    color: #555;
-    font-size: 14px;
-}
-
-.sb-sticker-grid {
-    display: flex;
-    flex-wrap: wrap;
-    gap: 16px;
-}
-
-.sb-sticker {
+.lesson-page .ls-thumb {
     display: flex;
     flex-direction: column;
     align-items: center;
-    gap: 4px;
-    width: 110px;
+    justify-content: center;
+    gap: 10px;
+    padding: 18px 22px;
+    background: linear-gradient(135deg, var(--ls-color), #022a40);
+    color: #fff;
     text-align: center;
-    color: #8a96a3;
 }
 
-.sb-sticker-face {
+.ls-thumb-icon {
+    width: 54px;
+    height: 54px;
     display: flex;
     align-items: center;
     justify-content: center;
-    width: 84px;
-    height: 84px;
-    border: 3px dashed #c3ccd5;
     border-radius: 50%;
-    background: #f3f5f7;
-    font-size: 30px;
-}
-
-.sb-sticker b {
-    font-size: 14px;
-}
-
-.sb-sticker small {
-    font-size: 12px;
-    font-weight: 700;
-}
-
-.sb-sticker.is-earned {
-    color: var(--sb-ink);
-}
-
-.sb-sticker.is-earned .sb-sticker-face {
-    border: 4px solid #fff;
-    background: var(--book);
-    color: #fff;
-    box-shadow: 0 0 0 3px var(--sb-ink), 4px 4px 0 3px var(--sb-ink);
-    transform: rotate(-6deg);
-}
-
-.sb-sticker.is-earned small {
-    color: var(--book);
-    font-size: 14px;
-    font-weight: 900;
-}
-
-.sb-sticker.is-new .sb-sticker-face {
-    animation: sbStickerIn 0.9s var(--fun-bounce) both;
-}
-
-/* "+10" that floats up in the reader's top bar */
-.sb-reader-top {
-    position: relative;
-}
-
-.sb-pop {
-    position: absolute;
-    left: 50%;
-    top: 100%;
-    z-index: 2;
-    padding: 2px 10px;
-    border: 2px solid var(--sb-ink);
-    border-radius: 999px;
-    background: #ffe66b;
-    color: var(--sb-ink);
-    font-size: 20px;
-    pointer-events: none;
-    animation: sbPointsUp 1.4s ease-out forwards;
-}
-
-/* Quick check at the end of a page */
-.sb-check {
-    margin-top: 22px;
-    padding: 18px;
-    border: 3px solid var(--sb-ink);
-    border-radius: 20px;
-    background: #fff8d6;
-    box-shadow: 5px 5px 0 var(--sb-ink);
-}
-
-.sb-check-title {
-    display: flex;
-    align-items: center;
-    gap: 8px;
-    color: var(--book);
+    background: rgba(255, 255, 255, 0.18);
     font-size: 24px;
+    transition: transform 0.3s ease;
 }
 
-.sb-check-q {
-    margin: 6px 0 12px;
-    color: var(--sb-ink);
-    font-size: 17px;
-    font-weight: 800;
-    line-height: 1.4;
+.lesson-page .video-card:hover .ls-thumb-icon {
+    transform: scale(1.1);
 }
 
-.sb-check-options {
-    display: grid;
-    grid-template-columns: 1fr 1fr;
-    gap: 10px;
+.ls-thumb-title {
+    display: -webkit-box;
+    -webkit-line-clamp: 2;
+    line-clamp: 2;
+    -webkit-box-orient: vertical;
+    overflow: hidden;
+    font-size: 13px;
+    font-weight: 700;
+    line-height: 1.35;
+    opacity: 0.92;
 }
 
-.sb-check-options button {
-    display: flex;
-    align-items: center;
-    gap: 10px;
-    padding: 10px 12px;
-    border: 2px solid var(--sb-ink);
+.lesson-page .video-link:focus-visible {
+    outline: 3px solid #046a9d;
+    outline-offset: 3px;
+    border-radius: 14px;
+}
+
+/* What you will learn */
+.ls-goals {
+    margin-top: 28px;
+    padding: 4px 20px;
+    border: 1px solid #e0e6ea;
     border-radius: 14px;
     background: #fff;
-    color: var(--sb-ink);
-    font: inherit;
-    font-size: 15px;
-    font-weight: 700;
-    text-align: left;
-    cursor: pointer;
-    box-shadow: 2px 2px 0 var(--sb-ink);
-    transition: transform 0.15s;
 }
 
-.sb-check-options button span {
+.ls-goals summary {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+    padding: 14px 0;
+    font-weight: 700;
+    color: #023047;
+    cursor: pointer;
+    list-style: none;
+}
+
+.ls-goals summary::-webkit-details-marker {
+    display: none;
+}
+
+.ls-goals-arrow {
+    margin-left: auto;
+    transition: transform 0.2s;
+}
+
+.ls-goals[open] .ls-goals-arrow {
+    transform: rotate(180deg);
+}
+
+.ls-goals ol {
+    margin: 0 0 16px;
+    padding-left: 22px;
+    color: #444;
+    line-height: 1.7;
+}
+
+/* ---------- Presentation ---------- */
+.ls-player {
+    --ls-color: var(--ls-c0);
+}
+
+.ls-show {
+    overflow: hidden;
+    border: 1px solid #e0e6ea;
+    border-radius: 14px;
+    background: #fff;
+    box-shadow: 0 4px 15px rgba(0, 0, 0, 0.08);
+}
+
+.ls-stage {
+    position: relative;
+    aspect-ratio: 16 / 9;
+    display: flex;
+    flex-direction: column;
+    overflow-y: auto;
+    padding: clamp(24px, 5%, 56px);
+    border-top: 6px solid var(--ls-color);
+    background: #fff;
+}
+
+/* Centred when it fits, top-aligned (and scrollable) when it doesn't */
+.ls-slide {
+    margin: auto 0;
+}
+
+/* How far through the topic: thin bar along the bottom of the slide */
+.ls-bar {
+    position: absolute;
+    left: 0;
+    right: 0;
+    bottom: 0;
+    height: 5px;
+    background: #e8ecef;
+}
+
+.ls-bar div {
+    height: 100%;
+    background: var(--ls-color);
+    transition: width 0.3s ease;
+}
+
+.ls-slide.is-from-right { animation: lsSlideRight 0.3s ease; }
+.ls-slide.is-from-left  { animation: lsSlideLeft 0.3s ease; }
+
+@keyframes lsSlideRight {
+    from { opacity: 0; transform: translateX(24px); }
+    to   { opacity: 1; transform: none; }
+}
+
+@keyframes lsSlideLeft {
+    from { opacity: 0; transform: translateX(-24px); }
+    to   { opacity: 1; transform: none; }
+}
+
+.ls-section-icon {
+    width: 60px;
+    height: 60px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    border-radius: 16px;
+    background: var(--ls-color);
+    color: #fff;
+    font-size: 26px;
+}
+
+.ls-section h3 {
+    margin: 16px 0 12px;
+    font-size: clamp(24px, 3vw, 36px);
+    line-height: 1.2;
+    color: #023047;
+}
+
+.ls-section p,
+.ls-section li {
+    font-size: clamp(18px, 2vw, 24px);
+    line-height: 1.6;
+    color: #333;
+}
+
+.ls-section p {
+    margin: 0 0 10px;
+}
+
+.ls-section ul {
+    margin: 6px 0 10px;
+    padding-left: 1.3em;
+}
+
+/* Controls under the slide, like a video player's */
+.ls-controls {
+    position: relative;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    gap: 14px;
+    padding: 10px 14px;
+    border-top: 1px solid #e8ecef;
+    background: #f6f8fa;
+}
+
+.ls-nav {
     flex-shrink: 0;
-    width: 26px;
-    height: 26px;
+    width: 46px;
+    height: 46px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    border: 1px solid #d6dde5;
+    border-radius: 50%;
+    background: #fff;
+    color: #023047;
+    font-size: 17px;
+    cursor: pointer;
+    transition: background-color 0.2s, color 0.2s, border-color 0.2s;
+}
+
+.ls-nav:hover:not(:disabled) {
+    border-color: var(--ls-color);
+    color: var(--ls-color);
+}
+
+.ls-nav.is-next {
+    border-color: var(--ls-color);
+    background: var(--ls-color);
+    color: #fff;
+}
+
+.ls-nav.is-next:hover:not(:disabled) {
+    color: #fff;
+    filter: brightness(1.1);
+}
+
+/* Last slide: Next moves on to the next topic */
+.ls-nav.is-next.is-topic {
+    width: auto;
+    padding: 0 18px;
+    border-radius: 23px;
+}
+
+.ls-nav.is-next.is-topic::before {
+    content: "Next topic";
+    margin-right: 8px;
+    font-size: 14px;
+    font-weight: 700;
+}
+
+.ls-nav:disabled {
+    opacity: 0.4;
+    cursor: default;
+}
+
+.ls-nav:focus-visible {
+    outline: 3px solid var(--ls-color);
+    outline-offset: 2px;
+}
+
+.ls-full {
+    position: absolute;
+    right: 14px;
+}
+
+.ls-counter {
+    min-width: 110px;
+    font-size: 14px;
+    font-weight: 700;
+    text-align: center;
+    color: #4a5866;
+}
+
+.ls-read-msg {
+    display: flex;
+    align-items: center;
+    gap: 6px;
+    margin: 0;
+    color: #1e7e45;
+    font-weight: 700;
+}
+
+/* Full screen: the slide fills the screen, text grows */
+.ls-show:fullscreen {
+    display: flex;
+    flex-direction: column;
+    border: none;
+    border-radius: 0;
+}
+
+.ls-show:fullscreen .ls-stage {
+    flex: 1;
+    aspect-ratio: auto;
+    padding: 5vh 8vw;
+}
+
+.ls-show:fullscreen .ls-section h3 {
+    font-size: clamp(30px, 4vw, 56px);
+}
+
+.ls-show:fullscreen .ls-section p,
+.ls-show:fullscreen .ls-section li {
+    font-size: clamp(22px, 2.6vw, 36px);
+}
+
+/* ---------- Quick check (last slide) ---------- */
+.ls-check-title {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+    font-size: clamp(22px, 2.6vw, 30px);
+    color: var(--ls-color);
+}
+
+.ls-check-q {
+    margin: 10px 0 18px;
+    font-size: clamp(18px, 2.1vw, 25px);
+    font-weight: 700;
+    line-height: 1.4;
+    color: #023047;
+}
+
+.ls-check-options {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 12px;
+}
+
+.ls-check-options button {
+    display: flex;
+    align-items: center;
+    gap: 12px;
+    padding: 12px 14px;
+    border: 2px solid #d6dde5;
+    border-radius: 12px;
+    background: #fff;
+    color: #222;
+    font: inherit;
+    font-size: clamp(15px, 1.7vw, 20px);
+    font-weight: 600;
+    text-align: left;
+    cursor: pointer;
+    transition: border-color 0.2s, transform 0.15s;
+}
+
+.ls-check-options button span {
+    flex-shrink: 0;
+    width: 34px;
+    height: 34px;
     display: flex;
     align-items: center;
     justify-content: center;
     border-radius: 50%;
-    background: var(--book);
+    background: var(--ls-color);
     color: #fff;
-    font-size: 13px;
-    font-weight: 900;
+    font-size: 15px;
+    font-weight: 800;
 }
 
-.sb-check-options button:hover:not(:disabled) {
-    transform: translate(-1px, -2px);
+.ls-check-options button:hover:not(:disabled) {
+    border-color: var(--ls-color);
+    transform: translateY(-2px);
 }
 
-.sb-check-options button:disabled {
+.ls-check-options button:disabled {
     cursor: default;
     opacity: 0.55;
 }
 
-.sb-check-options button.is-right {
-    background: #dcf5e3;
+.ls-check-options button.is-right {
     border-color: #1e7e45;
+    background: #dcf5e3;
     opacity: 1;
 }
 
-.sb-check-options button.is-right span {
+.ls-check-options button.is-right span {
     background: #1e7e45;
 }
 
-.sb-check-options button.is-wrong {
+.ls-check-options button.is-wrong {
+    border-color: #d64545;
     background: #fde2e2;
     animation: funShake 0.5s ease-in-out;
 }
 
-/* Short phone screens: smaller title panel leaves room for the slide */
-@media screen and (max-width: 640px) and (max-height: 760px) {
-    .sb-sheet {
-        padding-top: 16px;
-    }
-
-    .sb-panel {
-        margin-bottom: 14px;
-        padding: 24px 16px 16px;
-    }
-
-    .sb-panel h3 {
-        font-size: 22px;
-    }
-
-    /* The "Tama!" line only takes space once there is something to say */
-    .sb-content.is-slides .sb-check-msg:empty {
-        display: none;
-    }
-}
-
-.sb-check-msg {
+.ls-check-msg {
     min-height: 1.4em;
-    margin: 10px 0 0;
-    color: var(--sb-ink);
-    font-weight: 900;
+    margin: 12px 0 0;
+    font-size: clamp(15px, 1.7vw, 20px);
+    font-weight: 800;
+    color: #023047;
 }
 
-.sb-check.is-done .sb-check-msg {
+.ls-check.is-done .ls-check-msg {
     color: #1e7e45;
 }
 
-/* Flip cards for key words */
-.sb-flip-hint {
-    margin: 0 0 12px;
+/* ---------- Key-word flip cards ---------- */
+.ls-flip-hint {
+    margin: 0 0 14px;
     color: #555;
     font-size: 14px;
     font-weight: 700;
 }
 
-.sb-flip-grid {
+.ls-flip-grid {
     display: grid;
-    grid-template-columns: repeat(auto-fill, minmax(200px, 1fr));
+    grid-template-columns: repeat(auto-fill, minmax(190px, 1fr));
     gap: 14px;
-    margin-bottom: 16px;
 }
 
-.sb-flip {
-    height: 190px;
+.ls-flip {
+    height: 210px;
     perspective: 900px;
+    border-radius: 14px;
     cursor: pointer;
-    border-radius: 18px;
 }
 
-.sb-flip:focus-visible {
-    outline: 3px solid var(--book);
+.ls-flip:focus-visible {
+    outline: 3px solid var(--ls-color);
     outline-offset: 3px;
 }
 
-.sb-flip-inner {
+.ls-flip-inner {
     position: relative;
     width: 100%;
     height: 100%;
     transform-style: preserve-3d;
-    transition: transform 0.5s var(--fun-bounce);
+    transition: transform 0.5s ease;
 }
 
-.sb-flip.is-flipped .sb-flip-inner {
+.ls-flip.is-flipped .ls-flip-inner {
     transform: rotateY(180deg);
 }
 
-.sb-flip-front,
-.sb-flip-back {
+.ls-flip-front,
+.ls-flip-back {
     position: absolute;
     inset: 0;
     display: flex;
     flex-direction: column;
-    border: 3px solid var(--sb-ink);
-    border-radius: 18px;
-    box-shadow: 4px 4px 0 var(--sb-ink);
+    align-items: center;
+    justify-content: center;
+    gap: 6px;
+    padding: 14px;
+    border-radius: 14px;
+    text-align: center;
     backface-visibility: hidden;
     -webkit-backface-visibility: hidden;
 }
 
-.sb-flip-front {
-    align-items: center;
-    justify-content: center;
-    gap: 8px;
-    padding: 12px;
-    background: var(--book);
+.ls-flip-front {
+    background: var(--ls-color);
     color: #fff;
-    text-align: center;
 }
 
-.sb-flip-front i {
+.ls-flip-front i {
     font-size: 26px;
 }
 
-.sb-flip-front b {
-    font-size: 21px;
-    line-height: 1.2;
+.ls-flip-front b {
+    font-size: 18px;
 }
 
-.sb-flip-front small {
-    font-size: 12px;
-    font-weight: 700;
+.ls-flip-front small {
     opacity: 0.85;
 }
 
-.sb-flip-back {
-    padding: 12px 14px;
-    background: #fff;
-    color: var(--sb-ink);
-    font-size: 14px;
-    line-height: 1.45;
+.ls-flip-back {
     overflow-y: auto;
+    border: 2px solid var(--ls-color);
+    background: #fff;
+    color: #333;
     transform: rotateY(180deg);
 }
 
-.sb-flip-back b {
-    color: var(--book);
-    font-size: 15px;
+.ls-flip-back b {
+    color: var(--ls-color);
 }
 
-.sb-flip-back p,
-.sb-flip-back ul {
-    margin: 6px 0 0;
+.ls-flip-back p {
+    margin: 0;
+    font-size: 14px;
+    line-height: 1.5;
 }
 
-@keyframes sbStickerIn {
-    0%   { transform: scale(0) rotate(-200deg); }
-    70%  { transform: scale(1.2) rotate(-2deg); }
-    100% { transform: scale(1) rotate(-6deg); }
-}
-
-@keyframes sbPointsUp {
-    0%   { transform: translate(-50%, 0) scale(0.6); opacity: 0; }
-    20%  { transform: translate(-50%, 6px) scale(1.1); opacity: 1; }
-    100% { transform: translate(-50%, 40px) scale(1); opacity: 0; }
-}
-
+/* ---------- Phones: the slide grows with its text instead of 16:9 ---------- */
 @media screen and (max-width: 640px) {
-    .sb-check-options {
+    .ls-stage {
+        aspect-ratio: auto;
+        min-height: 360px;
+        padding: 22px 20px;
+    }
+
+    .ls-section-icon {
+        width: 50px;
+        height: 50px;
+        font-size: 22px;
+    }
+
+    .ls-check-options {
         grid-template-columns: 1fr;
-    }
-
-    /* Quick-check slide: compact so the whole question fits on one phone screen */
-    .sb-content.is-slides {
-        gap: 16px;
-    }
-
-    .sb-content.is-slides .sb-check {
-        margin-top: 0;
-        padding: 14px;
-    }
-
-    .sb-content.is-slides .sb-check-title {
-        font-size: 20px;
-    }
-
-    .sb-content.is-slides .sb-check-q {
-        margin: 4px 0 10px;
-        font-size: 15px;
-    }
-
-    .sb-content.is-slides .sb-check-options {
         gap: 8px;
     }
 
-    .sb-content.is-slides .sb-check-options button {
-        padding: 8px 10px;
-        font-size: 14px;
+    .ls-check-options button {
+        padding: 9px 12px;
     }
 
-    .sb-sticker {
-        width: 90px;
+    .ls-controls {
+        gap: 10px;
     }
 
-    .sb-sticker-face {
-        width: 70px;
-        height: 70px;
+    .ls-counter {
+        min-width: 0;
+    }
+
+    .ls-full {
+        display: none !important;
     }
 }
 
 @media (prefers-reduced-motion: reduce) {
-    .sb-flip-inner {
-        transition: none;
+    .ls-slide.is-from-right,
+    .ls-slide.is-from-left,
+    .ls-check-options button.is-wrong {
+        animation: none;
     }
 
-    .sb-sticker.is-new .sb-sticker-face,
-    .sb-pop,
-    .sb-check-options button.is-wrong {
-        animation: none;
+    .ls-flip-inner {
+        transition: none;
     }
 }

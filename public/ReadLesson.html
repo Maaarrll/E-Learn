@@ -8,14 +8,12 @@
     <link rel="icon" href="favicon-32.png?v=3" type="image/png" sizes="32x32">
     <link rel="apple-touch-icon" href="apple-touch-icon.png?v=3">
     <meta name="theme-color" content="#023047">
-    <link rel="stylesheet" href="style.css?v=104">
+    <link rel="stylesheet" href="style.css?v=105">
     <link rel="stylesheet" href="dark.css?v=64">
     <script src="js/theme.js?v=3"></script>
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
-    <!-- Comic lettering for the storybook titles -->
-    <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Bangers&display=swap">
 </head>
-<body class="lesson-page">
+<body class="video-page lesson-page">
     <noscript>
         <div class="noscript-note">ALLEARN needs JavaScript to work. Please turn it on in your browser settings.</div>
     </noscript>
@@ -101,48 +99,50 @@
         <!-- Main Content Area -->
         <main class="main-content">
 
-            <div class="sb-wrap">
+            <!-- TOPIC LIST (same layout as Watch Videos) -->
+            <div id="lessonList">
 
-                <!-- Title + search -->
-                <header class="sb-hero">
-                    <div>
-                        <span class="sb-kicker">Mga Kuwento ng Aralin</span>
-                        <h2 class="sb-comic">Read Lesson</h2>
-                        <p id="sbGreeting">Pick a book and read it page by page. Every page you read gets a ✓!</p>
-                        <span class="sb-points" id="sbPoints"><i class="fa-solid fa-star"></i> <b id="sbPointsNum">0</b> points</span>
+                <div class="video-header">
+                    <div class="video-header-text">
+                        <h2><i class="fa-solid fa-book-open"></i> Read Lessons</h2>
+                        <p>Every topic is a short slide presentation. Go through to the last slide to finish it.</p>
                     </div>
-                    <div class="sb-progress" id="sbProgress" role="img" aria-label="Pages read">
-                        <b id="sbReadCount">0</b><small>/ <span id="sbTotal">0</span> pages read</small>
+                    <div class="search-container">
+                        <i class="fa-solid fa-magnifying-glass"></i>
+                        <input type="search" id="searchInput" placeholder="Search lessons..." aria-label="Search lessons">
                     </div>
-                </header>
-
-                <!-- Bookshelf: one book per lesson -->
-                <div class="sb-shelf" id="sbShelf" aria-live="polite">
-                    <p class="sb-loading"><span class="btn-spinner"></span> Loading lessons...</p>
                 </div>
 
-                <!-- Sticker book: one sticker per finished lesson -->
-                <section class="sb-stickers" aria-labelledby="sbStickersTitle">
-                    <h3 id="sbStickersTitle"><i class="fa-solid fa-award"></i> My sticker book</h3>
-                    <p>Read every page of an Aralin to earn its sticker.</p>
-                    <div class="sb-sticker-grid" id="sbStickers"></div>
-                </section>
-
-                <!-- Every page at once, so any topic is easy to find -->
-                <section class="sb-contents" aria-labelledby="sbContentsTitle">
-                    <div class="sb-contents-head">
-                        <h3 id="sbContentsTitle"><i class="fa-solid fa-list"></i> All pages</h3>
-                        <div class="sb-search">
-                            <i class="fa-solid fa-magnifying-glass" aria-hidden="true"></i>
-                            <input type="search" id="searchInput" placeholder="Find a topic..." aria-label="Find a topic">
-                        </div>
+                <div class="video-toolbar">
+                    <div class="video-progress">
+                        <span id="readText">0 of 0 read</span>
+                        <div class="video-progress-bar"><div id="readBar"></div></div>
                     </div>
-                    <div class="sb-contents-list" id="sbContents"></div>
-                    <p class="sb-empty" id="lessonEmpty" hidden><i class="fa-solid fa-book-open"></i> No pages found. Try a different word.</p>
-                </section>
+                    <div class="video-filters">
+                        <div class="topic-select">
+                            <i class="fa-solid fa-book"></i>
+                            <select id="lessonFilter" aria-label="Filter by lesson">
+                                <option value="all">All lessons</option>
+                            </select>
+                            <i class="fa-solid fa-chevron-down select-arrow"></i>
+                        </div>
+                        <button type="button" class="filter-btn active" data-filter="all">All</button>
+                        <button type="button" class="filter-btn" data-filter="unread">Not read</button>
+                        <button type="button" class="filter-btn" data-filter="read">Read</button>
+                    </div>
+                </div>
 
-                <details class="sb-goals">
-                    <summary><i class="fa-solid fa-bullseye"></i> What you will learn <i class="fa-solid fa-chevron-down sb-goals-arrow" aria-hidden="true"></i></summary>
+                <div class="video-grid" id="lessonGrid">
+                    <p class="lesson-loading"><span class="btn-spinner"></span> Loading lessons...</p>
+                </div>
+
+                <div class="video-empty" id="lessonEmpty" hidden>
+                    <i class="fa-solid fa-book-open"></i>
+                    <p>No lessons found. Try a different search or filter.</p>
+                </div>
+
+                <details class="ls-goals">
+                    <summary><i class="fa-solid fa-bullseye"></i> What you will learn <i class="fa-solid fa-chevron-down ls-goals-arrow" aria-hidden="true"></i></summary>
                     <ol>
                         <li>Natutukoy ang mga pang-araw-araw na gawain na may kinalaman sa pagtitipid.</li>
                         <li>Naipahahayag at naisasakilos ang wastong paraan ng paggamit ng tubig at enerhiya katuwang ang kapuwa.</li>
@@ -154,7 +154,54 @@
                         <li>Naisasakilos ang mga paraan ng mapanagutang paggamit ng social media upang malinang ang disiplina.</li>
                     </ol>
                 </details>
+            </div>
 
+            <!-- SLIDE PRESENTATION (same layout as the video player) -->
+            <div class="player-wrapper ls-player" id="lessonPlayer" hidden>
+
+                <div class="page-header">
+                    <div class="title-with-icon">
+                        <i class="fa-solid fa-person-chalkboard"></i>
+                        <h2 id="lsTitle"></h2>
+                    </div>
+                    <p id="lsLesson"></p>
+                    <hr class="header-divider">
+                </div>
+
+                <!-- Slide + controls (this box goes full screen) -->
+                <div class="ls-show" id="lsShow">
+                    <div class="ls-stage" id="lsStage">
+                        <div class="ls-slide" id="lsSlide"></div>
+                        <div class="ls-bar" aria-hidden="true"><div id="lsBar"></div></div>
+                    </div>
+                    <div class="ls-controls">
+                        <button type="button" class="ls-nav" id="lsPrev" aria-label="Previous slide"><i class="fa-solid fa-chevron-left"></i></button>
+                        <span class="ls-counter" id="lsCounter" aria-live="polite"></span>
+                        <button type="button" class="ls-nav is-next" id="lsNext" aria-label="Next slide"><i class="fa-solid fa-chevron-right"></i></button>
+                        <button type="button" class="ls-nav ls-full" id="lsFull" aria-label="Full screen" hidden><i class="fa-solid fa-expand"></i></button>
+                    </div>
+                </div>
+
+                <div class="player-tools">
+                    <p class="ls-read-msg" id="lsReadMsg" hidden><i class="fa-solid fa-circle-check"></i> Marked as read</p>
+                    <div class="player-tool-buttons">
+                        <button type="button" class="tool-btn" id="bookmarkBtn" aria-pressed="false">
+                            <i class="fa-regular fa-bookmark"></i> <span>Save lesson</span>
+                        </button>
+                        <button type="button" class="tool-btn" id="noteBtn">
+                            <i class="fa-regular fa-pen-to-square"></i> <span>Add note</span>
+                        </button>
+                    </div>
+                </div>
+
+                <div class="saved-note" id="lsNote" hidden>
+                    <strong><i class="fa-solid fa-note-sticky"></i> My note</strong>
+                    <p id="lsNoteText"></p>
+                </div>
+
+                <div class="player-footer-centered">
+                    <button type="button" class="btn-back-centered" id="lsBack">Back</button>
+                </div>
             </div>
 
             <!-- Footer -->
@@ -164,44 +211,6 @@
                 <span>Values Education 7 Study Hub for Allen National High School</span>
             </footer>
         </main>
-    </div>
-
-    <!-- Storybook reader: one topic per page -->
-    <div class="sb-reader" id="sbReader" role="dialog" aria-modal="true" aria-labelledby="sbTopicTitle" hidden>
-        <div class="sb-reader-top">
-            <button type="button" class="sb-icon-btn" id="sbClose" aria-label="Close the book"><i class="fa-solid fa-xmark"></i></button>
-            <span class="sb-book-name" id="sbBookName"></span>
-            <button type="button" class="sb-icon-btn" id="sbFullBtn" aria-label="Full screen" hidden><i class="fa-solid fa-expand"></i></button>
-            <button type="button" class="sb-icon-btn" id="sbPagesBtn" aria-expanded="false" aria-controls="sbPages" aria-label="Pages in this book"><i class="fa-solid fa-list-ol"></i></button>
-        </div>
-
-        <!-- Pages in this book (jump anywhere) -->
-        <div class="sb-pages" id="sbPages" hidden>
-            <strong>Pages in this book</strong>
-            <ol id="sbPagesList"></ol>
-        </div>
-
-        <article class="sb-sheet" id="sbSheet" tabindex="-1">
-            <div class="sb-panel">
-                <span class="sb-badge sb-comic" id="sbLessonBadge"></span>
-                <h3 class="sb-comic" id="sbTopicTitle"></h3>
-                <span class="sb-page-tag" id="sbPageTag"></span>
-            </div>
-            <div class="sb-note" id="sbNote" hidden><strong><i class="fa-solid fa-note-sticky"></i> My note</strong><p></p></div>
-            <div class="sb-content" id="sbContent"></div>
-        </article>
-
-        <div class="sb-reader-bottom">
-            <button type="button" class="sb-turn" id="sbPrev" aria-label="Previous page"><i class="fa-solid fa-caret-left"></i></button>
-            <div class="sb-middle">
-                <div class="sb-dots" id="sbDots"></div>
-                <div class="sb-tools">
-                    <button type="button" class="sb-icon-btn" id="sbSave" aria-pressed="false" aria-label="Save page"><i class="fa-regular fa-bookmark"></i></button>
-                    <button type="button" class="sb-icon-btn" id="sbNoteBtn" aria-label="Add note"><i class="fa-regular fa-pen-to-square"></i></button>
-                </div>
-            </div>
-            <button type="button" class="sb-turn is-next" id="sbNext" aria-label="Next page"><i class="fa-solid fa-caret-right"></i></button>
-        </div>
     </div>
 
     <script>
@@ -230,15 +239,19 @@
                     api.get('/content/study-cards').catch(() => ({ decks: [] })), // only for Quick checks
                 ]);
             } catch (err) {
-                $('sbShelf').innerHTML = '<p class="sb-loading"><i class="fa-solid fa-circle-exclamation"></i> Could not load the lessons. Please refresh the page.</p>';
+                $('lessonGrid').innerHTML = '';
+                $('lessonEmpty').querySelector('p').textContent = 'Could not load the lessons. Please refresh the page.';
+                $('lessonEmpty').hidden = false;
                 return;
             }
 
-            // Every topic in reading order, with its lesson ("book")
+            // Every topic in reading order, with its lesson (Aralin)
             const topics = [];
-            modules.forEach((mod, m) => mod.topics.forEach(t => topics.push({ ...t, lesson: m, lessonTitle: mod.title })));
-            const searchText = topics.map(t => normalizeText(`${t.title} ${t.sections.map(s => `${s.heading || ''} ${s.body || ''}`).join(' ')}`));
+            modules.forEach((mod, m) => mod.topics.forEach(t => topics.push({ ...t, lesson: m, lessonTitle: mod.title, lessonIcon: mod.icon })));
+            const searchText = topics.map(t => normalizeText(`${t.title} ${t.lessonTitle} ${t.sections.map(s => `${s.heading || ''} ${s.body || ''}`).join(' ')}`));
             const bookPages = (m) => topics.filter(t => t.lesson === m);
+            // Lesson colours, matching the topic chips on Watch Videos
+            const CHIP = ['video-icon', 'book-icon', 'read-icon', 'check-icon'];
 
             // Quick checks: cards from the quiz-card decks tied to each lesson (by module key)
             const checkCards = new Map();
@@ -246,18 +259,12 @@
                 if (d.lesson && d.cards.length) checkCards.set(String(d.lesson), [...(checkCards.get(String(d.lesson)) || []), ...d.cards]);
             });
 
-            // Points come from pages read, so they never go out of sync:
-            // 10 per page, 50 more for each finished lesson (its sticker)
-            const PAGE_POINTS = 10;
-            const BOOK_POINTS = 50;
-            const STICKER_WORDS = ['Galing!', 'Astig!', 'Bida!', 'Panalo!'];
-
-            // Pages read are saved on the server: reading a lesson unlocks its quizzes.
+            // Topics read are saved on the server: reading a lesson unlocks its quizzes.
             let read = new Set();
-            try { read = new Set((await api.get('/progress/lesson')).readTopics); } catch (e) { /* offline: pages show as unread */ }
+            try { read = new Set((await api.get('/progress/lesson')).readTopics); } catch (e) { /* offline: topics show as unread */ }
             const saveRead = (keys) => api.post('/progress/lesson/read', { topicKeys: keys });
 
-            // Pages read before that were kept in this browser: upload them once
+            // Topics read before that were kept in this browser: upload them once
             const readKey = `readTopics:${user ? user.id : 'me'}`;
             try {
                 const local = JSON.parse(localStorage.getItem(readKey) || '[]');
@@ -268,164 +275,35 @@
                     .catch(() => { /* try again next visit */ });
             } catch (e) { /* storage blocked */ }
 
-            // ---------------- Bookshelf + all pages ----------------
-            function renderShelf() {
-                $('sbShelf').innerHTML = modules.map((mod, m) => {
-                    const pages = bookPages(m);
-                    const done = pages.filter(t => read.has(t.key)).length;
-                    const label = done === 0 ? 'Start reading' : done === pages.length ? 'Read again' : 'Continue';
-                    return `<button type="button" class="sb-book" style="--book: var(--sb-c${m % 4})" data-book="${m}">
-                        <span class="sb-book-spine" aria-hidden="true"></span>
-                        <span class="sb-book-icon"><i class="fa-solid ${HCIRichText.safeIcon(mod.icon)}"></i></span>
-                        <span class="sb-book-no sb-comic">Aralin ${m + 1}</span>
-                        <span class="sb-book-title">${esc(mod.title)}</span>
-                        <span class="sb-book-bar" aria-hidden="true"><span style="width:${pages.length ? (done / pages.length) * 100 : 0}%"></span></span>
-                        <span class="sb-book-meta">${done === pages.length ? '<i class="fa-solid fa-star"></i> Finished!' : `${done} / ${pages.length} pages`}</span>
-                        <span class="sb-book-go">${label} <i class="fa-solid fa-arrow-right"></i></span>
-                    </button>`;
-                }).join('');
-
-                $('sbStickers').innerHTML = modules.map((mod, m) => {
-                    const pages = bookPages(m);
-                    const done = pages.filter(t => read.has(t.key)).length;
-                    return stickerHtml(mod, m, bookDone(m), `${done} / ${pages.length} pages`);
-                }).join('');
-                $('sbPointsNum').textContent = points();
-
-                $('sbReadCount').textContent = read.size;
-                $('sbTotal').textContent = topics.length;
-                $('sbProgress').setAttribute('aria-label', `${read.size} of ${topics.length} pages read`);
-                $('sbGreeting').textContent = read.size === 0
-                    ? 'Pick a book and read it page by page. Every page you read gets a ✓!'
-                    : read.size === topics.length
-                        ? 'You read every page. Amazing! Open any book to read again.'
-                        : `Nice! ${topics.length - read.size} more page${topics.length - read.size === 1 ? '' : 's'} to go.`;
-            }
-
-            function bookDone(m) {
-                const pages = bookPages(m);
-                return pages.length > 0 && pages.every(t => read.has(t.key));
-            }
-
-            function points() {
-                return topics.filter(t => read.has(t.key)).length * PAGE_POINTS
-                    + modules.filter((_, m) => bookDone(m)).length * BOOK_POINTS;
-            }
-
-            function stickerHtml(mod, m, earned, lockedNote, extraClass = '') {
-                return `<div class="sb-sticker${earned ? ' is-earned' : ''}${extraClass}" style="--book: var(--sb-c${m % 4})">
-                    <span class="sb-sticker-face">${earned ? `<i class="fa-solid ${HCIRichText.safeIcon(mod.icon)}"></i>` : '<i class="fa-solid fa-question"></i>'}</span>
-                    <b>Aralin ${m + 1}</b>
-                    <small>${earned ? STICKER_WORDS[m % STICKER_WORDS.length] : lockedNote}</small>
-                </div>`;
-            }
-
-            function renderContents() {
-                const q = normalizeText($('searchInput').value.trim());
-                let shown = 0;
-                $('sbContents').innerHTML = modules.map((mod, m) => {
-                    const items = topics.map((t, i) => ({ t, i })).filter(({ t, i }) => t.lesson === m && (!q || searchText[i].includes(q)));
-                    if (!items.length) return '';
-                    shown += items.length;
-                    return `<div class="sb-chapter" style="--book: var(--sb-c${m % 4})">
-                        <h4><span class="sb-chapter-no">${m + 1}</span> ${esc(mod.title)}</h4>
-                        <ol>${items.map(({ t, i }) => `<li>
-                            <button type="button" data-open="${i}" id="topic-${esc(t.key)}" class="${read.has(t.key) ? 'is-read' : ''}">
-                                <span class="sb-page-no">${read.has(t.key) ? '<i class="fa-solid fa-check"></i>' : esc(t.number)}</span>
-                                <span>${esc(t.title)}</span>
-                            </button></li>`).join('')}</ol>
-                    </div>`;
-                }).join('');
-                $('lessonEmpty').hidden = shown > 0;
-            }
-
-            function renderAll() {
-                renderShelf();
-                renderContents();
-            }
-
-            $('sbShelf').addEventListener('click', (e) => {
-                const b = e.target.closest('[data-book]');
-                if (!b) return;
-                const pages = bookPages(Number(b.dataset.book));
-                const start = pages.find(t => !read.has(t.key)) || pages[0];
-                openPage(topics.indexOf(start));
-            });
-            $('sbContents').addEventListener('click', (e) => {
-                const b = e.target.closest('[data-open]');
-                if (b) openPage(Number(b.dataset.open));
-            });
-            $('searchInput').addEventListener('input', renderContents);
-
-            // ---------------- Reader ----------------
-            const reader = $('sbReader');
-            let current = -1;
-            let lastFocus = null;
-            let atEnd = false;            // showing the "Wakas!" page after a book's last page
-            let slide = 0;                // section shown when the topic is a slide deck
-            const countedThisVisit = new Set();
-            const finishedThisVisit = new Set();   // lessons whose sticker was just earned
-
-            // "+10" floats up in the top bar when a new page is read
-            function popPoints(text) {
-                const pop = document.createElement('span');
-                pop.className = 'sb-pop sb-comic';
-                pop.textContent = text;
-                $('sbBookName').after(pop);
-                setTimeout(() => pop.remove(), 1400);
-            }
-
-            function quickCheck(t, pos) {
-                const cards = checkCards.get(String(modules[t.lesson].key));
-                if (!cards) return '';
-                const card = cards[pos % cards.length];
-                return `<div class="sb-check" data-answer="${card.answer}">
-                    <b class="sb-check-title sb-comic"><i class="fa-solid fa-circle-question"></i> Quick check!</b>
-                    <p class="sb-check-q">${esc(card.question)}</p>
-                    <div class="sb-check-options">${card.options.map((o, k) => `<button type="button" data-choice="${k}"><span>${'ABCD'[k]}</span> ${esc(o)}</button>`).join('')}</div>
-                    <p class="sb-check-msg" aria-live="polite"></p>
-                </div>`;
-            }
-
-            function answerCheck(btn) {
-                const box = btn.closest('.sb-check');
-                const right = Number(btn.dataset.choice) === Number(box.dataset.answer);
-                btn.classList.add(right ? 'is-right' : 'is-wrong');
-                btn.disabled = true;
-                box.querySelector('.sb-check-msg').textContent = right ? 'Tama! Ang galing mo!' : 'Hindi pa. Subukan ulit!';
-                HCISfx.play(right ? 'correct' : 'wrong');
-                if (right) {
-                    box.classList.add('is-done');
-                    box.querySelectorAll('[data-choice]').forEach(b => { b.disabled = true; });
-                }
-            }
-
-            // Key-word pages ("Mga Susing Salita", "Mga Salita Mula sa...") show
-            // each section with a heading as a card to flip: word in front, meaning behind
+            // ---------------- Slides ----------------
+            // One section per slide. Key-word pages ("Salita") are one slide of
+            // flip cards. The quick check is the last slide.
             const isWordPage = (t) => /salita/i.test(t.title);
-
-            // Presentation style: each section is its own slide (word pages keep their flip cards)
-            const isSlides = (t) => !isWordPage(t) && t.sections.length > 1;
-            // The quick check gets its own last slide, so it fits on a phone screen
             const hasCheck = (t) => checkCards.has(String(modules[t.lesson].key));
-            const slideCount = (t) => t.sections.length + (hasCheck(t) ? 1 : 0);
-            const lastSlide = (t) => slideCount(t) - 1;
 
-            function renderSlide(t, pos) {
-                const bar = Array.from({ length: slideCount(t) }, (_, k) => `<span class="${k <= slide ? 'is-on' : ''}"></span>`).join('');
-                return `<div class="sb-slide-bar" aria-hidden="true">${bar}</div>`
-                    + (slide < t.sections.length ? `<div class="sb-slide">${HCIRichText.renderSection(t.sections[slide])}</div>` : quickCheck(t, pos));
+            function slidesOf(t) {
+                const list = isWordPage(t) ? [{ flip: true }] : t.sections.map(section => ({ section }));
+                if (hasCheck(t)) list.push({ check: true });
+                return list.length ? list : [{ section: { body: 'Nothing here yet.' } }];
             }
+
+            function renderSection(s) {
+                return `<div class="ls-section">
+                    ${s.heading ? `<span class="ls-section-icon"><i class="fa-solid ${HCIRichText.safeIcon(s.icon)}"></i></span><h3>${esc(s.heading)}</h3>` : ''}
+                    <div class="ls-section-body">${HCIRichText.render(s.body)}</div>
+                </div>`;
+            }
+
             function renderFlipCards(sections) {
                 const words = sections.filter(s => s.heading);
-                return `<p class="sb-flip-hint"><i class="fa-solid fa-hand-pointer"></i> Tap a card to see what the word means.</p>
-                    <div class="sb-flip-grid">${words.map(s => `<div class="sb-flip" role="button" tabindex="0" aria-pressed="false">
-                        <div class="sb-flip-inner">
-                            <div class="sb-flip-front"><i class="fa-solid ${HCIRichText.safeIcon(s.icon)}"></i><b>${esc(s.heading)}</b><small>Tap to flip</small></div>
-                            <div class="sb-flip-back"><b>${esc(s.heading)}</b>${HCIRichText.render(s.body)}</div>
+                return `<p class="ls-flip-hint"><i class="fa-solid fa-hand-pointer"></i> Tap a card to see what the word means.</p>
+                    <div class="ls-flip-grid">${words.map(s => `<div class="ls-flip" role="button" tabindex="0" aria-pressed="false">
+                        <div class="ls-flip-inner">
+                            <div class="ls-flip-front"><i class="fa-solid ${HCIRichText.safeIcon(s.icon)}"></i><b>${esc(s.heading)}</b><small>Tap to flip</small></div>
+                            <div class="ls-flip-back"><b>${esc(s.heading)}</b>${HCIRichText.render(s.body)}</div>
                         </div>
                     </div>`).join('')}</div>`
-                    + sections.filter(s => !s.heading).map(HCIRichText.renderSection).join('');
+                    + sections.filter(s => !s.heading).map(renderSection).join('');
             }
 
             function toggleFlip(card) {
@@ -433,211 +311,275 @@
                 card.setAttribute('aria-pressed', String(on));
             }
 
+            function quickCheck(t) {
+                const cards = checkCards.get(String(modules[t.lesson].key));
+                const card = cards[bookPages(t.lesson).indexOf(t) % cards.length];
+                return `<div class="ls-check" data-answer="${card.answer}">
+                    <b class="ls-check-title"><i class="fa-solid fa-circle-question"></i> Quick check!</b>
+                    <p class="ls-check-q">${esc(card.question)}</p>
+                    <div class="ls-check-options">${card.options.map((o, k) => `<button type="button" data-choice="${k}"><span>${'ABCD'[k]}</span> ${esc(o)}</button>`).join('')}</div>
+                    <p class="ls-check-msg" aria-live="polite"></p>
+                </div>`;
+            }
+
+            function answerCheck(btn) {
+                const box = btn.closest('.ls-check');
+                const right = Number(btn.dataset.choice) === Number(box.dataset.answer);
+                btn.classList.add(right ? 'is-right' : 'is-wrong');
+                btn.disabled = true;
+                box.querySelector('.ls-check-msg').textContent = right ? 'Tama! Ang galing mo!' : 'Hindi pa. Subukan ulit!';
+                HCISfx.play(right ? 'correct' : 'wrong');
+                if (right) {
+                    box.classList.add('is-done');
+                    box.querySelectorAll('[data-choice]').forEach(b => { b.disabled = true; });
+                }
+            }
+
+            // ---------------- Topic list ----------------
+            const listView = $('lessonList');
+            const player = $('lessonPlayer');
+            let activeFilter = 'all';
+
+            modules.forEach((mod, m) => {
+                const option = document.createElement('option');
+                option.value = String(m);
+                option.textContent = `Aralin ${m + 1}: ${mod.title} (${bookPages(m).length})`;
+                $('lessonFilter').appendChild(option);
+            });
+
+            function renderGrid() {
+                $('lessonGrid').innerHTML = topics.map((t, i) => {
+                    const saved = HCIBookmarks.get('lesson', t.key);
+                    return `<a href="#topic-${encodeURIComponent(t.key)}" class="video-link" data-open="${i}" style="--i:${Math.min(i, 12)}">
+                        <div class="video-card">
+                            <div class="thumbnail-container ls-thumb ls-c${t.lesson % 4}">
+                                <span class="ls-thumb-icon"><i class="fa-solid ${HCIRichText.safeIcon(t.lessonIcon)}"></i></span>
+                                <span class="ls-thumb-title">${esc(t.lessonTitle)}</span>
+                                <span class="duration-badge">${slidesOf(t).length} slides</span>
+                                ${read.has(t.key) ? '<span class="watched-badge"><i class="fa-solid fa-check"></i> Read</span>' : ''}
+                                ${saved ? '<span class="saved-badge" title="Saved"><i class="fa-solid fa-bookmark"></i><span class="sr-only">Saved</span></span>' : ''}
+                            </div>
+                            <div class="video-info">
+                                <div class="video-meta"><span class="topic-chip ${CHIP[t.lesson % 4]}">Aralin ${t.lesson + 1}</span></div>
+                                <h4>${esc(t.title)}</h4>
+                            </div>
+                        </div>
+                    </a>`;
+                }).join('');
+
+                const total = topics.length;
+                const done = topics.filter(t => read.has(t.key)).length;
+                const allDone = total > 0 && done === total;
+                $('readText').textContent = allDone ? `🏆 All ${total} read!` : `📖 ${done} of ${total} read`;
+                $('readBar').style.width = `${total ? (done / total) * 100 : 0}%`;
+                document.querySelector('.video-toolbar').classList.toggle('is-complete', allDone);
+                applyFilters();
+            }
+
+            function applyFilters() {
+                const q = normalizeText($('searchInput').value.trim());
+                const lesson = $('lessonFilter').value;
+                let shown = 0;
+                $('lessonGrid').querySelectorAll('[data-open]').forEach(card => {
+                    const i = Number(card.dataset.open);
+                    const t = topics[i];
+                    const show = (!q || searchText[i].includes(q))
+                        && (lesson === 'all' || String(t.lesson) === lesson)
+                        && (activeFilter === 'all' || (activeFilter === 'read') === read.has(t.key));
+                    card.style.display = show ? '' : 'none';
+                    if (show) shown++;
+                });
+                $('lessonEmpty').hidden = shown > 0;
+                if (!topics.length) $('lessonEmpty').querySelector('p').textContent = 'No lessons yet. Your teacher will add them soon.';
+            }
+
+            $('searchInput').addEventListener('input', applyFilters);
+            $('lessonFilter').addEventListener('change', applyFilters);
+            document.querySelectorAll('.filter-btn').forEach(btn => btn.addEventListener('click', () => {
+                document.querySelectorAll('.filter-btn').forEach(b => b.classList.remove('active'));
+                btn.classList.add('active');
+                activeFilter = btn.dataset.filter;
+                applyFilters();
+            }));
+
+            // ---------------- Presentation ----------------
+            let current = -1;
+            let slide = 0;
+            let slides = [];
+            let openedFromList = false;     // Back can then use the browser's history
+            const countedThisVisit = new Set();
+
             function markRead(t) {
                 if (!countedThisVisit.has(t.key)) {
                     countedThisVisit.add(t.key);
-                    HCIGamify.record('read');      // daily goal / streak, once per page per visit
+                    HCIGamify.record('read');      // daily goal / streak, once per topic per visit
                 }
                 if (read.has(t.key)) return;
-                const wasDone = bookDone(t.lesson);
                 read.add(t.key);
                 saveRead([t.key]).catch(() => {});
-                popPoints(`+${PAGE_POINTS}`);
-                if (!wasDone && bookDone(t.lesson)) finishedThisVisit.add(t.lesson);
-            }
-
-            function renderBookmark() {
-                const t = topics[current];
-                const saved = HCIBookmarks.get('lesson', t.key);
-                $('sbSave').classList.toggle('is-on', !!saved);
-                $('sbSave').setAttribute('aria-pressed', saved ? 'true' : 'false');
-                $('sbSave').setAttribute('aria-label', saved ? 'Saved (tap to remove)' : 'Save page');
-                $('sbSave').innerHTML = `<i class="fa-${saved ? 'solid' : 'regular'} fa-bookmark"></i>`;
-                const note = saved ? saved.note : '';
-                $('sbNote').hidden = atEnd || !note;
-                $('sbNote').querySelector('p').textContent = note;
-                $('sbNoteBtn').setAttribute('aria-label', note ? 'Edit note' : 'Add note');
-            }
-
-            function renderPageList(t) {
-                $('sbPagesList').innerHTML = bookPages(t.lesson).map(p => `<li>
-                    <button type="button" data-page="${topics.indexOf(p)}" class="${p === t ? 'is-now' : ''} ${read.has(p.key) ? 'is-read' : ''}">
-                        <span class="sb-page-no">${read.has(p.key) ? '<i class="fa-solid fa-check"></i>' : esc(p.number)}</span> ${esc(p.title)}
-                    </button></li>`).join('');
-            }
-
-            function togglePages(open) {
-                $('sbPages').hidden = !open;
-                $('sbPagesBtn').setAttribute('aria-expanded', String(open));
+                $('lsReadMsg').hidden = false;
+                HCISfx.confetti(90);
             }
 
             // startSlide -1 = the topic's last slide (going back)
-            function openPage(i, dir = 0, startSlide = 0) {
+            function openTopic(i, startSlide = 0) {
                 const t = topics[i];
-                if (!t) return;
-                if (reader.hidden) {
-                    lastFocus = document.activeElement;
-                    reader.hidden = false;
-                    document.body.classList.add('sb-reading');
-                    $('sbClose').focus();
-                }
-                atEnd = false;
+                if (!t) return showList();
+                const fromList = player.hidden;
                 current = i;
-                const slides = isSlides(t);
-                slide = slides ? (startSlide < 0 ? lastSlide(t) : Math.min(startSlide, lastSlide(t))) : 0;
-                $('sbNext').disabled = false;
-                togglePages(false);
-                const pages = bookPages(t.lesson);
-                const pos = pages.indexOf(t);
-                reader.style.setProperty('--book', `var(--sb-c${t.lesson % 4})`);
-                $('sbBookName').textContent = `Aralin ${t.lesson + 1} · ${t.lessonTitle}`;
-                $('sbLessonBadge').textContent = `Aralin ${t.lesson + 1}`;
-                $('sbTopicTitle').textContent = t.title;
-                $('sbPageTag').textContent = `Pahina ${pos + 1} / ${pages.length}` + (slides ? ` · Slide ${slide + 1} / ${slideCount(t)}` : '');
-                // Each section is a speech bubble (or one slide at a time)
-                $('sbContent').classList.toggle('is-slides', slides);
-                $('sbContent').innerHTML = slides ? renderSlide(t, pos)
-                    : (isWordPage(t) ? renderFlipCards(t.sections) : t.sections.map(HCIRichText.renderSection).join(''))
-                    + quickCheck(t, pos);
-                $('sbDots').innerHTML = pages.map((p, k) => `<button type="button" data-page="${topics.indexOf(p)}"
-                    class="${k === pos ? 'is-now' : ''} ${read.has(p.key) ? 'is-read' : ''}" aria-label="Page ${k + 1}${k === pos ? ' (this page)' : ''}"></button>`).join('');
-                const sheet = $('sbSheet');
-                sheet.scrollTop = 0;
-                sheet.classList.remove('is-from-left', 'is-from-right');
-                if (dir) { void sheet.offsetWidth; sheet.classList.add(dir > 0 ? 'is-from-right' : 'is-from-left'); }
-                const moreSlides = slides && slide < lastSlide(t);
-                $('sbPrev').disabled = i === 0 && slide === 0;
-                $('sbNext').setAttribute('aria-label', moreSlides ? 'Next slide' : pos === pages.length - 1 ? 'Finish this book' : 'Next page');
-                $('sbPrev').setAttribute('aria-label', slides && slide > 0 ? 'Previous slide' : 'Previous page');
-                // A slide deck counts as read once its last slide is reached
-                if (!moreSlides) markRead(t);
-                renderPageList(t);
+                slides = slidesOf(t);
+                slide = startSlide < 0 ? slides.length - 1 : Math.min(startSlide, slides.length - 1);
+                listView.hidden = true;
+                player.hidden = false;
+                player.style.setProperty('--ls-color', `var(--ls-c${t.lesson % 4})`);
+                $('lsTitle').textContent = t.title;
+                $('lsLesson').textContent = `Aralin ${t.lesson + 1} · ${t.lessonTitle}`;
+                document.title = `${t.title} · ALLEARN`;
+                $('lsReadMsg').hidden = !read.has(t.key);
+                renderSlide(0);
                 renderBookmark();
-                history.replaceState(null, '', `#topic-${t.key}`);
+                if (fromList) window.scrollTo({ top: 0 });
             }
 
-            // "Wakas!" (The End) page after the last page of a book
-            function showEnd() {
+            function renderSlide(dir) {
                 const t = topics[current];
-                const nextBook = topics.find(x => x.lesson === t.lesson + 1);
-                atEnd = true;
-                $('sbLessonBadge').textContent = `Aralin ${t.lesson + 1}`;
-                $('sbTopicTitle').textContent = 'Wakas!';
-                $('sbPageTag').textContent = 'The End';
-                $('sbNote').hidden = true;
-                const skipped = bookPages(t.lesson).filter(p => !read.has(p.key)).length;
-                const isNew = finishedThisVisit.has(t.lesson);
-                $('sbContent').innerHTML = `<div class="sb-end">
-                    <div class="sb-burst sb-comic">Galing!</div>
-                    ${skipped
-                        ? `<p>You reached the end of <b>${esc(t.lessonTitle)}</b>. Read the ${skipped} page${skipped === 1 ? '' : 's'} you skipped to earn its sticker.</p>`
-                        : `${stickerHtml(modules[t.lesson], t.lesson, true, '', isNew ? ' is-new' : '')}
-                           <p>You finished <b>${esc(t.lessonTitle)}</b>${isNew ? ` and earned its sticker! <b class="sb-end-points">+${BOOK_POINTS} points</b>` : '.'}</p>`}
-                    <div class="sb-end-actions">
-                        ${skipped ? '' : '<a href="CaseStudies.html" class="sb-end-btn is-main"><i class="fa-solid fa-flag"></i> Go on missions</a>'}
-                        ${nextBook ? `<button type="button" class="sb-end-btn${skipped ? ' is-main' : ''}" data-page="${topics.indexOf(nextBook)}"><i class="fa-solid fa-book-open"></i> Read Aralin ${t.lesson + 2}</button>`
-                            : '<a href="StudyCards.html" class="sb-end-btn"><i class="fa-solid fa-rotate"></i> Practice with Quiz Cards</a>'}
-                        <button type="button" class="sb-end-btn" data-close-book><i class="fa-solid fa-book"></i> Back to the bookshelf</button>
-                    </div>
-                </div>`;
-                $('sbDots').querySelectorAll('button').forEach(d => d.classList.remove('is-now'));
-                $('sbNext').disabled = true;
-                HCISfx.play('levelUp');
+                const s = slides[slide];
+                const last = slide === slides.length - 1;
+                const next = topics[current + 1];
+                const box = $('lsSlide');
+                box.className = `ls-slide${s.flip ? ' is-flip' : ''}${s.check ? ' is-check' : ''}`;
+                box.innerHTML = s.flip ? renderFlipCards(t.sections) : s.check ? quickCheck(t) : renderSection(s.section);
+                if (dir) { void box.offsetWidth; box.classList.add(dir > 0 ? 'is-from-right' : 'is-from-left'); }
+                $('lsStage').scrollTop = 0;
+                $('lsBar').style.width = `${((slide + 1) / slides.length) * 100}%`;
+                $('lsCounter').textContent = `Slide ${slide + 1} of ${slides.length}`;
+                $('lsPrev').disabled = current === 0 && slide === 0;
+                $('lsPrev').setAttribute('aria-label', slide > 0 ? 'Previous slide' : 'Previous topic');
+                $('lsNext').disabled = last && !next;
+                $('lsNext').setAttribute('aria-label', !last ? 'Next slide' : 'Next topic');
+                $('lsNext').classList.toggle('is-topic', last && !!next);
+                // A topic counts as read once its last slide is reached
+                if (last) markRead(t);
+            }
+
+            // Moving between topics swaps the address without adding history entries
+            function goTopic(i, startSlide) {
+                history.replaceState(null, '', `#topic-${encodeURIComponent(topics[i].key)}`);
+                openTopic(i, startSlide);
             }
 
             function goNext() {
-                if (atEnd) return;
-                const t = topics[current];
-                if (isSlides(t) && slide < lastSlide(t)) return openPage(current, 1, slide + 1);
-                const next = topics[current + 1];
-                if (!next || next.lesson !== t.lesson) return showEnd();
-                openPage(current + 1, 1);
+                if (slide < slides.length - 1) { slide++; return renderSlide(1); }
+                if (current + 1 < topics.length) goTopic(current + 1, 0);
             }
 
             function goPrev() {
-                if (atEnd) return openPage(current, -1, -1);
-                if (isSlides(topics[current]) && slide > 0) return openPage(current, -1, slide - 1);
-                if (current > 0) openPage(current - 1, -1, -1);
+                if (slide > 0) { slide--; return renderSlide(-1); }
+                if (current > 0) goTopic(current - 1, -1);
             }
 
-            function closeReader() {
+            function showList() {
                 if (document.fullscreenElement) document.exitFullscreen().catch(() => {});
-                reader.hidden = true;
-                document.body.classList.remove('sb-reading');
+                const was = current;
+                player.hidden = true;
+                listView.hidden = false;
+                document.title = 'Read Lesson · ALLEARN';
+                renderGrid();
+                const card = was >= 0 && $('lessonGrid').querySelector(`[data-open="${was}"]`);
+                if (card && card.style.display !== 'none') { card.scrollIntoView({ block: 'center' }); card.focus({ preventScroll: true }); }
+            }
+
+            // Links from the list, Saved and Search: ReadLesson.html#topic-12 opens that topic
+            function route() {
+                const match = /^#topic-(.+)$/.exec(location.hash);
+                const i = match ? topics.findIndex(t => String(t.key) === decodeURIComponent(match[1])) : -1;
+                if (i >= 0) openTopic(i);
+                else if (!player.hidden) showList();
+            }
+            window.addEventListener('hashchange', route);
+
+            $('lessonGrid').addEventListener('click', (e) => { if (e.target.closest('[data-open]')) openedFromList = true; });
+            $('lsBack').addEventListener('click', () => {
+                if (openedFromList) { openedFromList = false; history.back(); return; }
                 history.replaceState(null, '', location.pathname);
-                renderAll();
-                const item = current >= 0 && document.getElementById(`topic-${topics[current].key}`);
-                (item || lastFocus || document.body).focus();
-                if (item) item.scrollIntoView({ block: 'center' });
-            }
+                showList();
+            });
+            $('lsNext').addEventListener('click', goNext);
+            $('lsPrev').addEventListener('click', goPrev);
 
-            $('sbNext').addEventListener('click', goNext);
-            $('sbPrev').addEventListener('click', goPrev);
-            $('sbClose').addEventListener('click', closeReader);
-            $('sbPagesBtn').addEventListener('click', () => togglePages($('sbPages').hidden));
-
-            // Full screen for projecting in class (iPhones have no full screen, so the button stays hidden)
-            if (reader.requestFullscreen) {
-                $('sbFullBtn').hidden = false;
-                $('sbFullBtn').addEventListener('click', () => {
-                    (document.fullscreenElement ? document.exitFullscreen() : reader.requestFullscreen()).catch(() => {});
-                });
-                document.addEventListener('fullscreenchange', () => {
-                    const on = !!document.fullscreenElement;
-                    $('sbFullBtn').innerHTML = `<i class="fa-solid fa-${on ? 'compress' : 'expand'}"></i>`;
-                    $('sbFullBtn').setAttribute('aria-label', on ? 'Exit full screen' : 'Full screen');
-                });
-            }
-            // Dots, the page list and the "next book" button all jump to a page
-            reader.addEventListener('click', (e) => {
+            $('lsSlide').addEventListener('click', (e) => {
                 const choice = e.target.closest('[data-choice]');
                 if (choice) return answerCheck(choice);
-                const flip = e.target.closest('.sb-flip');
-                if (flip) return toggleFlip(flip);
-                const jump = e.target.closest('[data-page]');
-                if (jump) {
-                    const to = Number(jump.dataset.page);
-                    return openPage(to, to >= current ? 1 : -1);
-                }
-                if (e.target.closest('[data-close-book]')) closeReader();
+                const flip = e.target.closest('.ls-flip');
+                if (flip) toggleFlip(flip);
             });
             document.addEventListener('keydown', (e) => {
-                if (reader.hidden || e.target.closest('input, textarea, .confirm-overlay')) return;
-                if ((e.key === 'Enter' || e.key === ' ') && e.target.closest('.sb-flip')) {
+                if (player.hidden || e.target.closest('input, textarea, select, .confirm-overlay')) return;
+                if ((e.key === 'Enter' || e.key === ' ') && e.target.closest('.ls-flip')) {
                     e.preventDefault();
-                    return toggleFlip(e.target.closest('.sb-flip'));
+                    return toggleFlip(e.target.closest('.ls-flip'));
                 }
-                if (e.key === 'Escape') { if (!$('sbPages').hidden) togglePages(false); else closeReader(); }
-                else if (e.key === 'ArrowRight') goNext();
-                else if (e.key === 'ArrowLeft') goPrev();
+                if (e.key === 'ArrowRight' || e.key === 'PageDown') { e.preventDefault(); goNext(); }
+                else if (e.key === 'ArrowLeft' || e.key === 'PageUp') { e.preventDefault(); goPrev(); }
             });
 
-            // Swipe left/right on phones to turn the page
+            // Swipe left/right on phones to change slides
             let touchX = null;
             let touchY = null;
-            $('sbSheet').addEventListener('touchstart', (e) => { touchX = e.touches[0].clientX; touchY = e.touches[0].clientY; }, { passive: true });
-            $('sbSheet').addEventListener('touchend', (e) => {
+            $('lsStage').addEventListener('touchstart', (e) => { touchX = e.touches[0].clientX; touchY = e.touches[0].clientY; }, { passive: true });
+            $('lsStage').addEventListener('touchend', (e) => {
                 if (touchX === null) return;
                 const dx = e.changedTouches[0].clientX - touchX;
                 const dy = e.changedTouches[0].clientY - touchY;
                 touchX = null;
-                if (Math.abs(dx) > 70 && Math.abs(dx) > Math.abs(dy) * 1.5) (dx < 0 ? goNext : goPrev)();
+                if (Math.abs(dx) > 60 && Math.abs(dx) > Math.abs(dy) * 1.5) (dx < 0 ? goNext : goPrev)();
             });
 
-            // Save + note (same bookmarks as the Saved page)
-            $('sbSave').addEventListener('click', async () => {
+            // Full screen for projecting in class (iPhones have no full screen, so the button stays hidden)
+            const show = $('lsShow');
+            if (show.requestFullscreen) {
+                $('lsFull').hidden = false;
+                $('lsFull').addEventListener('click', () => {
+                    (document.fullscreenElement ? document.exitFullscreen() : show.requestFullscreen()).catch(() => {});
+                });
+                document.addEventListener('fullscreenchange', () => {
+                    const on = !!document.fullscreenElement;
+                    $('lsFull').innerHTML = `<i class="fa-solid fa-${on ? 'compress' : 'expand'}"></i>`;
+                    $('lsFull').setAttribute('aria-label', on ? 'Exit full screen' : 'Full screen');
+                });
+            }
+
+            // ---------------- Save + note (same bookmarks as the Saved page) ----------------
+            const bookmarkBtn = $('bookmarkBtn');
+            const noteBtn = $('noteBtn');
+
+            function renderBookmark() {
+                if (current < 0) return;
+                const saved = HCIBookmarks.get('lesson', topics[current].key);
+                bookmarkBtn.classList.toggle('is-active', !!saved);
+                bookmarkBtn.setAttribute('aria-pressed', saved ? 'true' : 'false');
+                bookmarkBtn.innerHTML = saved
+                    ? '<i class="fa-solid fa-bookmark"></i> <span>Saved</span>'
+                    : '<i class="fa-regular fa-bookmark"></i> <span>Save lesson</span>';
+                const note = saved ? saved.note : '';
+                noteBtn.querySelector('span').textContent = note ? 'Edit note' : 'Add note';
+                $('lsNote').hidden = !note;
+                $('lsNoteText').textContent = note;
+            }
+
+            bookmarkBtn.addEventListener('click', async () => {
                 const t = topics[current];
-                $('sbSave').disabled = true;
+                bookmarkBtn.disabled = true;
                 try {
                     const saved = await HCIBookmarks.toggle('lesson', t.key, t.title);
-                    HCIBookmarks.toast(saved ? 'Page saved' : 'Removed from Saved');
+                    HCIBookmarks.toast(saved ? 'Lesson saved' : 'Removed from Saved');
                 } catch (err) {
                     HCIBookmarks.toast(err.message, 'fa-circle-exclamation');
                 }
-                $('sbSave').disabled = false;
+                bookmarkBtn.disabled = false;
                 renderBookmark();
             });
-            $('sbNoteBtn').addEventListener('click', async () => {
+            noteBtn.addEventListener('click', async () => {
                 const t = topics[current];
                 try {
                     const saved = await HCIBookmarks.editNote('lesson', t.key, t.title);
@@ -648,17 +590,9 @@
                 renderBookmark();
             });
 
-            renderAll();
-            HCIBookmarks.load().then(() => { if (!reader.hidden) renderBookmark(); }).catch(() => {});
-
-            // Links from Saved / search: ReadLesson.html#topic-12 opens that page
-            function openFromHash() {
-                const match = /^#topic-(.+)$/.exec(location.hash);
-                const i = match ? topics.findIndex(t => String(t.key) === decodeURIComponent(match[1])) : -1;
-                if (i >= 0) openPage(i);
-            }
-            openFromHash();
-            window.addEventListener('hashchange', openFromHash);
+            renderGrid();
+            route();
+            HCIBookmarks.load().then(() => { if (player.hidden) renderGrid(); else renderBookmark(); }).catch(() => {});
         });
     </script>
 </body>

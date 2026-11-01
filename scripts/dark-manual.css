@@ -72,3 +72,9 @@
 :root[data-theme="dark"] .theme-fab:focus-visible .theme-switch {
     outline-color: #ffffff;
 }
+
+/* Read Lesson slides: the lesson colour is too dark for text on a dark slide */
+:root[data-theme="dark"] .ls-check-title,
+:root[data-theme="dark"] .ls-flip-back b {
+    color: #6cb8e6;
+}
