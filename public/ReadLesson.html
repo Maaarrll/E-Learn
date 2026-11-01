@@ -8,7 +8,7 @@
     <link rel="icon" href="favicon-32.png?v=3" type="image/png" sizes="32x32">
     <link rel="apple-touch-icon" href="apple-touch-icon.png?v=3">
     <meta name="theme-color" content="#023047">
-    <link rel="stylesheet" href="style.css?v=101">
+    <link rel="stylesheet" href="style.css?v=102">
     <link rel="stylesheet" href="dark.css?v=64">
     <script src="js/theme.js?v=3"></script>
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
@@ -171,6 +171,7 @@
         <div class="sb-reader-top">
             <button type="button" class="sb-icon-btn" id="sbClose" aria-label="Close the book"><i class="fa-solid fa-xmark"></i></button>
             <span class="sb-book-name" id="sbBookName"></span>
+            <button type="button" class="sb-icon-btn" id="sbFullBtn" aria-label="Full screen" hidden><i class="fa-solid fa-expand"></i></button>
             <button type="button" class="sb-icon-btn" id="sbPagesBtn" aria-expanded="false" aria-controls="sbPages" aria-label="Pages in this book"><i class="fa-solid fa-list-ol"></i></button>
         </div>
 
@@ -361,6 +362,7 @@
             let current = -1;
             let lastFocus = null;
             let atEnd = false;            // showing the "Wakas!" page after a book's last page
+            let slide = 0;                // section shown when the topic is a slide deck
             const countedThisVisit = new Set();
             const finishedThisVisit = new Set();   // lessons whose sticker was just earned
 
@@ -401,6 +403,19 @@
             // Key-word pages ("Mga Susing Salita", "Mga Salita Mula sa...") show
             // each section with a heading as a card to flip: word in front, meaning behind
             const isWordPage = (t) => /salita/i.test(t.title);
+
+            // Presentation style: each section is its own slide.
+            // Preview: only these topic keys use slides; drop the key check to turn every topic into slides.
+            const SLIDE_PREVIEW_KEYS = new Set(['1']);
+            const isSlides = (t) => SLIDE_PREVIEW_KEYS.has(String(t.key)) && !isWordPage(t) && t.sections.length > 1;
+            const lastSlide = (t) => t.sections.length - 1;
+
+            function renderSlide(t, pos) {
+                const bar = t.sections.map((_, k) => `<span class="${k <= slide ? 'is-on' : ''}"></span>`).join('');
+                return `<div class="sb-slide-bar" aria-hidden="true">${bar}</div>
+                    <div class="sb-slide">${HCIRichText.renderSection(t.sections[slide])}</div>`
+                    + (slide === lastSlide(t) ? quickCheck(t, pos) : '');
+            }
             function renderFlipCards(sections) {
                 const words = sections.filter(s => s.heading);
                 return `<p class="sb-flip-hint"><i class="fa-solid fa-hand-pointer"></i> Tap a card to see what the word means.</p>
@@ -456,7 +471,8 @@
                 $('sbPagesBtn').setAttribute('aria-expanded', String(open));
             }
 
-            function openPage(i, dir = 0) {
+            // startSlide -1 = the topic's last slide (going back)
+            function openPage(i, dir = 0, startSlide = 0) {
                 const t = topics[i];
                 if (!t) return;
                 if (reader.hidden) {
@@ -467,6 +483,8 @@
                 }
                 atEnd = false;
                 current = i;
+                const slides = isSlides(t);
+                slide = slides ? (startSlide < 0 ? lastSlide(t) : Math.min(startSlide, lastSlide(t))) : 0;
                 $('sbNext').disabled = false;
                 togglePages(false);
                 const pages = bookPages(t.lesson);
@@ -475,9 +493,11 @@
                 $('sbBookName').textContent = `Aralin ${t.lesson + 1} · ${t.lessonTitle}`;
                 $('sbLessonBadge').textContent = `Aralin ${t.lesson + 1}`;
                 $('sbTopicTitle').textContent = t.title;
-                $('sbPageTag').textContent = `Pahina ${pos + 1} / ${pages.length}`;
-                // Each section is a speech bubble
-                $('sbContent').innerHTML = (isWordPage(t) ? renderFlipCards(t.sections) : t.sections.map(HCIRichText.renderSection).join(''))
+                $('sbPageTag').textContent = `Pahina ${pos + 1} / ${pages.length}` + (slides ? ` · Slide ${slide + 1} / ${t.sections.length}` : '');
+                // Each section is a speech bubble (or one slide at a time)
+                $('sbContent').classList.toggle('is-slides', slides);
+                $('sbContent').innerHTML = slides ? renderSlide(t, pos)
+                    : (isWordPage(t) ? renderFlipCards(t.sections) : t.sections.map(HCIRichText.renderSection).join(''))
                     + quickCheck(t, pos);
                 $('sbDots').innerHTML = pages.map((p, k) => `<button type="button" data-page="${topics.indexOf(p)}"
                     class="${k === pos ? 'is-now' : ''} ${read.has(p.key) ? 'is-read' : ''}" aria-label="Page ${k + 1}${k === pos ? ' (this page)' : ''}"></button>`).join('');
@@ -485,9 +505,12 @@
                 sheet.scrollTop = 0;
                 sheet.classList.remove('is-from-left', 'is-from-right');
                 if (dir) { void sheet.offsetWidth; sheet.classList.add(dir > 0 ? 'is-from-right' : 'is-from-left'); }
-                $('sbPrev').disabled = i === 0;
-                $('sbNext').setAttribute('aria-label', pos === pages.length - 1 ? 'Finish this book' : 'Next page');
-                markRead(t);
+                const moreSlides = slides && slide < lastSlide(t);
+                $('sbPrev').disabled = i === 0 && slide === 0;
+                $('sbNext').setAttribute('aria-label', moreSlides ? 'Next slide' : pos === pages.length - 1 ? 'Finish this book' : 'Next page');
+                $('sbPrev').setAttribute('aria-label', slides && slide > 0 ? 'Previous slide' : 'Previous page');
+                // A slide deck counts as read once its last slide is reached
+                if (!moreSlides) markRead(t);
                 renderPageList(t);
                 renderBookmark();
                 history.replaceState(null, '', `#topic-${t.key}`);
@@ -525,17 +548,20 @@
             function goNext() {
                 if (atEnd) return;
                 const t = topics[current];
+                if (isSlides(t) && slide < lastSlide(t)) return openPage(current, 1, slide + 1);
                 const next = topics[current + 1];
                 if (!next || next.lesson !== t.lesson) return showEnd();
                 openPage(current + 1, 1);
             }
 
             function goPrev() {
-                if (atEnd) return openPage(current, -1);
-                if (current > 0) openPage(current - 1, -1);
+                if (atEnd) return openPage(current, -1, -1);
+                if (isSlides(topics[current]) && slide > 0) return openPage(current, -1, slide - 1);
+                if (current > 0) openPage(current - 1, -1, -1);
             }
 
             function closeReader() {
+                if (document.fullscreenElement) document.exitFullscreen().catch(() => {});
                 reader.hidden = true;
                 document.body.classList.remove('sb-reading');
                 history.replaceState(null, '', location.pathname);
@@ -549,6 +575,19 @@
             $('sbPrev').addEventListener('click', goPrev);
             $('sbClose').addEventListener('click', closeReader);
             $('sbPagesBtn').addEventListener('click', () => togglePages($('sbPages').hidden));
+
+            // Full screen for projecting in class (iPhones have no full screen, so the button stays hidden)
+            if (reader.requestFullscreen) {
+                $('sbFullBtn').hidden = false;
+                $('sbFullBtn').addEventListener('click', () => {
+                    (document.fullscreenElement ? document.exitFullscreen() : reader.requestFullscreen()).catch(() => {});
+                });
+                document.addEventListener('fullscreenchange', () => {
+                    const on = !!document.fullscreenElement;
+                    $('sbFullBtn').innerHTML = `<i class="fa-solid fa-${on ? 'compress' : 'expand'}"></i>`;
+                    $('sbFullBtn').setAttribute('aria-label', on ? 'Exit full screen' : 'Full screen');
+                });
+            }
             // Dots, the page list and the "next book" button all jump to a page
             reader.addEventListener('click', (e) => {
                 const choice = e.target.closest('[data-choice]');

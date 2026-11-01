@@ -14247,6 +14247,65 @@ body.sb-reading .main-content {
     color: #2b2b2b;
 }
 
+/* Presentation style: one section per slide, big enough to project */
+.sb-slide-bar {
+    display: flex;
+    gap: 6px;
+}
+
+.sb-slide-bar span {
+    flex: 1;
+    height: 8px;
+    border: 2px solid var(--sb-ink);
+    border-radius: 999px;
+    background: #fff;
+}
+
+.sb-slide-bar span.is-on {
+    background: var(--book);
+}
+
+.sb-sheet:has(.is-slides) {
+    max-width: 1040px;
+}
+
+.sb-slide {
+    min-height: 46vh;
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+}
+
+.sb-reader .sb-content .sb-slide .sub-card,
+.sb-reader .sb-content .sb-slide .rt-loose {
+    padding: clamp(22px, 4vw, 40px);
+}
+
+.sb-reader .sb-content .sb-slide .sub-card-title {
+    flex-direction: column;
+    align-items: flex-start;
+    gap: 14px;
+    margin-bottom: 14px;
+}
+
+.sb-reader .sb-content .sb-slide .sub-card-title i {
+    width: 64px;
+    height: 64px;
+    font-size: 28px;
+    border-width: 3px;
+}
+
+.sb-reader .sb-content .sb-slide .sub-card-title h4 {
+    font-size: clamp(24px, 3.4vw, 34px);
+    line-height: 1.2;
+}
+
+.sb-reader .sb-content .sb-slide p,
+.sb-reader .sb-content .sb-slide li {
+    font-size: clamp(19px, 2.4vw, 26px);
+    line-height: 1.6;
+}
+
 /* Bottom: page turners + dots */
 .sb-turn {
     flex-shrink: 0;
