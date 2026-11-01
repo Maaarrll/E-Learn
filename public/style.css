@@ -11388,23 +11388,121 @@ div.qs-result {
     gap: 12px;
 }
 
+/* Icon picker: a button showing the icon, and a grid that opens below it */
 .ce-icon-input {
+    position: relative;
     display: flex;
-    align-items: center;
-    gap: 8px;
 }
 
-.ce-icon-input > i {
-    flex-shrink: 0;
-    width: 40px;
-    height: 40px;
+.ce-icon-pick {
+    display: inline-flex;
+    align-items: center;
+    gap: 10px;
+    padding: 5px 12px 5px 5px;
+    border: 2px solid #dfe3f0;
+    border-radius: 14px;
+    background: #fff;
+    color: #023047;
+    font: inherit;
+    font-size: 13px;
+    font-weight: 700;
+    cursor: pointer;
+    transition: border-color 0.2s;
+}
+
+.ce-icon-pick:hover,
+.ce-icon-pick[aria-expanded="true"] {
+    border-color: #013988;
+}
+
+.ce-icon-pick > i:first-child {
+    width: 36px;
+    height: 36px;
     display: flex;
     align-items: center;
     justify-content: center;
-    border-radius: 12px;
+    border-radius: 10px;
     background: #dce1f2;
     color: #013988;
     font-size: 16px;
+}
+
+.ce-icon-caret {
+    font-size: 11px;
+    color: #6b7590;
+    transition: transform 0.2s;
+}
+
+.ce-icon-pick[aria-expanded="true"] .ce-icon-caret {
+    transform: rotate(180deg);
+}
+
+.ce-icon-grid {
+    position: absolute;
+    top: calc(100% + 6px);
+    left: 0;
+    z-index: 5;
+    display: grid;
+    grid-template-columns: repeat(7, 38px);
+    gap: 6px;
+    /* Tall enough for every icon, so no scrollbars */
+    max-height: 420px;
+    overflow: hidden auto;
+    padding: 10px;
+    border: 1px solid #dfe3f0;
+    border-radius: 14px;
+    background: #fff;
+    box-shadow: 0 12px 30px rgba(2, 48, 71, 0.18);
+}
+
+.ce-icon-grid[hidden] {
+    display: none;
+}
+
+.ce-icon-grid button {
+    width: 38px;
+    height: 38px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    border: 2px solid transparent;
+    border-radius: 10px;
+    background: #f3f5fb;
+    color: #023047;
+    font-size: 16px;
+    cursor: pointer;
+}
+
+.ce-icon-grid button:hover {
+    background: #dce1f2;
+}
+
+.ce-icon-grid button[aria-selected="true"] {
+    border-color: #013988;
+    background: #dce1f2;
+    color: #013988;
+}
+
+.ce-icon-grid button:focus-visible,
+.ce-icon-pick:focus-visible {
+    outline: 3px solid #0185c6;
+    outline-offset: 2px;
+}
+
+/* Phones: the grid opens inside the editor instead of floating over it */
+@media screen and (max-width: 480px) {
+    .ce-icon-input {
+        flex-direction: column;
+        align-items: flex-start;
+    }
+
+    .ce-icon-grid {
+        position: static;
+        margin-top: 8px;
+        grid-template-columns: repeat(6, 38px);
+        max-height: none;
+        box-shadow: none;
+    }
 }
 
 .ce-choices {

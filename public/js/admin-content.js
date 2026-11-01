@@ -14,9 +14,23 @@ const HCIContentEditor = (function () {
   ];
   const STATUS_LABEL = { new: 'New · not live yet', changed: 'Edited · not live yet', deleted: 'Removed · not live yet' };
   const STATUS_VERB = { new: 'Added', changed: 'Edited', deleted: 'Removed' };
-  const ICON_IDEAS = ['fa-book-open', 'fa-lightbulb', 'fa-brain', 'fa-users', 'fa-eye', 'fa-hand-pointer', 'fa-pen-ruler',
-    'fa-universal-access', 'fa-scale-balanced', 'fa-face-smile', 'fa-robot', 'fa-vr-cardboard', 'fa-house-signal',
-    'fa-desktop', 'fa-magnifying-glass', 'fa-bullseye', 'fa-layer-group', 'fa-shield-halved', 'fa-chart-line', 'fa-star'];
+  // Icons a teacher can pick (every icon the lessons already use, plus a few more)
+  const ICONS = [
+    ['fa-book-open', 'Open book'], ['fa-book', 'Book'], ['fa-star', 'Star'], ['fa-bullseye', 'Target'],
+    ['fa-list-check', 'Checklist'], ['fa-clipboard-list', 'Clipboard'], ['fa-list', 'List'], ['fa-lightbulb', 'Idea'],
+    ['fa-circle-question', 'Question'], ['fa-magnifying-glass', 'Search'], ['fa-flag', 'Flag'], ['fa-trophy', 'Trophy'],
+    ['fa-droplet', 'Water drop'], ['fa-faucet', 'Faucet'], ['fa-bolt', 'Electricity'], ['fa-plug', 'Plug'],
+    ['fa-lightbulb', 'Light bulb'], ['fa-piggy-bank', 'Savings'], ['fa-recycle', 'Recycle'], ['fa-seedling', 'Seedling'],
+    ['fa-leaf', 'Leaf'], ['fa-sun', 'Sun'], ['fa-earth-asia', 'Earth'], ['fa-shirt', 'Clothes'],
+    ['fa-heart', 'Heart'], ['fa-hand-holding-heart', 'Caring'], ['fa-handshake-angle', 'Helping hand'], ['fa-gift', 'Gift'],
+    ['fa-people-roof', 'Family home'], ['fa-users', 'People'], ['fa-child', 'Child'], ['fa-house', 'House'],
+    ['fa-school', 'School'], ['fa-building-columns', 'Government'], ['fa-hotel', 'Building'], ['fa-bed', 'Bed'],
+    ['fa-clock', 'Clock'], ['fa-briefcase', 'Work'], ['fa-scale-balanced', 'Fairness'], ['fa-shield-halved', 'Safety'],
+    ['fa-lock', 'Privacy'], ['fa-gem', 'Value'], ['fa-feather', 'Feather'], ['fa-face-smile', 'Smile'],
+    ['fa-share-nodes', 'Sharing'], ['fa-mobile-screen', 'Phone'], ['fa-comment-dots', 'Chat'], ['fa-camera', 'Camera'],
+    ['fa-image', 'Picture'], ['fa-video', 'Video'], ['fa-play', 'Play'], ['fa-microphone', 'Microphone'],
+    ['fa-pen', 'Pen'], ['fa-clone', 'Cards'], ['fa-brain', 'Thinking'], ['fa-eye', 'Eye'],
+  ].filter(([icon], i, all) => all.findIndex(([x]) => x === icon) === i);
 
   let root = null;
   let data = { items: [], videoTopics: [], deckColors: [], pending: 0 };
@@ -304,7 +318,22 @@ const HCIContentEditor = (function () {
       <option value="">None (always open)</option>
       ${ofKind('module').filter(m => m.status !== 'deleted').map((m, i) => `<option value="${esc(m.key)}" ${value === m.key ? 'selected' : ''}>Lesson ${i + 1}: ${esc(view(m).title)}</option>`).join('')}
     </select>`, 'Locked until the student reads every page of this lesson');
-  const iconBox = (name, value) => `<span class="ce-icon-input"><i class="fa-solid ${HCIRichText.safeIcon(value)}"></i>${inputBox(name, value, 'placeholder="fa-book-open" list="ceIconIdeas"')}</span>`;
+  // Icon: a button showing the current icon that opens a grid to pick from
+  function iconBox(name, value) {
+    const current = HCIRichText.safeIcon(value);
+    // An icon set earlier that isn't in the list stays pickable
+    const list = ICONS.some(([icon]) => icon === current) ? ICONS : [[current, 'Current icon'], ...ICONS];
+    const nameOf = (icon) => (list.find(([x]) => x === icon) || [icon, 'Icon'])[1];
+    return `<span class="ce-icon-input">
+      <input type="hidden" name="${name}" value="${esc(current)}">
+      <button type="button" class="ce-icon-pick" data-pick aria-expanded="false" aria-label="Icon: ${esc(nameOf(current))}. Click to change">
+        <i class="fa-solid ${current}"></i><span>Change</span><i class="fa-solid fa-chevron-down ce-icon-caret" aria-hidden="true"></i>
+      </button>
+      <span class="ce-icon-grid" role="listbox" aria-label="Pick an icon" hidden>
+        ${list.map(([icon, label]) => `<button type="button" role="option" data-icon="${icon}" title="${esc(label)}" aria-label="${esc(label)}" aria-selected="${icon === current}"><i class="fa-solid ${icon}"></i></button>`).join('')}
+      </span>
+    </span>`;
+  }
 
   function choiceFields(d) {
     return `<fieldset class="ce-choices"><legend>Answer choices <small>(pick the correct one)</small></legend>
@@ -428,7 +457,6 @@ const HCIContentEditor = (function () {
           <button type="submit" class="tool-btn" data-save="later"><i class="fa-solid fa-floppy-disk"></i> Save for later</button>
           <button type="submit" class="tool-btn ce-publish" data-save="publish"><i class="fa-solid fa-upload"></i> Save &amp; publish</button></span>
         </div>
-        <datalist id="ceIconIdeas">${ICON_IDEAS.map(i => `<option value="${i}">`).join('')}</datalist>
       </form>`;
     document.body.appendChild(overlay);
     const form = overlay.querySelector('form');
@@ -453,6 +481,45 @@ const HCIContentEditor = (function () {
     };
     form.addEventListener('input', refreshPreview);
     refreshPreview();
+
+    // Icon picker: open/close the grid, pick an icon
+    const closeGrids = (except) => form.querySelectorAll('.ce-icon-grid').forEach(g => {
+      if (g === except) return;
+      g.hidden = true;
+      g.parentElement.querySelector('[data-pick]').setAttribute('aria-expanded', 'false');
+    });
+    form.addEventListener('click', (e) => {
+      const pick = e.target.closest('[data-pick]');
+      const choice = e.target.closest('[data-icon]');
+      if (!pick && !choice) { if (!e.target.closest('.ce-icon-grid')) closeGrids(); return; }
+      e.preventDefault(); // buttons sit inside a <label>
+      const box = e.target.closest('.ce-icon-input');
+      const grid = box.querySelector('.ce-icon-grid');
+      if (pick) {
+        closeGrids(grid);
+        grid.hidden = !grid.hidden;
+        pick.setAttribute('aria-expanded', String(!grid.hidden));
+        if (!grid.hidden) (grid.querySelector('[aria-selected="true"]') || grid.querySelector('button')).focus();
+        return;
+      }
+      const input = box.querySelector('input');
+      input.value = choice.dataset.icon;
+      grid.querySelectorAll('[data-icon]').forEach(b => b.setAttribute('aria-selected', String(b === choice)));
+      box.querySelector('[data-pick]').setAttribute('aria-label', `Icon: ${choice.getAttribute('aria-label')}. Click to change`);
+      closeGrids();
+      box.querySelector('[data-pick]').focus();
+      input.dispatchEvent(new Event('input', { bubbles: true })); // updates the icon and the preview
+    });
+
+    // Escape closes an open icon grid first, not the whole editor
+    form.addEventListener('keydown', (e) => {
+      if (e.key !== 'Escape') return;
+      const openGrid = form.querySelector('.ce-icon-grid:not([hidden])');
+      if (!openGrid) return;
+      e.stopPropagation();
+      closeGrids();
+      openGrid.parentElement.querySelector('[data-pick]').focus();
+    });
 
     // Topic sections: add / move / remove
     form.addEventListener('click', (e) => {
