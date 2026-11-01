@@ -21,10 +21,6 @@
 :root[data-theme="dark"] .login-section::before {
     background: url('campus-bg.jpg') no-repeat center center/cover;
 }
-:root[data-theme="dark"] .image-section {
-    background: url('classroom-img.jpg') no-repeat center center/cover;
-    background-color: hsl(165 14% 20%);
-}
 :root[data-theme="dark"] .glass-panel {
     background: hsl(165 14% 17% / 0.45);
     box-shadow: 0 4px 30px rgba(0, 0, 0, 0.1);
@@ -824,17 +820,6 @@
 }
 :root[data-theme="dark"] .login-page .secure-note i {
     color: hsl(219 62% 79%);
-}
-:root[data-theme="dark"] .login-page .image-overlay {
-    color: #fff;
-    background: linear-gradient(to top, rgba(1, 27, 41, 0.92) 0%, rgba(2, 41, 61, 0.6) 55%, rgba(2, 41, 61, 0) 100%);
-}
-:root[data-theme="dark"] .login-page .overlay-badge {
-    background: rgba(255, 255, 255, 0.15);
-    border: 1px solid rgba(255, 255, 255, 0.3);
-}
-:root[data-theme="dark"] .login-page .feature-list i {
-    background: rgba(255, 255, 255, 0.18);
 }
 @media (max-width: 768px) {
     :root[data-theme="dark"] .login-page .glass-panel {
@@ -5364,8 +5349,7 @@
 }
 
 /* Photos: slightly dimmer so they don't glare */
-:root[data-theme="dark"] .thumbnail-container img,
-:root[data-theme="dark"] .image-section {
+:root[data-theme="dark"] .thumbnail-container img {
     filter: brightness(0.88);
 }
 
