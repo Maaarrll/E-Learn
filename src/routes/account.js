@@ -57,6 +57,14 @@ const passwordChangeLimiter = rateLimit({
     message: 'Too many attempts. Please wait 15 minutes and try again.'
 });
 
+// Every photo upload goes to Cloudinary (uses up its quota)
+const photoLimiter = rateLimit({
+    windowMs: 60 * 60 * 1000,
+    max: 10,
+    keyFn: (req) => `photo:${req.userId}`,
+    message: 'Too many photo uploads. Please try again in an hour.'
+});
+
 
 /*
     Cloudinary configuration.
@@ -616,6 +624,7 @@ router.put(
 router.post(
     '/photo',
     requireAuth,
+    photoLimiter,
     upload.single('photo'),
     async (req, res, next) => {
 
@@ -685,6 +694,44 @@ router.delete(
     async (req, res, next) => {
 
         try {
+
+            /*
+                Requires the password, so someone at an unattended,
+                logged-in computer can't wipe the account for good.
+            */
+            const attempt =
+                passwordChangeLimiter.hit(
+                    `account-pw:${req.userId}`
+                );
+
+            if (attempt.limited) {
+
+                return passwordChangeLimiter.reject(
+                    res,
+                    attempt.retryAfter
+                );
+            }
+
+            const { password } = req.body || {};
+
+            const { rows } = await pool.query(
+                'SELECT password_hash FROM public.users WHERE id = $1',
+                [req.userId]
+            );
+
+            if (
+                !rows[0] ||
+                typeof password !== 'string' ||
+                !(await bcrypt.compare(password, rows[0].password_hash))
+            ) {
+
+                return res.status(400).json({
+
+                    error:
+                        'Your password is incorrect.'
+
+                });
+            }
 
             await pool.query(
 

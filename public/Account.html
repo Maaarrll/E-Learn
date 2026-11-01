@@ -297,6 +297,10 @@
                     <div class="acct-danger-text">
                         <h3><i class="fa-solid fa-triangle-exclamation"></i> Delete Account</h3>
                         <p>This permanently deletes your account and all your progress. It cannot be undone.</p>
+                        <div class="acct-input">
+                            <i class="fa-solid fa-lock"></i>
+                            <input type="password" id="delete-password" placeholder="Enter your password to confirm" aria-label="Password to confirm deleting your account" autocomplete="current-password">
+                        </div>
                     </div>
                     <button type="button" class="acct-delete-btn" id="deleteAccountBtn">
                         <i class="fa-solid fa-trash"></i> Delete Account
@@ -532,6 +536,14 @@
 
         document.getElementById('deleteAccountBtn').addEventListener('click', function () {
             const btn = this;
+            const deletePassword = document.getElementById('delete-password');
+
+            if (!deletePassword.value) {
+                deletePassword.closest('.acct-input').classList.add('invalid');
+                deletePassword.focus();
+                showMessage('Enter your password to delete your account.', true);
+                return;
+            }
 
             confirmDialog({
                 title: 'Delete your account?',
@@ -547,7 +559,9 @@
                     try {
                         const response = await fetch('/api/account', {
                             method: 'DELETE',
-                            credentials: 'include'
+                            credentials: 'include',
+                            headers: { 'Content-Type': 'application/json' },
+                            body: JSON.stringify({ password: deletePassword.value })
                         });
 
                         const data = await response.json().catch(() => ({}));

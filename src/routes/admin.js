@@ -383,11 +383,13 @@ router.post('/students/:id/reset', studentAction('reset_progress', async (s) => 
 router.get('/lrns', async (req, res, next) => {
   try {
     const { rows } = await pool.query(
-      `SELECT a.lrn, a.added_at, u.full_name
+      `SELECT a.lrn, a.added_at, u.full_name, u.program, u.year_section
        FROM allowed_lrns a LEFT JOIN users u ON u.student_id = a.lrn
        ORDER BY a.added_at DESC, a.lrn`
     );
-    res.json({ lrns: rows.map(r => ({ lrn: r.lrn, addedAt: r.added_at, usedBy: r.full_name || null })) });
+    // Names only for students this instructor can see (main admin: everyone)
+    const usedBy = (r) => !r.full_name ? null : canSee(req.instructor, r) ? r.full_name : 'a student in another section';
+    res.json({ lrns: rows.map(r => ({ lrn: r.lrn, addedAt: r.added_at, usedBy: usedBy(r) })) });
   } catch (err) {
     next(err);
   }
