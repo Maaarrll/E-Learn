@@ -169,7 +169,7 @@
                         <div class="admin-toolbar">
                             <div class="search-container admin-search">
                                 <i class="fa-solid fa-magnifying-glass"></i>
-                                <input type="text" id="studentSearch" placeholder="Search name or student ID..." aria-label="Search students">
+                                <input type="text" id="studentSearch" placeholder="Search name, username or LRN..." aria-label="Search students">
                             </div>
                             <select id="filterProgram" aria-label="Program"><option value="">All programs</option></select>
                             <select id="filterSection" aria-label="Year and section"><option value="">All sections</option></select>
@@ -514,7 +514,7 @@
             const avg = classAverage();
 
             const list = students.filter(s =>
-                (!q || s.fullName.toLowerCase().includes(q) || s.studentId.toLowerCase().includes(q)) &&
+                (!q || s.fullName.toLowerCase().includes(q) || s.username.toLowerCase().includes(q) || s.studentId.toLowerCase().includes(q)) &&
                 (!program || s.program === program) &&
                 (!section || s.yearSection === section) &&
                 (!status || (status === 'atrisk' ? riskReasons(s, avg).length > 0 : status === 'inactive' ? s.inactive : !s.inactive)));
@@ -535,7 +535,7 @@
                     <td data-label="Student">
                         <span class="admin-student">
                             <span class="admin-avatar">${escapeHtml(initials(s.fullName))}</span>
-                            <span><strong>${escapeHtml(s.fullName)}</strong><small>${escapeHtml(s.studentId || '—')}</small></span>
+                            <span><strong>${escapeHtml(s.fullName)}</strong><small>${s.username ? '@' + escapeHtml(s.username) + ' · ' : ''}${escapeHtml(s.studentId || '—')}</small></span>
                         </span>
                     </td>
                     <td data-label="Section">${escapeHtml(sectionOf(s))}</td>
@@ -567,7 +567,7 @@
                         <span class="admin-avatar is-big">${escapeHtml(initials(s.fullName))}</span>
                         <div>
                             <h3 id="drawerName">${escapeHtml(s.fullName)}</h3>
-                            <p>${escapeHtml(s.studentId || 'No student ID')} · ${escapeHtml(sectionOf(s))}</p>
+                            <p>${s.username ? '@' + escapeHtml(s.username) + ' · ' : ''}${escapeHtml(s.studentId || 'No student ID')} · ${escapeHtml(sectionOf(s))}</p>
                             <small>Joined ${new Date(s.joinedAt).toLocaleDateString(undefined, { month: 'short', day: 'numeric', year: 'numeric' })} · Last active ${lastActiveText(s.lastActive).toLowerCase()}</small>
                             ${s.deactivated ? '<span class="admin-pill is-off">Deactivated: cannot log in</span>' : ''}
                         </div>
