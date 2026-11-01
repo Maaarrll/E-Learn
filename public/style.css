@@ -369,6 +369,11 @@ p {
     text-align: left;
 }
 
+/* Full-width row (School), so LRN and Password pair up below it */
+.signup-container .input-group.full {
+    grid-column: 1 / -1;
+}
+
 
 /* =========================================================
    LABEL
@@ -651,7 +656,8 @@ p {
     .signup-container {
         align-items: flex-start;
 
-        padding: 20px 12px;
+        /* Room above the card for the floating theme switch */
+        padding: 68px 12px 20px;
     }
 
     .signup-container .glass-card {
