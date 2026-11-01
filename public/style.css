@@ -9257,6 +9257,50 @@ div.qs-result {
     display: none;
 }
 
+/* Online now: overlapping faces + count, the full list opens below and scrolls */
+.online-drop summary {
+    cursor: pointer;
+}
+
+.online-faces {
+    display: flex;
+    flex-shrink: 0;
+}
+
+.online-faces:empty {
+    display: none;
+}
+
+.online-faces .admin-avatar,
+.online-more {
+    width: 30px;
+    height: 30px;
+    margin-left: -5px;
+    border: 2px solid #ffffff;
+    font-size: 11px;
+}
+
+.online-faces > :first-child {
+    margin-left: 0;
+}
+
+.online-more {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    flex-shrink: 0;
+    border-radius: 50%;
+    background: #e3e8f4;
+    color: #33415c;
+    font-weight: 800;
+}
+
+.online-list {
+    max-height: 320px;
+    margin-top: 6px;
+    overflow-y: auto;
+}
+
 /* Most-missed questions scroll after about four rows so the card stays short */
 #missedList {
     max-height: 280px;
