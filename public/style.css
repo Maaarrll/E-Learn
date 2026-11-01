@@ -8472,6 +8472,11 @@ body.update-password-page .update-container::before {
     margin-left: auto;
 }
 
+/* display: inline-flex would otherwise override the hidden attribute */
+.resume-note[hidden] {
+    display: none;
+}
+
 .resume-note {
     display: inline-flex;
     align-items: center;
@@ -14487,6 +14492,12 @@ fieldset.ce-field legend {
 .tq-c0 { --tile: #459fe0; }
 .tq-c1 { --tile: #2f74c0; }
 .tq-c2 { --tile: #d48a00; }
+
+/* White text is too faint on the two bright tiles, so they use dark ink */
+.tq-choice.tq-c0,
+.tq-choice.tq-c2 {
+    color: #102430;
+}
 .tq-c3 { --tile: #115b91; }
 .tq-c4 { --tile: #7a4fc4; }
 .tq-c5 { --tile: #d4572b; }
@@ -16768,6 +16779,11 @@ button.cs-node:hover .cs-node-card {
 
 .ls-aralin[aria-pressed="true"] {
     background: var(--ls-pow);
+}
+
+/* Lesson colours are too faint on yellow */
+.ls-aralin[aria-pressed="true"] .ls-aralin-text b {
+    color: var(--ls-ink);
 }
 
 .ls-aralin:focus-visible {
