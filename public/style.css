@@ -16313,6 +16313,52 @@ button.cs-node:hover .cs-node-card {
     }
 }
 
+/* ---------- Quiz Cards on phones ---------- */
+/* Submit fixed to the bottom of the screen (fixed, not sticky: .main-content
+   has overflow-x hidden on phones). Cards move on by themselves after 1.5s,
+   so the feedback pops up above the bar instead of waiting below the answers */
+@media screen and (max-width: 768px) {
+    .study-page #quizBody {
+        margin-bottom: 84px;
+    }
+
+    .study-page #quizBody .fc-actions {
+        position: fixed;
+        left: 0;
+        right: 0;
+        bottom: 0;
+        z-index: 40;
+        padding: 10px 16px calc(10px + env(safe-area-inset-bottom));
+        background: #fff;
+        box-shadow: 0 -6px 18px rgba(2, 48, 71, 0.12);
+    }
+
+    /* "All decks" at the top already quits */
+    .study-page #quizBody .fc-btn-ghost {
+        display: none;
+    }
+
+    .study-page #quizBody .fc-feedback {
+        position: fixed;
+        left: 16px;
+        right: 16px;
+        bottom: calc(80px + env(safe-area-inset-bottom));
+        z-index: 41;
+        margin: 0;
+        box-shadow: 0 8px 24px rgba(2, 48, 71, 0.18);
+    }
+
+    .study-page #quizBody .fc-card {
+        margin-bottom: 26px;
+        padding: 24px 16px 26px;
+        min-height: 0;
+    }
+
+    .study-page:has(#quizView[style*="block"]) .to-top-global {
+        bottom: 88px;
+    }
+}
+
 /* ---------- Read Lesson: points, sticker book, quick checks, flip cards ---------- */
 .sb-points {
     display: inline-flex;
