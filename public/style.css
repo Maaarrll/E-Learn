@@ -6092,7 +6092,8 @@ p {
     transition: color 0.2s;
 }
 
-.account-page .acct-input input {
+.account-page .acct-input input,
+.account-page .acct-input select {
     width: 100%;
     height: 46px;
     padding: 0 14px 0 40px;
@@ -6110,11 +6111,13 @@ p {
     color: #969fa6;
 }
 
-.account-page .acct-input input:hover:not(:focus) {
+.account-page .acct-input input:hover:not(:focus),
+.account-page .acct-input select:hover:not(:focus) {
     border-color: #b1c2ce;
 }
 
-.account-page .acct-input input:focus {
+.account-page .acct-input input:focus,
+.account-page .acct-input select:focus {
     background: #fff;
     border-color: #023047;
     box-shadow: 0 0 0 3px rgba(2, 48, 71, 0.12);
@@ -6335,7 +6338,8 @@ p {
     }
 
     /* 16px para hindi mag-zoom ang iPhone */
-    .account-page .acct-input input {
+    .account-page .acct-input input,
+    .account-page .acct-input select {
         font-size: 16px;
     }
 
@@ -11751,7 +11755,7 @@ fieldset.ce-field legend {
 
 .instructor-list .admin-list-text strong small {
     font-weight: 600;
-    color: #888da1;
+    color: #5f6478;
 }
 
 .admin-page .sidebar-user {

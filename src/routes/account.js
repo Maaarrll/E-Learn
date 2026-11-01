@@ -38,6 +38,10 @@ const {
     USERNAME_RULES_MESSAGE,
     lrnProblem
 } = require('../utils/students');
+const { splitName } = require('../utils/names');
+
+// Same sections as signup: Grade 7, Section A to Z
+const YEAR_SECTION_REGEX = /^Grade 7 - Section [A-Z]$/;
 
 // Maximum lengths for text fields
 const MAX_FULL_NAME = 120;
@@ -197,6 +201,10 @@ function publicUser(row) {
         fullName:
             row.full_name,
 
+        // First / middle / last for the Account page form
+        nameParts:
+            splitName(row),
+
         username:
             row.username,
 
@@ -233,6 +241,8 @@ router.get(
                 `SELECT
                     id,
                     full_name,
+                    first_name,
+                    last_name,
                     username,
                     year_section,
                     program,
@@ -288,6 +298,12 @@ router.put(
 
                 fullName,
 
+                firstName,
+
+                middleName,
+
+                lastName,
+
                 username,
 
                 yearSection,
@@ -333,6 +349,8 @@ router.put(
                 `SELECT
                     id,
                     full_name,
+                    first_name,
+                    last_name,
                     username,
                     year_section,
                     program,
@@ -368,11 +386,23 @@ router.put(
                TEXT FIELDS
                ===================================================== */
 
+            // The Account page sends first / middle / last (like signup), so
+            // first_name and last_name stay right for "Ordonia, Marl June S."
+            const clean = (v) => String(v || '').trim().replace(/\s+/g, ' ');
+            const splitSent = firstName !== undefined || lastName !== undefined;
+            if (splitSent && (!clean(firstName) || !clean(lastName))) {
+                return res.status(400).json({ error: 'Please enter your first name and last name.' });
+            }
+
+            const newFirstName = splitSent ? clean(firstName) : user.first_name;
+            const newLastName = splitSent ? clean(lastName) : user.last_name;
+
             const newFullName =
-                fullName !== undefined &&
-                String(fullName).trim() !== ''
-                    ? String(fullName).trim().replace(/\s+/g, ' ')
-                    : user.full_name;
+                splitSent
+                    ? [clean(firstName), clean(middleName), clean(lastName)].filter(Boolean).join(' ')
+                    : fullName !== undefined && clean(fullName) !== ''
+                        ? clean(fullName)
+                        : user.full_name;
 
             const newYearSection =
                 yearSection !== undefined
@@ -399,6 +429,11 @@ router.put(
                 });
             }
 
+
+            // Unchanged keeps older free-typed sections; a new one must be from the list
+            if (newYearSection !== user.year_section && !YEAR_SECTION_REGEX.test(newYearSection)) {
+                return res.status(400).json({ error: 'Please pick your section from the list.' });
+            }
 
             /*
                 The name is the login, so it must stay unique.
@@ -604,13 +639,19 @@ router.put(
 
                     session_version = $6,
 
-                    username = $8
+                    username = $8,
+
+                    first_name = $9,
+
+                    last_name = $10
 
                  WHERE id = $7
 
                  RETURNING
                     id,
                     full_name,
+                    first_name,
+                    last_name,
                     username,
                     year_section,
                     program,
@@ -633,7 +674,11 @@ router.put(
 
                     req.userId,
 
-                    newUsername
+                    newUsername,
+
+                    newFirstName,
+
+                    newLastName
 
                 ]
             );

@@ -267,6 +267,14 @@ router.get('/export.csv', async (req, res, next) => {
   try {
     const students = await loadStudents(req.instructor);
     const { totals } = await getContent();
+    // Same overall as the student panel: points earned / points possible over finished quizzes
+    const { rows: quizRows } = await pool.query(
+      `SELECT a.user_id, SUM(a.score)::int AS got, SUM(jsonb_array_length(q.questions))::int AS max
+       FROM quiz_attempts a JOIN quizzes q ON q.id = a.quiz_id
+       WHERE a.user_id = ANY($1::int[]) AND a.finished_at IS NOT NULL GROUP BY a.user_id`,
+      [students.map(s => s.id)]
+    );
+    const quizBy = new Map(quizRows.map(r => [r.user_id, r]));
     // Cells starting with = + - @ could run as formulas in Excel
     const cell = (value) => {
       let text = value === null || value === undefined ? '' : String(value);
@@ -276,13 +284,15 @@ router.get('/export.csv', async (req, res, next) => {
     const header = ['Name', 'Student ID', 'Program', 'Year & Section', 'Overall %',
       `Case studies solved (of ${totals.caseStudies})`, `Decks mastered (of ${totals.decks})`,
       `Videos watched (of ${totals.videos})`, 'Questions answered', 'Correct answers',
-      'Current streak (days)', 'Longest streak (days)', `Badges (of ${getBadges(totals).length})`, 'Last active', 'Joined'];
+      'Current streak (days)', 'Longest streak (days)', `Badges (of ${getBadges(totals).length})`, 'Quiz points earned', 'Quiz points possible', 'Quiz score %', 'Last active', 'Joined'];
     const lines = [header.map(cell).join(',')];
     for (const s of students) {
+      const qz = quizBy.get(s.id);
       lines.push([
         s.fullName, s.studentId, s.program, s.yearSection, s.overallPercent,
         s.caseSolved, s.decksMastered, s.videosWatched, s.answers, s.correct,
-        s.currentStreak, s.longestStreak, s.badges, s.lastActive || 'Never', tsToYmd(s.joinedAt),
+        s.currentStreak, s.longestStreak, s.badges,
+        qz ? qz.got : '', qz ? qz.max : '', qz && qz.max ? Math.round((qz.got / qz.max) * 100) : '', s.lastActive || 'Never', tsToYmd(s.joinedAt),
       ].map(cell).join(','));
     }
 

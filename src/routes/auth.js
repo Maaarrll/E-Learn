@@ -29,6 +29,7 @@ const {
     nameTaken,
     lrnProblem
 } = require('../utils/students');
+const { splitName } = require('../utils/names');
 
 // Rate-limit key for a typed name: spacing/case variants count as the same
 // name (login matches them all), and very long input can't bloat memory
@@ -148,6 +149,10 @@ function publicUser(row) {
 
         fullName:
             row.full_name,
+
+        // First / middle / last for the Account page form
+        nameParts:
+            splitName(row),
 
         username:
             row.username,

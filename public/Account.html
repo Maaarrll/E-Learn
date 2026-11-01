@@ -9,8 +9,8 @@
     <link rel="icon" href="favicon-32.png?v=4" type="image/png" sizes="32x32">
     <link rel="apple-touch-icon" href="apple-touch-icon.png?v=4">
     <meta name="theme-color" content="#023047">
-    <link rel="stylesheet" href="style.css?v=117">
-    <link rel="stylesheet" href="dark.css?v=71">
+    <link rel="stylesheet" href="style.css?v=118">
+    <link rel="stylesheet" href="dark.css?v=72">
     <script src="js/theme.js?v=3"></script>
 
     <link
@@ -181,14 +181,30 @@
 
                         <div class="acct-grid">
 
-                            <!-- Full Name -->
+                            <!-- Name: first / middle / last, like signup -->
                             <div class="acct-field">
-                                <label for="full-name">Full Name</label>
+                                <label for="first-name">First Name</label>
                                 <div class="acct-input">
                                     <i class="fa-regular fa-user"></i>
-                                    <input type="text" id="full-name" maxlength="160" autocomplete="name" required>
+                                    <input type="text" id="first-name" maxlength="60" autocomplete="given-name" required>
                                 </div>
-                                <small class="acct-hint">Shown to your teacher. You can also log in with it.</small>
+                                <small class="acct-hint">Shown to your teacher. You can also log in with your full name.</small>
+                            </div>
+
+                            <div class="acct-field">
+                                <label for="middle-name">Middle Name <small>(optional)</small></label>
+                                <div class="acct-input">
+                                    <i class="fa-regular fa-user"></i>
+                                    <input type="text" id="middle-name" maxlength="60" autocomplete="additional-name" placeholder="Full name or initial">
+                                </div>
+                            </div>
+
+                            <div class="acct-field">
+                                <label for="last-name">Last Name</label>
+                                <div class="acct-input">
+                                    <i class="fa-regular fa-user"></i>
+                                    <input type="text" id="last-name" maxlength="60" autocomplete="family-name" required>
+                                </div>
                             </div>
 
                             <!-- Username -->
@@ -206,7 +222,36 @@
                                 <label for="year-section">Year &amp; Section</label>
                                 <div class="acct-input">
                                     <i class="fa-solid fa-layer-group"></i>
-                                    <input type="text" id="year-section" placeholder="e.g. Grade 7 - Section B" required>
+                                    <!-- Same list as signup, so the teacher's section filter always matches -->
+                                    <select id="year-section" required>
+                                        <option value="" disabled>Select section</option>
+                                        <option value="Grade 7 - Section A">Grade 7 - Section A</option>
+                                        <option value="Grade 7 - Section B">Grade 7 - Section B</option>
+                                        <option value="Grade 7 - Section C">Grade 7 - Section C</option>
+                                        <option value="Grade 7 - Section D">Grade 7 - Section D</option>
+                                        <option value="Grade 7 - Section E">Grade 7 - Section E</option>
+                                        <option value="Grade 7 - Section F">Grade 7 - Section F</option>
+                                        <option value="Grade 7 - Section G">Grade 7 - Section G</option>
+                                        <option value="Grade 7 - Section H">Grade 7 - Section H</option>
+                                        <option value="Grade 7 - Section I">Grade 7 - Section I</option>
+                                        <option value="Grade 7 - Section J">Grade 7 - Section J</option>
+                                        <option value="Grade 7 - Section K">Grade 7 - Section K</option>
+                                        <option value="Grade 7 - Section L">Grade 7 - Section L</option>
+                                        <option value="Grade 7 - Section M">Grade 7 - Section M</option>
+                                        <option value="Grade 7 - Section N">Grade 7 - Section N</option>
+                                        <option value="Grade 7 - Section O">Grade 7 - Section O</option>
+                                        <option value="Grade 7 - Section P">Grade 7 - Section P</option>
+                                        <option value="Grade 7 - Section Q">Grade 7 - Section Q</option>
+                                        <option value="Grade 7 - Section R">Grade 7 - Section R</option>
+                                        <option value="Grade 7 - Section S">Grade 7 - Section S</option>
+                                        <option value="Grade 7 - Section T">Grade 7 - Section T</option>
+                                        <option value="Grade 7 - Section U">Grade 7 - Section U</option>
+                                        <option value="Grade 7 - Section V">Grade 7 - Section V</option>
+                                        <option value="Grade 7 - Section W">Grade 7 - Section W</option>
+                                        <option value="Grade 7 - Section X">Grade 7 - Section X</option>
+                                        <option value="Grade 7 - Section Y">Grade 7 - Section Y</option>
+                                        <option value="Grade 7 - Section Z">Grade 7 - Section Z</option>
+                                    </select>
                                 </div>
                             </div>
 
@@ -330,7 +375,7 @@
     </div>
 
 
-    <script src="js/api.js?v=17"></script>
+    <script src="js/api.js?v=18"></script>
     <script src="js/notifications.js?v=2"></script>
     <script src="js/sfx.js?v=8"></script>
     <script src="js/gamify.js?v=3"></script>
@@ -344,7 +389,9 @@
            ================================================= */
 
         const els = {
-            fullName: document.getElementById('full-name'),
+            firstName: document.getElementById('first-name'),
+            middleName: document.getElementById('middle-name'),
+            lastName: document.getElementById('last-name'),
             username: document.getElementById('username'),
             yearSection: document.getElementById('year-section'),
             program: document.getElementById('program'),
@@ -390,7 +437,7 @@
            ================================================= */
 
         function updateProfileHeader() {
-            const name = els.fullName.value.trim() || 'Your Account';
+            const name = fullNameNow() || 'Your Account';
             document.getElementById('profileName').textContent = name;
 
             const meta = els.yearSection.value.trim();
@@ -419,9 +466,14 @@
            UNSAVED CHANGES (Save button)
            ================================================= */
 
+        const fullNameNow = () => [els.firstName, els.middleName, els.lastName]
+            .map(el => el.value.trim().replace(/\s+/g, ' ')).filter(Boolean).join(' ');
+
         function currentValues() {
             return {
-                fullName: els.fullName.value.trim(),
+                firstName: els.firstName.value.trim(),
+                middleName: els.middleName.value.trim(),
+                lastName: els.lastName.value.trim(),
                 username: els.username.value.trim(),
                 yearSection: els.yearSection.value.trim(),
                 program: els.program.value.trim(),
@@ -504,8 +556,15 @@
             const user = await requireAuth();
             if (!user) return;
 
-            els.fullName.value = user.fullName || '';
+            const parts = user.nameParts || { first: user.fullName || '', middle: '', last: '' };
+            els.firstName.value = parts.first;
+            els.middleName.value = parts.middle;
+            els.lastName.value = parts.last;
             els.username.value = user.username || '';
+            // An older free-typed section stays selectable until they pick one from the list
+            if (user.yearSection && ![...els.yearSection.options].some(o => o.value === user.yearSection)) {
+                els.yearSection.add(new Option(user.yearSection, user.yearSection), 1);
+            }
             els.yearSection.value = user.yearSection || '';
             els.program.value = user.program || '';
             els.studentId.value = user.studentId || '';
@@ -643,7 +702,7 @@
             e.preventDefault();
 
             /* Validate required fields */
-            for (const key of ['fullName', 'yearSection', 'program']) {
+            for (const key of ['firstName', 'lastName', 'yearSection', 'program']) {
                 if (!els[key].value.trim()) {
                     els[key].closest('.acct-input').classList.add('invalid');
                     els[key].focus();
@@ -688,7 +747,9 @@
             }
 
             const payload = {
-                fullName: els.fullName.value.trim(),
+                firstName: els.firstName.value.trim(),
+                middleName: els.middleName.value.trim(),
+                lastName: els.lastName.value.trim(),
                 username,
                 yearSection: els.yearSection.value.trim(),
                 program: els.program.value.trim(),

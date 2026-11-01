@@ -268,6 +268,17 @@ router.put('/:id/schedule', async (req, res, next) => {
     const { window, error } = validateWindow(req.body || {});
     const audience = validateAudience(req.body || {}, req.instructor);
     if (error || audience.error) return res.status(400).json({ error: error || audience.error });
+    // More time: reopen attempts the old deadline cut off mid-quiz (closeOverdue
+    // set their finished_at to that deadline; real finishes answered every question)
+    if (!window.closesAt || window.closesAt > new Date()) {
+      await pool.query(
+        `UPDATE quiz_attempts a SET finished_at = NULL, shown_at = NOW()
+         FROM quizzes q
+         WHERE q.id = a.quiz_id AND a.quiz_id = $1 AND a.finished_at = q.closes_at
+           AND a.current < jsonb_array_length(q.questions)`,
+        [quiz.id]
+      );
+    }
     await pool.query(
       'UPDATE quizzes SET opens_at = $2, closes_at = $3, target_sections = $4::jsonb, updated_at = NOW() WHERE id = $1',
       [quiz.id, window.opensAt, window.closesAt, audience.sections ? JSON.stringify(audience.sections) : null]

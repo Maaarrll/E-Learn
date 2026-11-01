@@ -1824,7 +1824,8 @@
 :root[data-theme="dark"] .account-page .acct-input > i {
     color: hsl(206 10% 65%);
 }
-:root[data-theme="dark"] .account-page .acct-input input {
+:root[data-theme="dark"] .account-page .acct-input input,
+:root[data-theme="dark"] .account-page .acct-input select {
     border: 1px solid hsl(206 18% 26%);
     background: hsl(210 33% 18%);
     color: hsl(165 12% 89%);
@@ -1833,10 +1834,12 @@
 :root[data-theme="dark"] .account-page .acct-input input::placeholder {
     color: #969fa6;
 }
-:root[data-theme="dark"] .account-page .acct-input input:hover:not(:focus) {
+:root[data-theme="dark"] .account-page .acct-input input:hover:not(:focus),
+:root[data-theme="dark"] .account-page .acct-input select:hover:not(:focus) {
     border-color: hsl(205 23% 32%);
 }
-:root[data-theme="dark"] .account-page .acct-input input:focus {
+:root[data-theme="dark"] .account-page .acct-input input:focus,
+:root[data-theme="dark"] .account-page .acct-input select:focus {
     background: hsl(165 14% 17%);
     border-color: #023047;
     box-shadow: 0 0 0 3px rgba(2, 48, 71, 0.12);
@@ -3623,7 +3626,7 @@
     color: hsl(46 70% 84%);
 }
 :root[data-theme="dark"] .instructor-list .admin-list-text strong small {
-    color: hsl(228 12% 64%);
+    color: hsl(228 12% 73%);
 }
 :root[data-theme="dark"] .notif-count {
     border: 2px solid #011f4e;
