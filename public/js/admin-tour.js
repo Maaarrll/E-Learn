@@ -53,7 +53,7 @@ const HCIAdminTour = (function () {
     { section: 'audit', target: cardOf('#auditList'), title: 'Activity log',
       text: 'A record of what teachers do here: opening and closing the class, viewing a student\'s details, exporting data and changes to student accounts. It shows who looked at what, to protect students\' privacy.' },
     { section: 'overview', target: '.sidebar-user', title: 'Your account',
-      text: 'The key changes your password and the arrow logs you out. Always log out on a shared or school computer.' },
+      text: 'Click your name to open My profile, where you can change your photo, name and password. The key changes your password and the arrow logs you out. Always log out on a shared or school computer.' },
     { title: 'You\'re all set!',
       text: 'That\'s the whole panel. Replay this tour anytime with the Tour button at the top of the page.' },
   ];

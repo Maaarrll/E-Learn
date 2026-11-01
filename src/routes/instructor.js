@@ -9,7 +9,7 @@ const { pool } = require('../db');
 const { rateLimit } = require('../middleware/rateLimit');
 const { isValidPassword, PASSWORD_RULES_MESSAGE } = require('../utils/passwords');
 const { isClassOpen, setClassOpen } = require('../middleware/classOpen');
-const { photoUpload, uploadPhoto } = require('../utils/photos');
+const { photoUpload, uploadPhoto, deletePhoto } = require('../utils/photos');
 const {
   requireInstructor,
   issueInstructorSession,
@@ -74,6 +74,37 @@ router.get('/me', requireInstructor, (req, res) => {
   res.json({ instructor: { instructorId, fullName, role, isAdmin, sections, profilePhoto } });
 });
 
+const audit = (instructorRowId, action, details = '') => pool.query(
+  'INSERT INTO instructor_audit_log (instructor_id, action, details) VALUES ($1, $2, $3)',
+  [instructorRowId, action, details]
+);
+
+// GET /api/instructor/profile — everything the My profile page shows
+router.get('/profile', requireInstructor, async (req, res, next) => {
+  try {
+    const { rows: [r] } = await pool.query('SELECT created_at, last_login_at FROM instructors WHERE id = $1', [req.instructor.id]);
+    const { instructorId, fullName, role, isAdmin, sections, profilePhoto } = req.instructor;
+    res.json({ instructorId, fullName, role, isAdmin, sections, profilePhoto, createdAt: r.created_at, lastLoginAt: r.last_login_at });
+  } catch (err) {
+    next(err);
+  }
+});
+
+// PUT /api/instructor/profile  { fullName } — change your own name (ID, role and sections stay with the main admin)
+router.put('/profile', requireInstructor, async (req, res, next) => {
+  try {
+    const fullName = typeof (req.body || {}).fullName === 'string' ? req.body.fullName.trim().replace(/\s+/g, ' ') : '';
+    if (!fullName || fullName.length > 120) return res.status(400).json({ error: 'Give your name (up to 120 characters).' });
+    if (fullName !== req.instructor.fullName) {
+      await pool.query('UPDATE instructors SET full_name = $1 WHERE id = $2', [fullName, req.instructor.id]);
+      await audit(req.instructor.id, 'update_profile', `"${req.instructor.fullName}" to "${fullName}"`);
+    }
+    res.json({ fullName });
+  } catch (err) {
+    next(err);
+  }
+});
+
 // Every upload uses Cloudinary quota
 const photoLimiter = rateLimit({
   windowMs: 60 * MINUTE,
@@ -89,6 +120,17 @@ router.post('/photo', requireInstructor, photoLimiter, photoUpload, async (req, 
     const url = await uploadPhoto(req.file.buffer, 'hcilearn/instructor_photos', `instructor${req.instructor.id}`);
     await pool.query('UPDATE instructors SET profile_photo = $1 WHERE id = $2', [url, req.instructor.id]);
     res.json({ profilePhoto: url });
+  } catch (err) {
+    next(err);
+  }
+});
+
+// DELETE /api/instructor/photo — back to initials
+router.delete('/photo', requireInstructor, async (req, res, next) => {
+  try {
+    await pool.query('UPDATE instructors SET profile_photo = NULL WHERE id = $1', [req.instructor.id]);
+    deletePhoto('hcilearn/instructor_photos', `instructor${req.instructor.id}`);
+    res.json({ profilePhoto: null });
   } catch (err) {
     next(err);
   }
