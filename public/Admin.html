@@ -407,7 +407,7 @@
         function riskReasons(s, avg) {
             if (s.deactivated) return [];
             const reasons = [];
-            if (!s.lastActive) reasons.push('Never started');
+            if (!s.lastActive) { if (s.inactive) reasons.push('Never started'); }
             else if (s.inactive) reasons.push(`Inactive ${daysBetween(s.lastActive, today)} days`);
             const accuracy = s.answers ? Math.round((s.correct / s.answers) * 100) : 100;
             if (s.answers >= RISK_MIN_ANSWERS && accuracy < RISK_LOW_ACCURACY) reasons.push(`${accuracy}% correct`);
@@ -439,11 +439,12 @@
         let lastInsights = null;
         function renderOverview(insights) {
             lastInsights = insights;
-            const activeWeek = students.filter(s => !s.inactive);
+            // Deactivated accounts can't log in, so they're neither active nor inactive
+            const current = students.filter(s => !s.deactivated);
             $('statStudents').textContent = students.length;
-            $('statToday').textContent = students.filter(s => s.lastActive === today).length;
-            $('statWeek').textContent = activeWeek.length;
-            $('statInactive').textContent = students.length - activeWeek.length;
+            $('statToday').textContent = current.filter(s => s.lastActive === today).length;
+            $('statWeek').textContent = current.filter(s => s.lastActive && !s.inactive).length;
+            $('statInactive').textContent = current.filter(s => s.inactive).length;
             $('statAvg').textContent = students.length
                 ? `${Math.round(students.reduce((sum, s) => sum + s.overallPercent, 0) / students.length)}%`
                 : '0%';
@@ -480,6 +481,7 @@
                     ${s.inactive && s.canEmail ? `<button type="button" class="ce-icon-btn risk-remind" data-remind="${s.id}" ${remindedRecently(s) ? 'disabled title="Reminder already sent today" aria-label="Reminder already sent today"' : 'title="Send reminder email" aria-label="Send reminder email"'}><i class="fa-solid ${remindedRecently(s) ? 'fa-check' : 'fa-bell'}"></i></button>` : '<span class="risk-remind" aria-hidden="true"></span>'}
                 </div>`).join('') + (atRisk.length > RISK_SHOWN ? `<a href="#students" class="risk-more" data-quick="atrisk">See all ${atRisk.length} at-risk students <i class="fa-solid fa-arrow-right"></i></a>` : '')
                 : '<p class="admin-empty"><i class="fa-solid fa-circle-check"></i> Nobody looks at risk right now!</p>';
+            $('quickInactive').textContent = atRisk.length ? `${atRisk.length} at-risk student${atRisk.length === 1 ? '' : 's'}` : 'Nobody looks at risk';
 
             // One-line row that opens to show the full title and details (all args already escaped)
             const dropRow = (tag, title, pill, details) => `
@@ -702,7 +704,7 @@
         const MANAGE = {
             remind: { title: 'Send a reminder email?', message: (n) => `${n} will get an email saying you noticed they haven't studied lately, with a link to log in.`, confirm: 'Send email', icon: 'fa-bell', done: 'Reminder sent' },
             signout: { title: 'Sign out everywhere?', message: (n) => `${n} will be logged out on every device and will need to log in again.`, confirm: 'Sign out', icon: 'fa-arrow-right-from-bracket', done: 'Signed out everywhere' },
-            reset: { title: 'Reset all progress?', message: (n) => `This clears ${n}'s situation quizzes, quiz cards, videos, mistakes, streak and badges. Their account and saved items stay. This cannot be undone.`, confirm: 'Reset progress', icon: 'fa-eraser', danger: true, done: 'Progress reset' },
+            reset: { title: 'Reset all progress?', message: (n) => `This clears ${n}'s lessons read, situation quizzes, quiz cards, videos, mistakes, streak and badges. Their account, saved items and timed quiz scores stay. This cannot be undone.`, confirm: 'Reset progress', icon: 'fa-eraser', danger: true, done: 'Progress reset' },
             deactivate: { title: 'Deactivate this account?', message: (n) => `${n} will be logged out and won't be able to log in until you reactivate the account. Their progress is kept.`, confirm: 'Deactivate', icon: 'fa-user-slash', danger: true, done: 'Account deactivated' },
             remove: { title: 'Remove this account?', message: (n) => `${n}'s account will be deleted for good, with all their progress, badges and saved items. They can sign up again later as a new student. This cannot be undone.`, confirm: 'Remove account', icon: 'fa-user-xmark', danger: true, done: 'Account removed', removed: true },
             reactivate: { title: 'Reactivate this account?', message: (n) => `${n} will be able to log in again.`, confirm: 'Reactivate', icon: 'fa-user-check', done: 'Account reactivated' },
@@ -1282,11 +1284,6 @@
 
                 $('adminLoading').hidden = true;
                 $('adminApp').hidden = false;
-                $('quickInactive').textContent = (() => {
-                    const avg = classAverage();
-                    const n = students.filter(x => riskReasons(x, avg).length).length;
-                    return n ? `${n} at-risk student${n === 1 ? '' : 's'}` : 'Nobody looks at risk';
-                })();
                 showTab(location.hash.slice(1) || 'overview');
 
                 // Guided tour: replay button, and once by itself on a first visit
