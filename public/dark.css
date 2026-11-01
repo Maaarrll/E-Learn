@@ -5092,6 +5092,15 @@
         box-shadow: 0 -6px 18px rgba(2, 48, 71, 0.12);
     }
 }
+@media screen and (max-width: 768px) {
+    :root[data-theme="dark"] .study-page #quizBody .fc-actions {
+        background: hsl(165 14% 17%);
+        box-shadow: 0 -6px 18px rgba(2, 48, 71, 0.12);
+    }
+    :root[data-theme="dark"] .study-page #quizBody .fc-feedback {
+        box-shadow: 0 8px 24px rgba(2, 48, 71, 0.18);
+    }
+}
 :root[data-theme="dark"] .sb-points {
     border: 2px solid var(--sb-ink);
     background: hsl(165 14% 17%);
