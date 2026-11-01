@@ -263,7 +263,7 @@
 
                 <!-- Leaderboards (right of Overall Progress; uses that slot's layout class) -->
                 <div class="card quick-actions-card leaderboard-card">
-                    <h3 class="card-title"><i class="fa-solid fa-ranking-star icon-title"></i> Leaderboards <span class="badge-count" title="Correct answers in the last 7 days">This week</span></h3>
+                    <h3 class="card-title"><i class="fa-solid fa-ranking-star icon-title"></i> Leaderboards <span class="badge-count" title="Points in the last 7 days: +1 per practice answer right, +2 per teacher-quiz answer right">This week</span></h3>
                     <div id="leaderboardBody"><p class="lb-note"><span class="btn-spinner"></span> Loading...</p></div>
                 </div>
 
@@ -465,7 +465,7 @@
         }
 
         // ========================================================
-        // LEADERBOARDS (all students, correct answers in the last 7 days)
+        // LEADERBOARDS (all students, points in the last 7 days; one place each, ties go to who got there first)
         // ========================================================
         const MEDALS = ['🥇', '🥈', '🥉'];
         const LB_CARD_TOP = 4; // about the height of Overall Progress next to it
@@ -537,7 +537,7 @@
                         <span class="lb-hero-trophy" aria-hidden="true">🏆</span>
                         <div>
                             <h3 id="lbFullTitle">Leaderboards</h3>
-                            <p>All students · ⭐ = correct answers in the last 7 days</p>
+                            <p>All students · ⭐ points this week: +1 per practice answer right, +2 per teacher-quiz answer right. Just for fun: it never changes your grades.</p>
                         </div>
                         <button type="button" class="qs-close lb-close" data-close aria-label="Close"><i class="fa-solid fa-xmark"></i></button>
                     </div>
