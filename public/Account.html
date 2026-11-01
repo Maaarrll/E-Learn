@@ -188,7 +188,17 @@
                                     <i class="fa-regular fa-user"></i>
                                     <input type="text" id="full-name" maxlength="160" autocomplete="name" required>
                                 </div>
-                                <small class="acct-hint">This is the name you log in with.</small>
+                                <small class="acct-hint">Shown to your teacher. You can also log in with it.</small>
+                            </div>
+
+                            <!-- Username -->
+                            <div class="acct-field">
+                                <label for="username">Username</label>
+                                <div class="acct-input">
+                                    <i class="fa-solid fa-at"></i>
+                                    <input type="text" id="username" maxlength="20" autocomplete="username" autocapitalize="none" spellcheck="false">
+                                </div>
+                                <small class="acct-hint">This is what you log in with. 3-20 letters, numbers, dots or underscores.</small>
                             </div>
 
                             <!-- Year and Section -->
@@ -335,6 +345,7 @@
 
         const els = {
             fullName: document.getElementById('full-name'),
+            username: document.getElementById('username'),
             yearSection: document.getElementById('year-section'),
             program: document.getElementById('program'),
             studentId: document.getElementById('student-id'),
@@ -411,6 +422,7 @@
         function currentValues() {
             return {
                 fullName: els.fullName.value.trim(),
+                username: els.username.value.trim(),
                 yearSection: els.yearSection.value.trim(),
                 program: els.program.value.trim(),
                 studentId: els.studentId.value.trim(),
@@ -493,6 +505,7 @@
             if (!user) return;
 
             els.fullName.value = user.fullName || '';
+            els.username.value = user.username || '';
             els.yearSection.value = user.yearSection || '';
             els.program.value = user.program || '';
             els.studentId.value = user.studentId || '';
@@ -639,6 +652,15 @@
                 }
             }
 
+            /* Validate username (older accounts may leave it empty) */
+            const username = els.username.value.trim();
+            if ((username || savedValues.username) && !/^[a-z0-9._]{3,20}$/i.test(username)) {
+                els.username.closest('.acct-input').classList.add('invalid');
+                els.username.focus();
+                showMessage('Username must be 3 to 20 characters: letters, numbers, dots or underscores (no spaces).', true);
+                return;
+            }
+
             /* Validate student ID */
             if (!/^\d{12}$/.test(els.studentId.value.trim())) {
                 els.studentId.closest('.acct-input').classList.add('invalid');
@@ -667,6 +689,7 @@
 
             const payload = {
                 fullName: els.fullName.value.trim(),
+                username,
                 yearSection: els.yearSection.value.trim(),
                 program: els.program.value.trim(),
                 studentId: els.studentId.value.trim()
