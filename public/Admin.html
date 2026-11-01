@@ -537,7 +537,8 @@
             const avg = classAverage();
 
             const list = students.filter(s =>
-                (!q || s.fullName.toLowerCase().includes(q) || s.username.toLowerCase().includes(q) || s.studentId.toLowerCase().includes(q)) &&
+                // Every typed word must match, so "Marl Ordonia" finds "Ordonia, Marl June S."
+                (!q || q.split(/\s+/).every(w => `${s.fullName} ${s.username} ${s.studentId}`.toLowerCase().includes(w))) &&
                 (!program || s.program === program) &&
                 (!section || s.yearSection === section) &&
                 (!status || (status === 'atrisk' ? riskReasons(s, avg).length > 0 : status === 'inactive' ? s.inactive : !s.inactive)));

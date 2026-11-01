@@ -10,6 +10,7 @@ const { todayLocal, addDays, toYmd, computeStreaks } = require('../utils/dates')
 const { getBadges } = require('./gamify');
 const { decryptEmail } = require('../utils/emailSecurity');
 const { sendInactiveReminder } = require('../utils/mailer');
+const { adminName } = require('../utils/names');
 
 const router = express.Router();
 router.use(requireInstructor);
@@ -43,7 +44,7 @@ async function loadStudents(instructor) {
   const totalActivities = caseStudies + deckTotal + videoTotal;
   const videoIds = [...content.videoTitles.keys()];
   const { rows } = await pool.query(
-    `SELECT u.id, u.full_name, u.username, u.program, u.year_section, u.student_id, u.profile_photo,
+    `SELECT u.id, u.full_name, u.first_name, u.last_name, u.username, u.program, u.year_section, u.student_id, u.profile_photo,
             u.created_at, u.disabled_at, u.email_enc IS NOT NULL AS can_email, u.reminded_at,
             cs.solved_ids, sc.completed_ids
      FROM users u
@@ -101,7 +102,7 @@ async function loadStudents(instructor) {
     const a = answers.get(s.id);
     return {
       id: s.id,
-      fullName: s.full_name,
+      fullName: adminName(s),
       username: s.username || '',
       program: s.program || '',
       yearSection: s.year_section || '',
@@ -300,7 +301,7 @@ router.get('/export.csv', async (req, res, next) => {
 async function studentFor(req) {
   const id = Number(req.params.id);
   if (!Number.isInteger(id) || id < 1) return null;
-  const { rows } = await pool.query('SELECT id, full_name, program, year_section, disabled_at FROM users WHERE id = $1', [id]);
+  const { rows } = await pool.query('SELECT id, full_name, first_name, last_name, program, year_section, disabled_at FROM users WHERE id = $1', [id]);
   return rows[0] && canSee(req.instructor, rows[0]) ? rows[0] : null;
 }
 
@@ -332,7 +333,7 @@ router.post('/students/:id/remove', async (req, res, next) => {
   try {
     const student = await studentFor(req);
     if (!student) return res.status(404).json({ error: 'Student not found.' });
-    await audit(req.instructor.id, 'remove_student', null, student.full_name);
+    await audit(req.instructor.id, 'remove_student', null, adminName(student));
     await pool.query('DELETE FROM users WHERE id = $1', [student.id]);
     // Best effort: also remove the profile photo from Cloudinary
     try {
@@ -397,12 +398,12 @@ router.post('/students/:id/reset', studentAction('reset_progress', async (s) => 
 router.get('/lrns', async (req, res, next) => {
   try {
     const { rows } = await pool.query(
-      `SELECT a.lrn, a.added_at, u.full_name, u.program, u.year_section
+      `SELECT a.lrn, a.added_at, u.full_name, u.first_name, u.last_name, u.program, u.year_section
        FROM allowed_lrns a LEFT JOIN users u ON u.student_id = a.lrn
        ORDER BY a.added_at DESC, a.lrn`
     );
     // Names only for students this instructor can see (main admin: everyone)
-    const usedBy = (r) => !r.full_name ? null : canSee(req.instructor, r) ? r.full_name : 'a student in another section';
+    const usedBy = (r) => !r.full_name ? null : canSee(req.instructor, r) ? adminName(r) : 'a student in another section';
     res.json({ lrns: rows.map(r => ({ lrn: r.lrn, addedAt: r.added_at, usedBy: usedBy(r) })) });
   } catch (err) {
     next(err);
@@ -531,7 +532,7 @@ router.get('/audit', async (req, res, next) => {
     const { rows } = await pool.query(
       `SELECT l.id, l.action, l.details, l.created_at,
               i.full_name AS instructor_name, i.instructor_id AS instructor_code,
-              t.full_name AS target_name
+              t.full_name, t.first_name, t.last_name
        FROM instructor_audit_log l
        LEFT JOIN instructors i ON i.id = l.instructor_id
        LEFT JOIN users t ON t.id = l.target_user_id
@@ -544,7 +545,7 @@ router.get('/audit', async (req, res, next) => {
       entries: rows.map(r => ({
         id: r.id, action: r.action, details: r.details, createdAt: r.created_at,
         adminName: r.instructor_name ? `${r.instructor_name} (ID ${r.instructor_code})` : '(removed instructor)',
-        targetName: r.target_name,
+        targetName: r.full_name ? adminName(r) : null,
       })),
     });
   } catch (err) {
