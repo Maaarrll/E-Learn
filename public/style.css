@@ -7251,7 +7251,7 @@ body {
     padding: 18px 0 6px;
     border-top: 1px solid #e4e9ed;
     font-size: 12.5px;
-    color: #84919b;
+    color: #5f6b75;
     text-align: center;
 }
 
@@ -14428,7 +14428,7 @@ fieldset.ce-field legend {
 .tq-keys {
     margin: -8px 0 14px;
     font-size: 12px;
-    color: #888;
+    color: #66727c;
 }
 
 .tq-keys kbd {
@@ -16825,7 +16825,8 @@ button.cs-node:hover .cs-node-card {
     font-size: 21px;
     letter-spacing: 1px;
     line-height: 1;
-    color: var(--ls-color);
+    /* A darker shade of the lesson colour, so orange and pink stay readable on white */
+    color: color-mix(in srgb, var(--ls-color) 65%, #102430);
 }
 
 /* One dot per topic, filled when read */
