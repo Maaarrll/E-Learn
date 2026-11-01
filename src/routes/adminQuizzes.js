@@ -7,6 +7,7 @@ const express = require('express');
 const { pool } = require('../db');
 const { requireInstructor } = require('../middleware/instructorGuard');
 const { canSee } = require('./admin');
+const { adminName } = require('../utils/names');
 const { closeOverdue, windowOf } = require('./quizzes');
 
 const router = express.Router();
@@ -289,10 +290,10 @@ router.get('/:id/results', async (req, res, next) => {
     await closeOverdue();
     const { rows } = await pool.query(
       `SELECT a.user_id, a.score, a.current, a.answers, a.started_at, a.finished_at,
-              u.full_name, u.program, u.year_section
+              u.full_name, u.first_name, u.last_name, u.program, u.year_section
        FROM quiz_attempts a JOIN users u ON u.id = a.user_id
        WHERE a.quiz_id = $1
-       ORDER BY a.finished_at IS NULL, a.score DESC, u.full_name`,
+       ORDER BY a.finished_at IS NULL, a.score DESC, u.last_name, u.first_name`,
       [quiz.id]
     );
     const section = sectionOf(req);
@@ -300,7 +301,7 @@ router.get('/:id/results', async (req, res, next) => {
     // Students (that this instructor sees) who haven't started it
     const taken = new Set(rows.map(r => r.user_id));
     const notTaken = (await pool.query(
-      'SELECT id, full_name, program, year_section FROM users WHERE disabled_at IS NULL ORDER BY full_name'
+      'SELECT id, full_name, first_name, last_name, program, year_section FROM users WHERE disabled_at IS NULL ORDER BY last_name, first_name'
     )).rows.filter(u => !taken.has(u.id) && canSee(req.instructor, u) && inSection(section)(u)
       && (!quiz.target_sections || quiz.target_sections.includes(u.year_section)));
     const closed = windowOf(quiz) === 'closed';
@@ -321,12 +322,12 @@ router.get('/:id/results', async (req, res, next) => {
       // After the deadline, everyone who didn't take it is listed with 0
       missed: closed ? notTaken.map(u => ({
         userId: u.id,
-        fullName: u.full_name,
+        fullName: adminName(u),
         section: u.year_section || '',
       })) : [],
       results: visible.map(r => ({
         userId: r.user_id,
-        fullName: r.full_name,
+        fullName: adminName(r),
         section: r.year_section || '',
         score: r.score,
         answered: r.current,
