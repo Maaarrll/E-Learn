@@ -18,7 +18,7 @@ async function logActivity(userId, type, description) {
 async function getCaseStudyRow(userId) {
   let { rows } = await pool.query('SELECT * FROM case_study_progress WHERE user_id = $1', [userId]);
   if (!rows[0]) {
-    await pool.query('INSERT INTO case_study_progress (user_id) VALUES ($1)', [userId]);
+    await pool.query('INSERT INTO case_study_progress (user_id) VALUES ($1) ON CONFLICT DO NOTHING', [userId]);
     ({ rows } = await pool.query('SELECT * FROM case_study_progress WHERE user_id = $1', [userId]));
   }
   return rows[0];
@@ -27,7 +27,7 @@ async function getCaseStudyRow(userId) {
 async function getStudyCardRow(userId) {
   let { rows } = await pool.query('SELECT * FROM study_card_progress WHERE user_id = $1', [userId]);
   if (!rows[0]) {
-    await pool.query('INSERT INTO study_card_progress (user_id) VALUES ($1)', [userId]);
+    await pool.query('INSERT INTO study_card_progress (user_id) VALUES ($1) ON CONFLICT DO NOTHING', [userId]);
     ({ rows } = await pool.query('SELECT * FROM study_card_progress WHERE user_id = $1', [userId]));
   }
   return rows[0];
@@ -36,7 +36,7 @@ async function getStudyCardRow(userId) {
 async function getLessonRow(userId) {
   let { rows } = await pool.query('SELECT * FROM lesson_progress WHERE user_id = $1', [userId]);
   if (!rows[0]) {
-    await pool.query('INSERT INTO lesson_progress (user_id) VALUES ($1)', [userId]);
+    await pool.query('INSERT INTO lesson_progress (user_id) VALUES ($1) ON CONFLICT DO NOTHING', [userId]);
     ({ rows } = await pool.query('SELECT * FROM lesson_progress WHERE user_id = $1', [userId]));
   }
   return rows[0];
@@ -244,7 +244,7 @@ router.get('/videos', async (req, res, next) => {
       [req.userId]
     );
     const { rows: positions } = await pool.query(
-      'SELECT video_id, position_seconds, duration_seconds FROM video_positions WHERE user_id = $1',
+      'SELECT video_id, position_seconds, duration_seconds, watched_seconds FROM video_positions WHERE user_id = $1',
       [req.userId]
     );
     res.json({ watched: rows, positions });
@@ -253,11 +253,16 @@ router.get('/videos', async (req, res, next) => {
   }
 });
 
-// PUT /api/progress/videos/position  { videoId, position, duration }
-// Remembers where the user stopped so the player can resume there.
+// A video counts as watched once this share of it was really played
+const WATCH_SHARE = 0.8;
+
+// PUT /api/progress/videos/position  { videoId, position, duration, played? }
+// Remembers where the user stopped so the player can resume there. played =
+// seconds played since the last save; it can't add up faster than real time.
 router.put('/videos/position', async (req, res, next) => {
   try {
     const { videoId, position, duration } = req.body || {};
+    const played = Number.isInteger(req.body.played) && req.body.played > 0 ? Math.min(req.body.played, 600) : 0;
     if (typeof videoId !== 'string' || !(await getContent()).videoTitles.has(videoId)) {
       return res.status(400).json({ error: 'Unknown video.' });
     }
@@ -267,14 +272,17 @@ router.put('/videos/position', async (req, res, next) => {
       return res.status(400).json({ error: 'Invalid position.' });
     }
 
+    // First save comes after about 10s of playing; later ones can't claim more than the time since the last save
     await pool.query(
-      `INSERT INTO video_positions (user_id, video_id, position_seconds, duration_seconds, updated_at)
-       VALUES ($1, $2, $3, $4, NOW())
+      `INSERT INTO video_positions (user_id, video_id, position_seconds, duration_seconds, watched_seconds, updated_at)
+       VALUES ($1, $2, $3, $4, LEAST($5, 15), NOW())
        ON CONFLICT (user_id, video_id)
        DO UPDATE SET position_seconds = EXCLUDED.position_seconds,
                      duration_seconds = EXCLUDED.duration_seconds,
+                     watched_seconds = video_positions.watched_seconds
+                       + LEAST($5, FLOOR(EXTRACT(EPOCH FROM NOW() - video_positions.updated_at))::int + 5),
                      updated_at = NOW()`,
-      [req.userId, videoId, pos, dur]
+      [req.userId, videoId, pos, dur, played]
     );
     res.json({ ok: true });
   } catch (err) {
@@ -298,6 +306,13 @@ router.post('/videos/watch', async (req, res, next) => {
     );
 
     if (already.rows.length === 0) {
+      const seen = (await pool.query(
+        'SELECT watched_seconds, duration_seconds FROM video_positions WHERE user_id = $1 AND video_id = $2',
+        [req.userId, videoId]
+      )).rows[0];
+      if (!seen || seen.watched_seconds < Math.floor(seen.duration_seconds * WATCH_SHARE)) {
+        return res.status(400).json({ error: 'Watch most of the video first.' });
+      }
       await pool.query(
         'INSERT INTO video_progress (user_id, video_id, title) VALUES ($1, $2, $3)',
         [req.userId, videoId, title]

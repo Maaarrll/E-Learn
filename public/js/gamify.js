@@ -1,7 +1,9 @@
 // public/js/gamify.js
 // Study streak and badges (needs js/api.js; js/sfx.js for confetti).
 //
-//   HCIGamify.record('answer', true);   // answered a question (right/wrong)
+//   HCIGamify.record('answer', true, { source: 'study_card', itemKey: '3-7' });
+//                                       // answered a question (right/wrong); a right answer
+//                                       // needs the question, and counts once per day
 //   HCIGamify.record('perfect');        // finished a deck without a mistake
 //   HCIGamify.record('video');          // finished a video
 //   HCIGamify.record('read');           // opened a lesson topic
@@ -42,11 +44,12 @@ const HCIGamify = (function () {
     return n;
   }
 
-  function record(type, correct) {
+  function record(type, correct, question) {
     const body = { type };
     if (type === 'answer') {
       body.correct = !!correct;
       body.combo = nextCombo(!!correct);
+      if (question) { body.source = question.source; body.itemKey = String(question.itemKey); }
     }
     return api.post('/gamify/activity', body).then(handle).catch(() => null);
   }

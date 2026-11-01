@@ -9,7 +9,7 @@
     <link rel="apple-touch-icon" href="apple-touch-icon.png?v=4">
     <meta name="theme-color" content="#023047">
     <!-- Link to the separated CSS file -->
-    <link rel="stylesheet" href="style.css?v=119">
+    <link rel="stylesheet" href="style.css?v=120">
     <link rel="stylesheet" href="dark.css?v=72">
     <script src="js/theme.js?v=3"></script>
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.2/css/all.min.css">
@@ -21,7 +21,7 @@
 
     <script src="js/api.js?v=18"></script>
     <script src="js/notifications.js?v=2"></script>
-    <script src="js/gamify.js?v=3"></script>
+    <script src="js/gamify.js?v=4"></script>
     <script src="js/search.js?v=3"></script>
     <script src="js/sfx.js?v=8"></script>
     <script>
@@ -660,7 +660,7 @@
                     })
                     .catch(err => console.error('Could not save situation quiz progress:', err))
                     // Streak / daily goal / badges (pagkatapos ma-save para tama ang bilang)
-                    .then(() => HCIGamify.record('answer', true));
+                    .then(() => HCIGamify.record('answer', true, { source: 'case_study', itemKey: scenarioId }));
                 renderScenariosList();
             } else {
                 // MALI ANG SAGOT Logic

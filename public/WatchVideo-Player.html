@@ -8,7 +8,7 @@
     <link rel="icon" href="favicon-32.png?v=4" type="image/png" sizes="32x32">
     <link rel="apple-touch-icon" href="apple-touch-icon.png?v=4">
     <meta name="theme-color" content="#023047">
-    <link rel="stylesheet" href="style.css?v=119">
+    <link rel="stylesheet" href="style.css?v=120">
     <link rel="stylesheet" href="dark.css?v=72">
     <script src="js/theme.js?v=3"></script>
     <!-- FontAwesome para sa icons -->
@@ -17,7 +17,7 @@
     <script src="js/notifications.js?v=2"></script>
     <script src="js/bookmarks.js?v=2"></script>
     <script src="js/sfx.js?v=8"></script>
-    <script src="js/gamify.js?v=3"></script>
+    <script src="js/gamify.js?v=4"></script>
     <script src="js/search.js?v=3"></script>
 </head>
 <body>
@@ -135,7 +135,7 @@
 
                 <!-- Centered Back Button -->
                 <div class="player-footer-centered">
-                    <button type="button" class="btn-back-centered" id="markWatchedBtn" style="margin-right:10px;">Mark as Watched</button>
+                    <button type="button" class="btn-back-centered" id="markWatchedBtn" style="margin-right:10px;" disabled>Mark as Watched</button>
                     <a href="WatchVideo.html" class="btn-back-centered">Back</a>
                 </div>
 
@@ -159,10 +159,13 @@
 
         let watchLogged = false;
         async function logWatched() {
-            if (watchLogged) return;
+            if (watchLogged || !enoughWatched()) return;
             watchLogged = true;
             try {
+                await savePosition(false);  // the server counts the last seconds played too
                 await api.post('/progress/videos/watch', { videoId, title: videoTitle });
+                alreadyWatched = true;
+                renderWatchBtn();
                 document.getElementById('watchedMsg').style.display = 'block';
                 HCISfx.confetti(90); // visual only: this page has no mute button
                 HCIGamify.record('video');
@@ -171,6 +174,33 @@
                 watchLogged = false;
             }
         }
+
+        // ---------------- Watched only after most of the video is played ----------------
+        // Seconds are counted only while the video is really playing (skipping ahead
+        // doesn't count). The server keeps the total and checks the same 80%.
+        const WATCH_SHARE = 0.8;
+        let alreadyWatched = false;
+        let watchedBefore = 0;      // seconds played on earlier visits (from the server)
+        let playedHere = 0;         // seconds played on this visit
+        let playedUnsaved = 0;      // not sent to the server yet
+        const videoLength = () => (player && typeof player.getDuration === 'function' && player.getDuration()) || 0;
+        const secondsLeft = () => Math.max(0, Math.ceil(videoLength() * WATCH_SHARE - watchedBefore - playedHere));
+        const enoughWatched = () => alreadyWatched || (videoLength() > 0 && secondsLeft() === 0);
+
+        function renderWatchBtn() {
+            const btn = document.getElementById('markWatchedBtn');
+            if (alreadyWatched) { btn.textContent = 'Watched ✓'; btn.disabled = true; return; }
+            const ready = enoughWatched();
+            btn.disabled = !ready;
+            btn.textContent = ready ? 'Mark as Watched' : videoLength() ? `Keep watching (${formatTime(secondsLeft())} left)` : 'Mark as Watched';
+        }
+
+        setInterval(() => {
+            if (document.hidden || !player || !player.getPlayerState || player.getPlayerState() !== YT.PlayerState.PLAYING) return;
+            playedHere++;
+            playedUnsaved++;
+            renderWatchBtn();
+        }, 1000);
 
         document.getElementById('markWatchedBtn').addEventListener('click', logWatched);
 
@@ -199,23 +229,25 @@
         }
 
         function sendPosition(position, duration, leavingPage) {
+            const played = playedUnsaved;
+            playedUnsaved = 0;
             // keepalive: para matapos ang request kahit umaalis na sa page
-            fetch('/api/progress/videos/position', {
+            return fetch('/api/progress/videos/position', {
                 method: 'PUT',
                 credentials: 'include',
                 headers: { 'Content-Type': 'application/json' },
-                body: JSON.stringify({ videoId, position, duration }),
+                body: JSON.stringify({ videoId, position, duration, played }),
                 keepalive: !!leavingPage,
-            }).catch(() => {});
+            }).catch(() => { playedUnsaved += played; });
         }
 
         function savePosition(leavingPage) {
-            if (!player || typeof player.getCurrentTime !== 'function') return;
+            if (!player || typeof player.getCurrentTime !== 'function') return Promise.resolve();
             const position = Math.floor(player.getCurrentTime());
             const duration = Math.floor(player.getDuration());
-            if (!duration || position === lastSavedPosition) return;
+            if (!duration || (position === lastSavedPosition && !playedUnsaved)) return Promise.resolve();
             lastSavedPosition = position;
-            sendPosition(position, duration, leavingPage);
+            return sendPosition(position, duration, leavingPage);
         }
 
         setInterval(() => {
@@ -242,6 +274,8 @@
         window.onYouTubeIframeAPIReady = async function () {
             const progress = await progressPromise;
             const saved = progress && (progress.positions || []).find(p => p.video_id === videoId);
+            alreadyWatched = !!(progress && (progress.watched || []).some(w => w.video_id === videoId));
+            watchedBefore = saved ? saved.watched_seconds || 0 : 0;
             const resumeAt = saved &&
                 saved.position_seconds >= RESUME_MIN_SECONDS &&
                 saved.position_seconds < saved.duration_seconds - RESUME_END_MARGIN
@@ -256,18 +290,22 @@
                 videoId: videoId,
                 playerVars,
                 events: {
+                    onReady: renderWatchBtn,
                     onStateChange: function (event) {
                         if (event.data === YT.PlayerState.PAUSED) {
                             savePosition(false);
                         }
                         // Kapag tapos na ang video (State 0 = ENDED)
                         if (event.data === YT.PlayerState.ENDED) {
-                            logWatched();
                             // Tapos na: sa umpisa na ulit magsisimula sa susunod
-                            const duration = Math.floor(player.getDuration());
-                            if (duration) sendPosition(0, duration, false);
-                            lastSavedPosition = 0;
+                            // (after the watch is saved, so the last seconds count)
+                            logWatched().then(() => {
+                                const duration = Math.floor(player.getDuration());
+                                if (duration) sendPosition(0, duration, false);
+                                lastSavedPosition = 0;
+                            });
                         }
+                        renderWatchBtn();
                     },
                 },
             });
