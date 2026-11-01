@@ -47,15 +47,23 @@ async function requireAuth() {
 }
 
 // Quietly refreshes the page after a deploy, and (students: withData) after a
-// teacher publishes something. Waits while someone is typing or has an editor
-// open, so nobody loses what they wrote.
+// teacher publishes something. Only once the page has sat untouched for 2
+// minutes, nobody is typing or editing, and no video is playing (a page can
+// say it's busy with window.HCIBusy), so nobody is cut off mid-activity.
+const IDLE_BEFORE_REFRESH = 2 * 60 * 1000;
+let lastTouched = Date.now();
+['pointerdown', 'keydown', 'wheel', 'touchstart', 'scroll'].forEach(type =>
+  window.addEventListener(type, () => { lastTouched = Date.now(); }, { passive: true, capture: true }));
+
 function watchForUpdates(withData) {
   let seen = null;
   let stale = false;
   const busy = () => {
     const el = document.activeElement;
-    return !!(el && (el.matches('input, textarea, select') || el.isContentEditable))
-      || !!document.querySelector('.ce-overlay');
+    return Date.now() - lastTouched < IDLE_BEFORE_REFRESH
+      || !!(el && (el.matches('input, textarea, select') || el.isContentEditable))
+      || !!document.querySelector('.ce-overlay')
+      || !!(window.HCIBusy && window.HCIBusy());
   };
   const check = async () => {
     if (stale) { if (!busy()) location.reload(); return; }

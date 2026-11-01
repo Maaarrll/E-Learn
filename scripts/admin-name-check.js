@@ -1,6 +1,6 @@
 // node scripts/admin-name-check.js — self-check for adminName (src/utils/names.js)
 const assert = require('assert');
-const { adminName } = require('../src/utils/names');
+const { adminName, splitName } = require('../src/utils/names');
 
 const n = (full_name, first_name, last_name) => adminName({ full_name, first_name, last_name });
 
@@ -14,5 +14,10 @@ assert.strictEqual(n('Juan Carlos Reyes', 'Pedro', 'Santos'), 'Reyes, Juan Carlo
 assert.strictEqual(n('Juan Reyes', null, null), 'Reyes, Juan');
 assert.strictEqual(n('Madonna', 'Madonna', ''), 'Madonna');
 assert.strictEqual(n('', null, null), '');
+
+// Account page form fields
+assert.deepStrictEqual(splitName({ full_name: 'Marl June Santos Ordonia', first_name: 'Marl June', last_name: 'Ordonia' }),
+  { first: 'Marl June', middle: 'Santos', last: 'Ordonia' });
+assert.deepStrictEqual(splitName({ full_name: 'Juan Reyes' }), { first: 'Juan', middle: '', last: 'Reyes' });
 
 console.log('adminName: all checks passed.');
