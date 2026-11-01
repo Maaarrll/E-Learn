@@ -118,6 +118,9 @@
 
             <div class="account-wrapper">
 
+                <!-- Message (top of the page, so it's seen right after a photo change) -->
+                <div id="accountMsg" class="acct-alert" role="status" hidden></div>
+
                 <!-- Profile header -->
                 <div class="acct-profile">
 
@@ -158,10 +161,13 @@
                     <div class="badge-grid" id="badgeGrid">
                         <p class="badge-loading"><span class="btn-spinner"></span> Loading badges...</p>
                     </div>
+                    <!-- Locked badges stay folded so the page doesn't fill up with them -->
+                    <div style="text-align:center; margin-top:14px;">
+                        <button type="button" class="tool-btn" id="badgeToggle" aria-expanded="false" aria-controls="badgeLocked" style="display:none;"></button>
+                    </div>
+                    <div class="badge-grid" id="badgeLocked" style="margin-top:14px; display:none;"></div>
                 </div>
 
-                <!-- Message -->
-                <div id="accountMsg" class="acct-alert" role="status" hidden></div>
 
 
                 <form id="accountForm" class="account-form" novalidate>
@@ -812,7 +818,10 @@
             streakChip.hidden = data.streak.current === 0;
             streakChip.querySelector('span').textContent = `${data.streak.current}-day streak`;
 
-            grid.innerHTML = '';
+            // Earned badges always show; locked ones go in the folded list
+            const locked = document.getElementById('badgeLocked');
+            grid.innerHTML = earnedCount ? '' : '<p class="badge-loading"><i class="fa-solid fa-medal"></i> No badges yet. Your first one is close!</p>';
+            locked.innerHTML = '';
             data.badges.forEach(b => {
                 const tile = document.createElement('div');
                 tile.className = `badge-tile badge-${b.color}${b.earned ? ' is-earned' : ''}`;
@@ -828,9 +837,30 @@
                 tile.querySelector('.badge-state').textContent = b.earned
                     ? `Earned ${new Date(b.earnedAt).toLocaleDateString(undefined, { month: 'short', day: 'numeric', year: 'numeric' })}`
                     : `${b.progress} / ${b.target}`;
-                grid.appendChild(tile);
+                (b.earned ? grid : locked).appendChild(tile);
             });
+            lockedCount = data.badges.length - earnedCount;
+            renderBadgeToggle();
         }
+
+        let lockedCount = 0;
+        function renderBadgeToggle() {
+            const btn = document.getElementById('badgeToggle');
+            const open = btn.getAttribute('aria-expanded') === 'true';
+            // style.display, because both classes set their own display (which beats the hidden attribute)
+            btn.style.display = lockedCount ? '' : 'none';
+            document.getElementById('badgeLocked').style.display = open && lockedCount ? '' : 'none';
+            btn.innerHTML = open
+                ? '<i class="fa-solid fa-chevron-up"></i> Hide locked badges'
+                : `<i class="fa-solid fa-chevron-down"></i> Show ${lockedCount} locked badge${lockedCount === 1 ? '' : 's'}`;
+        }
+        document.getElementById('badgeToggle').addEventListener('click', (e) => {
+            const btn = e.currentTarget;
+            btn.setAttribute('aria-expanded', String(btn.getAttribute('aria-expanded') !== 'true'));
+            renderBadgeToggle();
+        });
+        // "See all badges" on the Dashboard links here: open the full list
+        if (window.location.hash === '#badges') document.getElementById('badgeToggle').setAttribute('aria-expanded', 'true');
 
         api.get('/gamify/summary')
             .then(data => {
