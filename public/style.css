@@ -430,7 +430,7 @@ p {
 }
 
 .signup-container .input-group input::placeholder {
-    color: #888;
+    color: #626262;
 }
 
 .signup-container .input-group input:focus {
@@ -476,7 +476,7 @@ p {
 }
 
 .signup-container .input-group select:invalid {
-    color: #777;
+    color: #5c5c5c;
 }
 
 .signup-container .input-group select:valid {
@@ -814,7 +814,7 @@ p {
 }
 
 .welcome-text .subtitle {
-    color: #888;
+    color: #626262;
     font-size: 14px;
     font-weight: 400;
     margin-top: 0; 
@@ -928,7 +928,7 @@ p {
 
 /* --- Icon Colors --- */
 .case-icon { background-color: #ebd4c6; color: #a67c5f; }
-.video-icon { background-color: #cddeea; color: #046a9d; }
+.video-icon { background-color: #cddeea; color: #035a85; }
 .read-icon { background-color: #c9d2e6; color: #4d67a3; }
 .check-icon { background-color: #fbe0c9; color: #d68748; }
 .book-icon { background-color: #ced3e6; color: #013785; }
@@ -1078,7 +1078,7 @@ p {
 
 .recent-info p, .quick-info p {
     font-size: 13px;
-    color: #777;
+    color: #5c5c5c;
     margin: 0;
     padding: 0;
     line-height: 1.2;
@@ -1087,7 +1087,7 @@ p {
 .time {
     margin-left: auto;
     font-size: 12px;
-    color: #888;
+    color: #626262;
     font-weight: 500;
 }
 
@@ -1421,7 +1421,7 @@ p {
 }
 
 .search-container input::placeholder {
-    color: #888;
+    color: #626262;
 }
 
 /* --- Top Grid (Learning Objectives & Outline) --- */
@@ -1674,7 +1674,7 @@ p {
 
 .cs-header-text p {
     font-size: 15px;
-    color: #888;
+    color: #626262;
     margin: 0;
     font-weight: 500;
 }
@@ -1733,7 +1733,7 @@ p {
     border: 1px solid transparent;
     box-shadow: none;
     transform: none;
-    color: #888;
+    color: #626262;
 }
 
 /* ========================================= */
@@ -1959,7 +1959,7 @@ p {
 
 /* (Opsyonal) Magiging medyo light ang text kapag tapos na ang lesson */
 .hidden-checkbox:checked ~ .card-text {
-    color: #888;
+    color: #626262;
 }
 
 /* Gray box na bumabalot sa buong quiz */
@@ -3471,7 +3471,7 @@ p {
 .dashboard-page .inner-circle small {
     font-size: 12px;
     font-weight: 600;
-    color: #888;
+    color: #626262;
     text-transform: uppercase;
     letter-spacing: 1px;
     margin-top: 4px;
@@ -3576,7 +3576,7 @@ p {
 .dashboard-page .recent-empty p {
     margin: 0;
     font-size: 14px;
-    color: #888;
+    color: #626262;
 }
 
 /* Quick actions */
@@ -3631,7 +3631,7 @@ p {
     font-style: normal;
     font-size: 14px;
     font-weight: 600;
-    color: #999;
+    color: #666666;
     margin-left: 2px;
 }
 
@@ -3736,7 +3736,7 @@ p {
 .dashboard-page .act-text small {
     font-size: 12px;
     font-weight: 500;
-    color: #888;
+    color: #626262;
 }
 
 .dashboard-page .act-text small.is-done {
@@ -4222,7 +4222,7 @@ p {
 :is(.video-page, .lesson-page) .video-empty {
     text-align: center;
     padding: 50px 20px;
-    color: #888;
+    color: #626262;
 }
 
 :is(.video-page, .lesson-page) .video-empty[hidden] {
@@ -4238,7 +4238,7 @@ p {
 :is(.video-page, .lesson-page) .video-empty p {
     margin: 0;
     font-size: 14px;
-    color: #888;
+    color: #626262;
 }
 
 @media screen and (max-width: 768px) {
@@ -5320,7 +5320,7 @@ p {
     font-weight: 700;
     letter-spacing: 1px;
     text-transform: uppercase;
-    color: #888;
+    color: #626262;
 }
 
 .study-page .deck-title {
@@ -5347,7 +5347,7 @@ p {
     gap: 6px;
     font-size: 12px;
     font-weight: 600;
-    color: #777;
+    color: #5c5c5c;
 }
 
 .study-page .deck-status {
@@ -5398,12 +5398,12 @@ p {
 
 .study-page .deck.is-locked .deck-title,
 .study-page .deck.is-locked .deck-count {
-    color: #969fa6;
+    color: #5f6873;
 }
 
 .study-page .deck.is-locked .deck-status {
     background: #e4e8eb;
-    color: #868f95;
+    color: #5f6873;
 }
 
 .study-page .deck:focus-visible {
@@ -6049,7 +6049,7 @@ p {
 .account-page .acct-card-head p {
     margin: 0;
     font-size: 13px;
-    color: #777;
+    color: #5c5c5c;
 }
 
 /* Fields */
@@ -6072,7 +6072,7 @@ p {
     padding: 1px 7px;
     border-radius: 8px;
     background: #f0f3f5;
-    color: #888;
+    color: #626262;
     font-size: 11px;
     font-weight: 600;
 }
@@ -6161,7 +6161,7 @@ p {
     display: block;
     margin-top: 6px;
     font-size: 12px;
-    color: #888;
+    color: #626262;
 }
 
 .account-page .acct-hint.is-ok {
@@ -6204,7 +6204,7 @@ p {
 .account-page .acct-save-note {
     font-size: 13px;
     font-weight: 600;
-    color: #888;
+    color: #626262;
 }
 
 .account-page .acct-save-note.is-dirty {
@@ -8810,7 +8810,7 @@ body.update-password-page .update-container::before {
     margin: 4px 2px 14px;
     text-align: right;
     font-size: 12px;
-    color: #888;
+    color: #626262;
 }
 
 /* --- Toast --- */
@@ -9051,7 +9051,7 @@ body.update-password-page .update-container::before {
     gap: 10px;
     margin-bottom: 4px;
     font-size: 12px;
-    color: #888;
+    color: #626262;
 }
 
 .saved-kind {
@@ -9167,7 +9167,7 @@ body.update-password-page .update-container::before {
     justify-content: center;
     gap: 10px;
     padding: 30px;
-    color: #777;
+    color: #5c5c5c;
 }
 
 @media screen and (max-width: 768px) {
@@ -9323,7 +9323,7 @@ body.update-password-page .update-container::before {
 
 .lb-row.is-open .lb-name {
     font-weight: 600;
-    color: #8089a3;
+    color: #66708a;
 }
 
 .lb-row.is-open .lb-rank {
@@ -9399,7 +9399,7 @@ body.update-password-page .update-container::before {
 .streak-text small,
 .streak-best {
     font-size: 12px;
-    color: #777;
+    color: #5c5c5c;
 }
 
 .streak-week {
@@ -9440,11 +9440,11 @@ body.update-password-page .update-container::before {
 .streak-day small {
     font-size: 11px;
     font-weight: 700;
-    color: #888;
+    color: #626262;
 }
 
 .streak-day.is-today small {
-    color: var(--fun-coral);
+    color: #bf4a1f; /* darker coral: the bright one is too faint as small text */
 }
 
 /* Badges preview */
@@ -9603,7 +9603,7 @@ body.update-password-page .update-container::before {
     min-height: 32px;
     font-size: 12px;
     line-height: 1.35;
-    color: #777;
+    color: #5c5c5c;
 }
 
 .badge-progress {
@@ -9624,7 +9624,7 @@ body.update-password-page .update-container::before {
 .badge-state {
     font-size: 11px;
     font-weight: 700;
-    color: #888;
+    color: #626262;
 }
 
 .badge-tile.is-earned .badge-state {
@@ -9636,7 +9636,7 @@ body.update-password-page .update-container::before {
     display: flex;
     align-items: center;
     gap: 10px;
-    color: #777;
+    color: #5c5c5c;
 }
 
 /* --- Badge / goal pop-up --- */
@@ -9707,7 +9707,7 @@ body.update-password-page .update-container::before {
     align-self: flex-start;
     border: none;
     background: none;
-    color: #999;
+    color: #666666;
     font-size: 16px;
     cursor: pointer;
 }
@@ -9945,7 +9945,7 @@ div.qs-result {
 .qs-empty,
 .qs-status {
     padding: 22px 16px;
-    color: #777;
+    color: #5c5c5c;
     text-align: center;
 }
 
@@ -10136,7 +10136,7 @@ div.qs-result {
     gap: 10px;
     padding: 16px 4px;
     margin: 0;
-    color: #777;
+    color: #5c5c5c;
     font-size: 14px;
 }
 
@@ -10247,7 +10247,7 @@ div.qs-result {
 
 .admin-stat span {
     font-size: 13px;
-    color: #777;
+    color: #5c5c5c;
 }
 
 /* Cards */
@@ -10283,7 +10283,7 @@ div.qs-result {
 .admin-card-note {
     margin: 0 0 10px;
     font-size: 12px;
-    color: #888;
+    color: #626262;
 }
 
 /* Progress bars */
@@ -10311,7 +10311,7 @@ div.qs-result {
 .section-name small {
     display: block;
     font-weight: 500;
-    color: #999;
+    color: #666666;
 }
 
 .admin-progress {
@@ -10388,7 +10388,7 @@ div.qs-result {
 
 .admin-list-text small {
     font-size: 12px;
-    color: #888;
+    color: #626262;
 }
 
 /* Long questions stop at two lines */
@@ -10468,7 +10468,7 @@ div.qs-result {
 .admin-drop-arrow {
     flex-shrink: 0;
     font-size: 12px;
-    color: #aaa;
+    color: #6b6b6b;
     transition: transform 0.2s;
 }
 
@@ -10493,7 +10493,7 @@ div.qs-result {
 
 .admin-drop-body small {
     font-size: 12px;
-    color: #888;
+    color: #626262;
 }
 
 .admin-avatar {
@@ -10598,7 +10598,7 @@ div.qs-result {
 .admin-count {
     margin: 0 0 10px;
     font-size: 13px;
-    color: #888;
+    color: #626262;
 }
 
 .admin-table-wrap {
@@ -10656,7 +10656,7 @@ div.qs-result {
 }
 
 .admin-student small {
-    color: #999;
+    color: #666666;
 }
 
 .admin-progress-cell {
@@ -10736,7 +10736,7 @@ div.qs-result {
 
 .student-head small {
     font-size: 12px;
-    color: #999;
+    color: #666666;
 }
 
 .student-stats {
@@ -10762,7 +10762,7 @@ div.qs-result {
 
 .student-stats span {
     font-size: 11px;
-    color: #777;
+    color: #5c5c5c;
 }
 
 .student-days {
@@ -10819,7 +10819,7 @@ div.qs-result {
 .student-modules small {
     font-size: 12px;
     line-height: 1.5;
-    color: #888;
+    color: #626262;
 }
 
 .student-decks {
@@ -11045,7 +11045,7 @@ div.qs-result {
 }
 
 /* Lesson text rendered from the server (js/richtext.js) */
-.lesson-loading { display: flex; align-items: center; gap: 10px; padding: 24px 6px; color: #777; }
+.lesson-loading { display: flex; align-items: center; gap: 10px; padding: 24px 6px; color: #5c5c5c; }
 .rt-note { margin-left: 15px; font-size: 0.95em; color: #555; }
 .rt-note i { font-size: 0.8em; margin-right: 5px; }
 .rt-loose { margin: 4px 0 12px; }
@@ -11233,7 +11233,7 @@ div.qs-result {
 
 .ce-main small {
     font-size: 12px;
-    color: #888;
+    color: #626262;
     overflow: hidden;
     text-overflow: ellipsis;
     white-space: nowrap;
@@ -11342,7 +11342,7 @@ div.qs-result {
 }
 
 .ce-modal-head h3 { font-size: 20px; color: #000c26; }
-.ce-modal-head small { color: #888; }
+.ce-modal-head small { color: #626262; }
 
 .ce-modal-body {
     display: flex;
@@ -11359,7 +11359,7 @@ div.qs-result {
     color: #444;
 }
 
-.ce-field small { font-weight: 500; color: #999; }
+.ce-field small { font-weight: 500; color: #666666; }
 
 .ce-field input,
 .ce-field textarea,
@@ -11612,7 +11612,7 @@ div.qs-result {
     margin-top: 18px;
 }
 
-.ce-modal-foot small { color: #888; }
+.ce-modal-foot small { color: #626262; }
 .ce-modal-foot span { display: flex; gap: 8px; }
 
 /* Announcements (admin) */
@@ -11709,7 +11709,7 @@ div.qs-result {
     accent-color: var(--fun-grape);
 }
 
-.ce-check small { color: #999; font-weight: 500; }
+.ce-check small { color: #666666; font-weight: 500; }
 
 fieldset.ce-field {
     padding: 0;
@@ -11868,7 +11868,7 @@ fieldset.ce-field legend {
 .notif-text { min-width: 0; flex: 1; }
 .notif-text strong { display: block; font-size: 14px; color: #000c26; }
 .notif-text p { margin: 4px 0; font-size: 13px; line-height: 1.45; color: #555; white-space: pre-wrap; }
-.notif-text small { font-size: 12px; color: #999; }
+.notif-text small { font-size: 12px; color: #666666; }
 
 .notif-new {
     margin-left: 4px;
@@ -11887,7 +11887,7 @@ fieldset.ce-field legend {
     gap: 8px;
     padding: 18px 10px;
     margin: 0;
-    color: #888;
+    color: #626262;
 }
 
 /* Pop-up when a new announcement arrives */
@@ -11929,7 +11929,7 @@ fieldset.ce-field legend {
 .notif-pop-close {
     border: none;
     background: none;
-    color: #999;
+    color: #666666;
     font-size: 15px;
     cursor: pointer;
 }
@@ -12126,7 +12126,7 @@ fieldset.ce-field legend {
 
 .admin-quick-btn span { display: flex; flex-direction: column; min-width: 0; }
 .admin-quick-btn b { font-size: 14px; color: #000c26; }
-.admin-quick-btn small { font-size: 12px; color: #888; }
+.admin-quick-btn small { font-size: 12px; color: #626262; }
 
 @media screen and (max-width: 768px) {
     .admin-quick { grid-template-columns: 1fr 1fr; }
@@ -12301,7 +12301,7 @@ fieldset.ce-field legend {
     flex-shrink: 0;
     text-align: center;
     font-weight: 800;
-    color: #777;
+    color: #5c5c5c;
 }
 
 .lb-row[class*="is-top"] .lb-rank {
@@ -12320,7 +12320,7 @@ fieldset.ce-field legend {
 .lb-name small,
 .lb-points small {
     font-weight: 600;
-    color: #888;
+    color: #626262;
 }
 
 .lb-points {
@@ -12333,7 +12333,7 @@ fieldset.ce-field legend {
 
 .lb-gap {
     text-align: center;
-    color: #aaa;
+    color: #6b6b6b;
     line-height: 1;
 }
 
@@ -13211,7 +13211,7 @@ fieldset.ce-field legend {
 
 .class-switch-text small {
     font-size: 12px;
-    color: #777;
+    color: #5c5c5c;
 }
 
 .class-switch .theme-switch {
@@ -13372,7 +13372,7 @@ fieldset.ce-field legend {
 
 .tq-card-text small {
     font-size: 13px;
-    color: #888;
+    color: #626262;
 }
 
 .tq-card .tool-btn {
@@ -13544,7 +13544,7 @@ fieldset.ce-field legend {
 
 .qz-hint {
     font-size: 12px;
-    color: #888;
+    color: #626262;
 }
 
 .qz-choices {
@@ -13610,7 +13610,7 @@ fieldset.ce-field legend {
 }
 
 .qz-stats small {
-    color: #777;
+    color: #5c5c5c;
 }
 
 /* Teacher quizzes: finished quizzes with their scores */
@@ -13686,7 +13686,7 @@ fieldset.ce-field legend {
 }
 
 .tq-score-text small {
-    color: #888;
+    color: #626262;
 }
 
 .tq-score-link {
@@ -13741,7 +13741,7 @@ fieldset.ce-field legend {
     display: block;
     margin: -4px 0 6px;
     font-size: 12px;
-    color: #888;
+    color: #626262;
 }
 
 .qz-results .qz-missed td {
@@ -13799,7 +13799,7 @@ fieldset.ce-field legend {
 .qz-scores-table td small {
     display: block;
     font-size: 12px;
-    color: #888;
+    color: #626262;
 }
 
 .qz-score {
@@ -14004,7 +14004,7 @@ fieldset.ce-field legend {
 
 .qz-card-title small {
     font-size: 13px;
-    color: #888;
+    color: #626262;
 }
 
 .qz-chip {
@@ -14059,7 +14059,7 @@ fieldset.ce-field legend {
 
 .qz-numbers small {
     font-size: 12px;
-    color: #777;
+    color: #5c5c5c;
 }
 
 .qz-numbers .is-bad {
@@ -14147,7 +14147,7 @@ fieldset.ce-field legend {
 .qz-menu button small {
     font-size: 12px;
     font-weight: 600;
-    color: #999;
+    color: #666666;
 }
 
 .qz-menu button:disabled {
@@ -14978,7 +14978,7 @@ button.cs-node:hover .cs-node-card {
 }
 
 .cs-node.is-solved .cs-node-status { background: #dcf5e8; color: #1f6b47; }
-.cs-node.is-next .cs-node-status   { background: #e3f3ff; color: #307bb0; }
+.cs-node.is-next .cs-node-status   { background: #e3f3ff; color: #21649a; }
 
 .cs-node .missed-chip {
     margin: 0;
