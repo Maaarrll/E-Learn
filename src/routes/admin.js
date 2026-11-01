@@ -43,7 +43,7 @@ async function loadStudents(instructor) {
   const totalActivities = caseStudies + deckTotal + videoTotal;
   const videoIds = [...content.videoTitles.keys()];
   const { rows } = await pool.query(
-    `SELECT u.id, u.full_name, u.program, u.year_section, u.student_id, u.profile_photo,
+    `SELECT u.id, u.full_name, u.username, u.program, u.year_section, u.student_id, u.profile_photo,
             u.created_at, u.disabled_at, u.email_enc IS NOT NULL AS can_email, u.reminded_at,
             cs.solved_ids, sc.completed_ids
      FROM users u
@@ -102,6 +102,7 @@ async function loadStudents(instructor) {
     return {
       id: s.id,
       fullName: s.full_name,
+      username: s.username || '',
       program: s.program || '',
       yearSection: s.year_section || '',
       studentId: s.student_id || '',
