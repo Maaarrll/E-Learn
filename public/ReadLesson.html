@@ -404,10 +404,8 @@
             // each section with a heading as a card to flip: word in front, meaning behind
             const isWordPage = (t) => /salita/i.test(t.title);
 
-            // Presentation style: each section is its own slide.
-            // Preview: only these topic keys use slides; drop the key check to turn every topic into slides.
-            const SLIDE_PREVIEW_KEYS = new Set(['1']);
-            const isSlides = (t) => SLIDE_PREVIEW_KEYS.has(String(t.key)) && !isWordPage(t) && t.sections.length > 1;
+            // Presentation style: each section is its own slide (word pages keep their flip cards)
+            const isSlides = (t) => !isWordPage(t) && t.sections.length > 1;
             const lastSlide = (t) => t.sections.length - 1;
 
             function renderSlide(t, pos) {
