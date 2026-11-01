@@ -3,6 +3,7 @@
 // read from content_items and cached in memory. The cache is cleared when an
 // instructor publishes, so students always get the latest published version.
 const { pool } = require('./db');
+const { markUpdated } = require('./updates');
 const seed = require('./seed/content.json');
 
 // Fixed video categories (labels + icon colour class)
@@ -80,6 +81,7 @@ async function getContent() {
 
 function invalidate() {
   cache = null;
+  markUpdated();
 }
 
 // Unlocking rule shared by Situation Quizzes and Quiz Cards: everything already

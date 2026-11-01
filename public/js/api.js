@@ -38,11 +38,45 @@ async function requireAuth() {
     renderSidebarUser(user);
     // Keeps the student "Online now" for the admin while the page is open and visible
     setInterval(() => { if (!document.hidden) api.get('/auth/me').catch(() => {}); }, 60000);
+    watchForUpdates(true);
     return user;
   } catch (err) {
     window.location.href = 'login.html';
     return null;
   }
+}
+
+// Refreshes the page after a deploy, and (students: withData) after a teacher
+// publishes something. A 15-second countdown with "Later" so nobody loses work.
+function watchForUpdates(withData) {
+  let seen = null;
+  const check = async () => {
+    if (document.hidden || document.querySelector('.update-toast')) return;
+    let v;
+    try { v = await api.get('/version'); } catch (e) { return; }
+    const key = withData ? `${v.app}:${v.data}` : String(v.app);
+    if (seen !== null && key !== seen) showUpdateToast();
+    seen = key;
+  };
+  check();
+  setInterval(check, 60000);
+  document.addEventListener('visibilitychange', check);
+}
+
+function showUpdateToast() {
+  let left = 15;
+  const el = document.createElement('div');
+  el.className = 'update-toast';
+  el.setAttribute('role', 'status');
+  el.innerHTML = '<i class="fa-solid fa-rotate"></i><span></span>'
+    + '<button type="button" data-now>Refresh now</button><button type="button" data-later>Later</button>';
+  const text = el.querySelector('span');
+  const tick = () => { text.textContent = `ALLEARN was updated. Refreshing in ${left}s`; };
+  tick();
+  const timer = setInterval(() => { left -= 1; if (left <= 0) location.reload(); else tick(); }, 1000);
+  el.querySelector('[data-now]').addEventListener('click', () => location.reload());
+  el.querySelector('[data-later]').addEventListener('click', () => { clearInterval(timer); el.remove(); });
+  document.body.appendChild(el);
 }
 
 async function logout() {
