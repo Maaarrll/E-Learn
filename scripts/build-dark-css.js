@@ -66,9 +66,9 @@ function rgbToHsl([r, g, b]) {
   return [h * 60, s, l];
 }
 
-// Plain greys get a hint of the theme's teal so dark mode feels on-brand
+// Plain greys get a hint of the theme's navy so dark mode feels on-brand
 function fmt(h, s, l, a, tint = 0.14) {
-  if (s < 0.05) { h = 165; s = tint; }
+  if (s < 0.05) { h = 222; s = tint; }
   const hsl = `${Math.round(h)} ${Math.round(s * 100)}% ${Math.round(l * 100)}%`;
   return a < 1 ? `hsl(${hsl} / ${+a.toFixed(3)})` : `hsl(${hsl})`;
 }
@@ -208,6 +208,35 @@ function prefixSelector(sel) {
   }).join(',\n');
 }
 
+// ---------- Colour variables ----------
+// How each --variable is used: 'text', 'surface' or 'both'. Global :root values are
+// kept so text like "color: var(--fun-grape)" can get a lighter shade in dark mode.
+const varUse = new Map();
+const rootVars = new Map();
+
+function scanVars(nodes) {
+  for (const node of nodes) {
+    if (node.type === 'at') { scanVars(node.children); continue; }
+    for (const { prop, value } of splitDecls(node.body)) {
+      if (prop.startsWith('--') && /^(:root|html)$/.test(node.selector.trim()) && parseColor(value)) rootVars.set(prop, parseColor(value));
+      const kind = TEXT_PROPS.has(prop) ? 'text' : SURFACE_PROPS.test(prop) || prop.startsWith('--') ? 'surface' : null;
+      if (!kind) continue;
+      for (const [, name] of value.matchAll(/var\((--[\w-]+)/g)) {
+        const was = varUse.get(name);
+        varUse.set(name, !was || was === kind ? kind : 'both');
+      }
+    }
+  }
+}
+
+// "var(--fun-grape)" as a text colour -> a light shade of that global colour
+function lightVar(value) {
+  const m = /^var\((--[\w-]+)\)$/.exec(value.replace(/\s*!important$/, ''));
+  const c = m && rootVars.get(m[1]);
+  const light = c && lightText(c);
+  return light ? value.replace(m[0], light) : null;
+}
+
 function convertRule(node) {
   const decls = splitDecls(node.body);
   const out = [];
@@ -226,7 +255,10 @@ function convertRule(node) {
   for (const { prop, value } of decls) {
     let mapped = null;
     if (TEXT_PROPS.has(prop)) {
-      if (!keepsColouredBg) mapped = mapValue(value, lightText);
+      if (!keepsColouredBg) mapped = mapValue(value, lightText) || lightVar(value);
+    } else if (prop.startsWith('--') && varUse.get(prop) !== 'surface') {
+      // A variable used only as a text colour is text; one used both ways keeps its colour
+      mapped = varUse.get(prop) === 'text' ? mapValue(value, lightText) : null;
     } else if (SURFACE_PROPS.test(prop)) {
       mapped = mapValue(value, darkSurface);
     } else {
@@ -271,9 +303,11 @@ let output = `/* ==========================================================
    then run "npm run build:dark".
    ========================================================== */\n\n`;
 
-for (const src of sources) {
+const parsed = sources.map(src => ({ ...src, nodes: parseBlocks(stripComments(src.css)) }));
+parsed.forEach(src => scanVars(src.nodes));
+for (const src of parsed) {
   output += `/* ---------- from ${src.name} ---------- */\n`;
-  output += convert(parseBlocks(stripComments(src.css))) + '\n';
+  output += convert(src.nodes) + '\n';
 }
 
 output += '/* ---------- hand-written fixes (scripts/dark-manual.css) ---------- */\n';

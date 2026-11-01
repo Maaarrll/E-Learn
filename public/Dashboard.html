@@ -9,7 +9,7 @@
     <link rel="apple-touch-icon" href="apple-touch-icon.png?v=4">
     <meta name="theme-color" content="#023047">
     <link rel="stylesheet" href="style.css?v=123">
-    <link rel="stylesheet" href="dark.css?v=74">
+    <link rel="stylesheet" href="dark.css?v=75">
     <script src="js/theme.js?v=3"></script>
     <!-- FontAwesome for the input icons -->
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
@@ -405,7 +405,7 @@
                 const value = target * eased;
                 label.textContent = `${Math.round(value)}%`;
                 if (ring) {
-                    ring.style.background = `conic-gradient(#1e407e ${value * 3.6}deg, var(--ring-track, #e0e0e0) 0deg)`;
+                    ring.style.background = `conic-gradient(var(--ring-fill, #1e407e) ${value * 3.6}deg, var(--ring-track, #e0e0e0) 0deg)`;
                 }
                 if (t < 1) requestAnimationFrame(frame);
             }
