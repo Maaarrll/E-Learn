@@ -30,8 +30,11 @@ const streamifier =
     require('streamifier');
 
 
-const STUDENT_ID_REGEX =
-    /^\d{12}$/;
+const {
+    normalizeName,
+    nameTaken,
+    lrnProblem
+} = require('../utils/students');
 
 // Maximum lengths for text fields
 const MAX_FULL_NAME = 120;
@@ -52,6 +55,14 @@ const passwordChangeLimiter = rateLimit({
     windowMs: 15 * 60 * 1000,
     max: 10,
     message: 'Too many attempts. Please wait 15 minutes and try again.'
+});
+
+// Every photo upload goes to Cloudinary (uses up its quota)
+const photoLimiter = rateLimit({
+    windowMs: 60 * 60 * 1000,
+    max: 10,
+    keyFn: (req) => `photo:${req.userId}`,
+    message: 'Too many photo uploads. Please try again in an hour.'
 });
 
 
@@ -350,7 +361,7 @@ router.put(
             const newFullName =
                 fullName !== undefined &&
                 String(fullName).trim() !== ''
-                    ? String(fullName).trim()
+                    ? String(fullName).trim().replace(/\s+/g, ' ')
                     : user.full_name;
 
             const newYearSection =
@@ -379,29 +390,68 @@ router.put(
             }
 
 
+            /*
+                The name is the login, so it must stay unique.
+            */
+            if (
+                normalizeName(newFullName) !== normalizeName(user.full_name) &&
+                await nameTaken(newFullName, user.id)
+            ) {
+
+                return res.status(409).json({
+
+                    error:
+                        'Another account already uses that name. Add your middle initial to tell them apart.'
+
+                });
+            }
+
+
             /* =====================================================
                STUDENT ID VALIDATION
+
+               Once set, the LRN is locked (one account per LRN).
+               Older accounts without one may add an LRN from the
+               instructors' list that nobody else has used.
                ===================================================== */
 
             const newStudentId =
-                studentId !== undefined
-                    ? String(studentId).trim()
-                    : user.student_id;
+                user.student_id ||
+                (studentId ? String(studentId).trim() : null);
 
 
             if (
-                newStudentId &&
-                !STUDENT_ID_REGEX.test(
-                    newStudentId
-                )
+                studentId &&
+                user.student_id &&
+                String(studentId).trim() !== user.student_id
             ) {
 
                 return res.status(400).json({
 
                     error:
-                        'LRN must contain exactly 12 digits.'
+                        'Your LRN cannot be changed. Please ask your teacher if it is wrong.'
 
                 });
+            }
+
+
+            if (
+                newStudentId &&
+                !user.student_id
+            ) {
+
+                const lrnError =
+                    await lrnProblem(newStudentId);
+
+                if (lrnError) {
+
+                    return res.status(400).json({
+
+                        error:
+                            lrnError
+
+                    });
+                }
             }
 
 
@@ -574,6 +624,7 @@ router.put(
 router.post(
     '/photo',
     requireAuth,
+    photoLimiter,
     upload.single('photo'),
     async (req, res, next) => {
 
@@ -643,6 +694,44 @@ router.delete(
     async (req, res, next) => {
 
         try {
+
+            /*
+                Requires the password, so someone at an unattended,
+                logged-in computer can't wipe the account for good.
+            */
+            const attempt =
+                passwordChangeLimiter.hit(
+                    `account-pw:${req.userId}`
+                );
+
+            if (attempt.limited) {
+
+                return passwordChangeLimiter.reject(
+                    res,
+                    attempt.retryAfter
+                );
+            }
+
+            const { password } = req.body || {};
+
+            const { rows } = await pool.query(
+                'SELECT password_hash FROM public.users WHERE id = $1',
+                [req.userId]
+            );
+
+            if (
+                !rows[0] ||
+                typeof password !== 'string' ||
+                !(await bcrypt.compare(password, rows[0].password_hash))
+            ) {
+
+                return res.status(400).json({
+
+                    error:
+                        'Your password is incorrect.'
+
+                });
+            }
 
             await pool.query(
 

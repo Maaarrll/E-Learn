@@ -26,7 +26,8 @@ This file provides guidance to Claude Code (claude.ai/code) when working with co
 
 ## Gotchas
 
-- `EMAIL_HASH_SECRET` must never change once users exist — emails are looked up by HMAC hash (`email_hash`), and the AES-GCM copy used for inactive reminders (`email_enc`, saved at signup/login) is keyed from it too. Changing it locks everyone out.
+- Students sign up with an LRN from `allowed_lrns` (Admin page → Allowed LRNs), one account per LRN, and log in with their full name, so names are unique (case/space-insensitive, `src/utils/students.js`). Forgot password = name + LRN.
+- `EMAIL_HASH_SECRET` must not change: older accounts still have an `email_hash` and an AES-GCM `email_enc` (used for inactive reminders) keyed from it. New accounts have no email.
 - Rate limiting is in-memory and resets on restart.
 - Request bodies are capped at 20kb.
 

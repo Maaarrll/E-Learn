@@ -45,6 +45,9 @@
                     <i class="fa-solid fa-pen-to-square"></i> <span class="nav-text">Content</span>
                     <span class="nav-badge" id="contentPending" hidden></span>
                 </a>
+                <a href="#lrns" class="nav-item" data-section="lrns">
+                    <i class="fa-solid fa-id-card"></i> <span class="nav-text">Allowed LRNs</span>
+                </a>
                 <a href="#quizzes" class="nav-item" data-section="quizzes">
                     <i class="fa-solid fa-stopwatch"></i> <span class="nav-text">Quizzes</span>
                 </a>
@@ -217,6 +220,27 @@
                         <div id="quizAdmin"></div>
                     </section>
 
+                    <!-- ALLOWED LRNS (only these can sign up) -->
+                    <section class="admin-panel" id="tab-lrns" hidden>
+                        <div class="admin-grid">
+                            <form class="admin-card announce-form" id="lrnForm" novalidate>
+                                <h3><i class="fa-solid fa-id-card"></i> Add LRNs</h3>
+                                <p class="admin-card-note">Paste your students' 12-digit LRNs, one per line (you can copy a column from a spreadsheet). Only these can create an account, one account each.</p>
+                                <label class="ce-field"><span>LRNs</span><textarea name="text" rows="8" placeholder="123456789012&#10;123456789013"></textarea></label>
+                                <p class="ce-error" id="lrnError" role="alert" hidden></p>
+                                <button type="submit" class="tool-btn ce-publish"><i class="fa-solid fa-plus"></i> Add LRNs</button>
+                            </form>
+                            <div class="admin-card">
+                                <h3><i class="fa-solid fa-list"></i> <span id="lrnCount">On the list</span></h3>
+                                <div class="search-container admin-search">
+                                    <i class="fa-solid fa-magnifying-glass"></i>
+                                    <input type="text" id="lrnSearch" placeholder="Search LRN or name..." aria-label="Search LRNs">
+                                </div>
+                                <div class="admin-list" id="lrnList"></div>
+                            </div>
+                        </div>
+                    </section>
+
                     <!-- ANNOUNCEMENTS -->
                     <section class="admin-panel" id="tab-announcements" hidden>
                         <div class="admin-grid">
@@ -287,7 +311,7 @@
         const ACTIVITY_LABELS = { case_study: 'Situation Quiz', study_card: 'Quiz Card', video: 'Video', lesson: 'Lesson' };
         const AUDIT_ICONS = {
             export_csv: 'fa-file-csv', publish_content: 'fa-upload', discard_content: 'fa-rotate-left',
-            post_announcement: 'fa-bullhorn', delete_announcement: 'fa-bullhorn', reset_progress: 'fa-eraser',
+            post_announcement: 'fa-bullhorn', delete_announcement: 'fa-bullhorn', add_lrns: 'fa-id-card', remove_lrn: 'fa-id-card', reset_progress: 'fa-eraser',
             remind_student: 'fa-bell', signout_student: 'fa-arrow-right-from-bracket', deactivate_student: 'fa-user-slash', reactivate_student: 'fa-user-check', remove_student: 'fa-user-xmark',
             rollback_content: 'fa-clock-rotate-left', add_instructor: 'fa-user-plus', update_instructor: 'fa-user-pen',
             reset_instructor_password: 'fa-key', remove_instructor: 'fa-user-minus', clear_audit: 'fa-trash',
@@ -302,6 +326,8 @@
             export_csv: (e) => `Exported progress CSV${e.details ? ` (${e.details})` : ''}`,
             publish_content: (e) => `Published content changes${e.details ? ` (${e.details})` : ''}`,
             discard_content: () => 'Discarded unpublished content changes',
+            add_lrns: (e) => `Added ${e.details} LRN${e.details === '1' ? '' : 's'} to the signup list`,
+            remove_lrn: (e) => `Removed LRN ${e.details} from the signup list`,
             post_announcement: (e) => `Posted announcement "${e.details}"`,
             delete_announcement: (e) => `Deleted announcement "${e.details}"`,
             reset_progress: (e) => `Reset ${e.targetName || 'a student'}'s progress`,
@@ -744,6 +770,66 @@
             });
         });
 
+        // ---------------- Allowed LRNs ----------------
+        let lrns = [];
+
+        function renderLrns() {
+            const q = $('lrnSearch').value.trim().toLowerCase();
+            const shown = lrns.filter(l => !q || l.lrn.includes(q) || (l.usedBy || '').toLowerCase().includes(q));
+            const used = lrns.filter(l => l.usedBy).length;
+            $('lrnCount').textContent = `On the list: ${lrns.length} (${used} signed up)`;
+            $('lrnList').innerHTML = shown.length ? shown.map(l => `<div class="admin-list-item is-static">
+                    <span class="admin-tag ${l.usedBy ? 'is-video' : ''}"><i class="fa-solid ${l.usedBy ? 'fa-user-check' : 'fa-id-card'}"></i></span>
+                    <span class="admin-list-text"><strong>${escapeHtml(l.lrn)}</strong>
+                        <small>${l.usedBy ? `Account: ${escapeHtml(l.usedBy)}` : 'Not signed up yet'} · added ${formatDateTime(l.addedAt)}</small></span>
+                    <button type="button" class="ce-icon-btn is-danger" data-lrn-delete="${escapeHtml(l.lrn)}" aria-label="Remove LRN ${escapeHtml(l.lrn)}"><i class="fa-solid fa-trash-can"></i></button>
+                </div>`).join('') : `<p class="admin-empty">${lrns.length ? 'No LRNs match.' : 'No LRNs yet. Nobody can sign up until you add some.'}</p>`;
+        }
+
+        async function loadLrns() {
+            try {
+                ({ lrns } = await api.get('/admin/lrns'));
+                renderLrns();
+            } catch (err) {
+                $('lrnList').innerHTML = '<p class="admin-empty">Could not load LRNs.</p>';
+            }
+        }
+
+        $('lrnSearch').addEventListener('input', renderLrns);
+
+        $('lrnForm').addEventListener('submit', async (e) => {
+            e.preventDefault();
+            const form = e.target;
+            const btn = form.querySelector('[type="submit"]');
+            $('lrnError').hidden = true;
+            btn.disabled = true;
+            try {
+                const { added, skipped } = await api.post('/admin/lrns', { text: form.elements.text.value });
+                form.reset();
+                adminToast(`Added ${added} LRN${added === 1 ? '' : 's'}${skipped ? ` (${skipped} already on the list)` : ''}`);
+                loadLrns();
+                loadAudit();
+            } catch (err) {
+                $('lrnError').textContent = err.message;
+                $('lrnError').hidden = false;
+            }
+            btn.disabled = false;
+        });
+
+        $('lrnList').addEventListener('click', (e) => {
+            const b = e.target.closest('[data-lrn-delete]');
+            if (!b) return;
+            confirmDialog({
+                title: 'Remove this LRN?', message: 'Nobody can sign up with it anymore. An account already made with it keeps working.',
+                confirmText: 'Remove', icon: 'fa-trash-can', danger: true,
+                onConfirm: async () => {
+                    try { await api.del(`/admin/lrns/${encodeURIComponent(b.dataset.lrnDelete)}`); } catch (err) { adminToast(err.message, true); }
+                    loadLrns();
+                    loadAudit();
+                },
+            });
+        });
+
         // ---------------- Small form dialog (same look as the content editor) ----------------
         function formModal({ title, subtitle = '', body, submitLabel, onSubmit }) {
             const overlay = document.createElement('div');
@@ -971,6 +1057,7 @@
             overview:      { icon: 'fa-house',           title: 'Overview',      desc: 'How your students are doing at a glance.', export: true },
             students:      { icon: 'fa-users',           title: 'Students',      desc: 'Search, filter and open any student to see their progress.', export: true },
             content:       { icon: 'fa-pen-to-square',   title: 'Content',       desc: 'Edit videos, lessons and questions. Changes are drafts until you publish.', adminOnly: true },
+            lrns:          { icon: 'fa-id-card',         title: 'Allowed LRNs',  desc: 'Students can only sign up with an LRN on this list.' },
             quizzes:       { icon: 'fa-stopwatch',       title: 'Quizzes',       desc: 'Make timed quizzes and see how your students scored.' },
             announcements: { icon: 'fa-bullhorn',        title: 'Announcements', desc: 'Post a message; students get a pop-up notification.' },
             instructors:   { icon: 'fa-chalkboard-user', title: 'Instructors',   desc: 'Add instructors and choose which sections they see.', adminOnly: true },
@@ -1134,6 +1221,7 @@
                 loadAudit();
                 if (instructor.isAdmin) await loadInstructors(); // also fills the section lists
                 loadAnnouncements();
+                loadLrns();
                 HCIQuizAdmin.mount($('quizAdmin'));
                 if (instructor.isAdmin) HCIContentEditor.mount($('contentEditor'), {
                     onPending: (n) => {
