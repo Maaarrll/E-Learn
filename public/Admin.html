@@ -350,7 +350,7 @@
             post_announcement: 'fa-bullhorn', delete_announcement: 'fa-bullhorn', add_lrns: 'fa-id-card', remove_lrn: 'fa-id-card', reset_progress: 'fa-eraser',
             remind_student: 'fa-bell', signout_student: 'fa-arrow-right-from-bracket', deactivate_student: 'fa-user-slash', reactivate_student: 'fa-user-check', remove_student: 'fa-user-xmark',
             rollback_content: 'fa-clock-rotate-left', add_instructor: 'fa-user-plus', update_instructor: 'fa-user-pen',
-            reset_instructor_password: 'fa-key', remove_instructor: 'fa-user-minus', clear_audit: 'fa-trash', update_profile: 'fa-id-badge',
+            reset_instructor_password: 'fa-key', remove_instructor: 'fa-user-minus', clear_audit: 'fa-trash', change_section: 'fa-layer-group', update_profile: 'fa-id-badge',
             open_class: 'fa-lock-open', close_class: 'fa-lock',
             create_quiz: 'fa-stopwatch', update_quiz: 'fa-stopwatch', publish_quiz: 'fa-upload', unpublish_quiz: 'fa-eye-slash',
             delete_quiz: 'fa-trash-can', allow_quiz_retake: 'fa-rotate-left', schedule_quiz: 'fa-calendar-days',
@@ -378,6 +378,7 @@
             reset_instructor_password: (e) => `Reset the password of ${e.details}`,
             remove_instructor: (e) => `Removed instructor ${e.details}`,
             clear_audit: () => 'Cleared the activity log',
+            change_section: (e) => `Changed ${e.targetName || 'a student'}'s section (${e.details})`,
             update_profile: (e) => `Changed their name (${e.details})`,
             create_quiz: (e) => `Created quiz "${e.details}"`,
             update_quiz: (e) => `Edited quiz "${e.details}"`,
@@ -717,12 +718,14 @@
                         ${s.inactive && !s.deactivated ? (s.canEmail
                             ? `<button type="button" class="tool-btn" data-manage="remind"><i class="fa-solid fa-bell"></i> Send reminder email</button>`
                             : '<button type="button" class="tool-btn" disabled title="The email is saved the next time this student logs in."><i class="fa-solid fa-bell-slash"></i> No email on file yet</button>') : ''}
+                        <button type="button" class="tool-btn" data-manage="section"><i class="fa-solid fa-layer-group"></i> Change section</button>
                         <button type="button" class="tool-btn" data-manage="signout"><i class="fa-solid fa-arrow-right-from-bracket"></i> Sign out everywhere</button>
                         <button type="button" class="tool-btn" data-manage="reset"><i class="fa-solid fa-eraser"></i> Reset progress</button>
                         ${s.deactivated ? '<button type="button" class="tool-btn" data-manage="reactivate"><i class="fa-solid fa-user-check"></i> Reactivate account</button>' : ''}
                         <button type="button" class="tool-btn is-danger" data-manage="remove"><i class="fa-solid fa-user-xmark"></i> Remove account</button>
                     </div>`;
-                $('drawerBody').querySelectorAll('[data-manage]').forEach(b => b.addEventListener('click', () => manageStudent(s, b.dataset.manage)));
+                $('drawerBody').querySelectorAll('[data-manage]').forEach(b => b.addEventListener('click', () =>
+                    b.dataset.manage === 'section' ? changeSection(s) : manageStudent(s, b.dataset.manage)));
                 loadAudit(); // the view was just recorded
             } catch (err) {
                 $('drawerBody').innerHTML = `<p class="admin-empty"><i class="fa-solid fa-circle-exclamation"></i> ${escapeHtml(err.message)}</p>`;
@@ -762,6 +765,30 @@
                     } catch (err) {
                         adminToast(err.message, true);
                     }
+                },
+            });
+        }
+
+        // Students can't change their own section; a teacher does it here. Regular
+        // instructors can only pick their own sections (the server checks too).
+        const ALL_SECTIONS = 'ABCDEFGHIJKLMNOPQRSTUVWXYZ'.split('').map(l => `Grade 7 - Section ${l}`);
+        function changeSection(student) {
+            const choices = me.isAdmin ? ALL_SECTIONS
+                : me.sections.filter(sec => sec.program === student.program && ALL_SECTIONS.includes(sec.yearSection)).map(sec => sec.yearSection);
+            if (!choices.length) return adminToast('You have no sections to move this student into.', true);
+            formModal({
+                title: `Change ${student.fullName}'s section`, submitLabel: 'Save',
+                subtitle: `Now: ${sectionOf(student)}. They'll see that section's quizzes and announcements.`,
+                body: `<label class="ce-field"><span>Section</span><select name="yearSection">${choices.map(v =>
+                    `<option value="${escapeHtml(v)}" ${v === student.yearSection ? 'selected' : ''}>${escapeHtml(v)}</option>`).join('')}</select></label>`,
+                onSubmit: async (form) => {
+                    await api.post(`/admin/students/${student.id}/section`, { yearSection: form.elements.yearSection.value });
+                    adminToast('Section changed');
+                    students = (await api.get('/admin/students')).students;
+                    renderStudents();
+                    if (lastInsights) renderOverview(lastInsights);
+                    openStudent(student.id);
+                    loadAudit();
                 },
             });
         }

@@ -55,7 +55,10 @@ async function lrnProblem(lrn) {
     return null;
 }
 
+// Same sections as signup: Grade 7, Section A to Z
+const YEAR_SECTION_REGEX = /^Grade 7 - Section [A-Z]$/;
+
 module.exports = {
-    LRN_REGEX, USERNAME_REGEX, USERNAME_RULES_MESSAGE,
+    LRN_REGEX, USERNAME_REGEX, USERNAME_RULES_MESSAGE, YEAR_SECTION_REGEX,
     normalizeName, findByName, nameTaken, usernameTaken, lrnProblem
 };

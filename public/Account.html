@@ -228,8 +228,8 @@
                                 <label for="year-section">Year &amp; Section</label>
                                 <div class="acct-input">
                                     <i class="fa-solid fa-layer-group"></i>
-                                    <!-- Same list as signup, so the teacher's section filter always matches -->
-                                    <select id="year-section" required>
+                                    <!-- Same list as signup; only a teacher can change it (Admin → student → Change section) -->
+                                    <select id="year-section" disabled>
                                         <option value="" disabled>Select section</option>
                                         <option value="Grade 7 - Section A">Grade 7 - Section A</option>
                                         <option value="Grade 7 - Section B">Grade 7 - Section B</option>
@@ -259,6 +259,7 @@
                                         <option value="Grade 7 - Section Z">Grade 7 - Section Z</option>
                                     </select>
                                 </div>
+                                <small class="acct-hint">Only your teacher can change your section.</small>
                             </div>
 
                             <!-- Program -->
@@ -708,7 +709,7 @@
             e.preventDefault();
 
             /* Validate required fields */
-            for (const key of ['firstName', 'lastName', 'yearSection', 'program']) {
+            for (const key of ['firstName', 'lastName', 'program']) {
                 if (!els[key].value.trim()) {
                     els[key].closest('.acct-input').classList.add('invalid');
                     els[key].focus();
@@ -757,7 +758,6 @@
                 middleName: els.middleName.value.trim(),
                 lastName: els.lastName.value.trim(),
                 username,
-                yearSection: els.yearSection.value.trim(),
                 program: els.program.value.trim(),
                 studentId: els.studentId.value.trim()
             };

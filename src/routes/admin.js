@@ -13,6 +13,7 @@ const { sendInactiveReminder } = require('../utils/mailer');
 const { adminName } = require('../utils/names');
 const { markUpdated } = require('../updates');
 const { deletePhoto } = require('../utils/photos');
+const { YEAR_SECTION_REGEX } = require('../utils/students');
 
 const router = express.Router();
 router.use(requireInstructor);
@@ -385,6 +386,27 @@ router.post('/students/:id/remind', async (req, res, next) => {
     await pool.query('UPDATE users SET reminded_at = NOW() WHERE id = $1', [student.id]);
     await audit(req.instructor.id, 'remind_student', student.id);
     res.json({ ok: true });
+  } catch (err) {
+    next(err);
+  }
+});
+
+// POST /api/admin/students/:id/section  { yearSection } — students can't change their own.
+// A regular instructor can only move a student between their own sections.
+router.post('/students/:id/section', async (req, res, next) => {
+  try {
+    const student = await studentFor(req);
+    if (!student) return res.status(404).json({ error: 'Student not found.' });
+    const yearSection = typeof (req.body || {}).yearSection === 'string' ? req.body.yearSection.trim() : '';
+    if (!YEAR_SECTION_REGEX.test(yearSection)) return res.status(400).json({ error: 'Pick a section from the list.' });
+    if (!canSee(req.instructor, { program: student.program, year_section: yearSection })) {
+      return res.status(403).json({ error: 'You can only move students into your own sections.' });
+    }
+    if (yearSection !== student.year_section) {
+      await pool.query('UPDATE users SET year_section = $1 WHERE id = $2', [yearSection, student.id]);
+      await audit(req.instructor.id, 'change_section', student.id, `"${student.year_section || 'No section'}" to "${yearSection}"`);
+    }
+    res.json({ yearSection });
   } catch (err) {
     next(err);
   }
