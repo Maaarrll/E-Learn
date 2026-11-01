@@ -8,10 +8,20 @@ const { pool } = require('../db');
 const { requireInstructor } = require('../middleware/instructorGuard');
 const { canSee } = require('./admin');
 const { adminName } = require('../utils/names');
+const { markUpdated } = require('../updates');
 const { closeOverdue, windowOf } = require('./quizzes');
 
 const router = express.Router();
 router.use(requireInstructor);
+
+// Tell open student pages to refresh when a change could reach them
+// (draft saves of unpublished quizzes and clearing attempts don't count)
+router.use((req, res, next) => {
+  const reachesStudents = req.method === 'DELETE' ? !req.path.includes('/attempts/')
+    : req.method !== 'GET' && (/\/(publish|schedule)$/.test(req.path) || !!(req.body && req.body.published));
+  if (reachesStudents) res.on('finish', () => { if (res.statusCode < 400) markUpdated(); });
+  next();
+});
 
 const LIMITS = { title: 120, description: 1000, questions: 50, text: 500, choice: 200, minChoices: 2, maxChoices: 6, minSeconds: 5, maxSeconds: 600 };
 

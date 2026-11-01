@@ -11,6 +11,7 @@ const { getBadges } = require('./gamify');
 const { decryptEmail } = require('../utils/emailSecurity');
 const { sendInactiveReminder } = require('../utils/mailer');
 const { adminName } = require('../utils/names');
+const { markUpdated } = require('../updates');
 
 const router = express.Router();
 router.use(requireInstructor);
@@ -504,6 +505,7 @@ router.post('/announcements', async (req, res, next) => {
       [req.instructor.id, t, b, ends, audience.length ? JSON.stringify(audience) : null]
     );
     await audit(req.instructor.id, 'post_announcement', null, t);
+    markUpdated();
     res.json({ id: rows[0].id });
   } catch (err) {
     next(err);
@@ -518,7 +520,7 @@ router.delete('/announcements/:id', async (req, res, next) => {
     const owner = req.instructor.isAdmin ? '' : ' AND instructor_id = $2';
     const params = req.instructor.isAdmin ? [id] : [id, req.instructor.id];
     const { rows } = await pool.query(`DELETE FROM announcements WHERE id = $1${owner} RETURNING title`, params);
-    if (rows[0]) await audit(req.instructor.id, 'delete_announcement', null, rows[0].title);
+    if (rows[0]) { await audit(req.instructor.id, 'delete_announcement', null, rows[0].title); markUpdated(); }
     res.json({ ok: true });
   } catch (err) {
     next(err);

@@ -8,6 +8,7 @@ const cookieParser = require('cookie-parser');
 const { ready } = require('./src/db'); // resolves once Postgres tables exist
 
 const authRoutes = require('./src/routes/auth');
+const { versions } = require('./src/updates');
 const accountRoutes = require('./src/routes/account');
 const progressRoutes = require('./src/routes/progress');
 const bookmarkRoutes = require('./src/routes/bookmarks');
@@ -70,6 +71,9 @@ app.use(express.json({ limit: '20kb' }));
 app.use(cookieParser());
 
 // ----- API -----
+// Open pages poll this to refresh after a deploy or a publish (src/updates.js)
+app.get('/api/version', (req, res) => res.json(versions()));
+
 // Lets the login page show whether the teacher has opened the class
 app.get('/api/class-status', async (req, res, next) => {
   try {
