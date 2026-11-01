@@ -33,6 +33,9 @@ const streamifier =
 const {
     normalizeName,
     nameTaken,
+    usernameTaken,
+    USERNAME_REGEX,
+    USERNAME_RULES_MESSAGE,
     lrnProblem
 } = require('../utils/students');
 
@@ -194,6 +197,9 @@ function publicUser(row) {
         fullName:
             row.full_name,
 
+        username:
+            row.username,
+
         yearSection:
             row.year_section,
 
@@ -227,6 +233,7 @@ router.get(
                 `SELECT
                     id,
                     full_name,
+                    username,
                     year_section,
                     program,
                     student_id,
@@ -281,6 +288,8 @@ router.put(
 
                 fullName,
 
+                username,
+
                 yearSection,
 
                 program,
@@ -324,6 +333,7 @@ router.put(
                 `SELECT
                     id,
                     full_name,
+                    username,
                     year_section,
                     program,
                     student_id,
@@ -404,6 +414,43 @@ router.put(
                         'Another account already uses that name. Add your middle initial to tell them apart.'
 
                 });
+            }
+
+
+            /*
+                Username: blank keeps the current one (older accounts may have none).
+            */
+            const newUsername =
+                username !== undefined &&
+                String(username).trim() !== ''
+                    ? String(username).trim()
+                    : user.username;
+
+            if (newUsername !== user.username) {
+
+                if (!USERNAME_REGEX.test(newUsername)) {
+
+                    return res.status(400).json({
+
+                        error:
+                            USERNAME_RULES_MESSAGE
+
+                    });
+                }
+
+                // Changing only the letter case of your own username is fine
+                if (
+                    String(user.username || '').toLowerCase() !== newUsername.toLowerCase() &&
+                    await usernameTaken(newUsername)
+                ) {
+
+                    return res.status(409).json({
+
+                        error:
+                            'That username is already taken. Please choose another one.'
+
+                    });
+                }
             }
 
 
@@ -555,13 +602,16 @@ router.put(
 
                     password_hash = $5,
 
-                    session_version = $6
+                    session_version = $6,
+
+                    username = $8
 
                  WHERE id = $7
 
                  RETURNING
                     id,
                     full_name,
+                    username,
                     year_section,
                     program,
                     student_id,
@@ -581,7 +631,9 @@ router.put(
 
                     newSessionVersion,
 
-                    req.userId
+                    req.userId,
+
+                    newUsername
 
                 ]
             );
