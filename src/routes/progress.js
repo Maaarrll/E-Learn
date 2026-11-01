@@ -4,6 +4,7 @@ const { pool } = require('../db');
 const { requireAuth } = require('../middleware/authGuard');
 
 const { getContent, unlockedKeys, lessonLock } = require('../contentStore');
+const { todayLocal } = require('../utils/dates');
 
 const router = express.Router();
 router.use(requireAuth);
@@ -484,10 +485,26 @@ router.post('/mistakes/resolve', async (req, res, next) => {
     if (!['case_study', 'study_card'].includes(source) || typeof itemKey !== 'string' || itemKey.length > 40) {
       return res.status(400).json({ error: 'Invalid question.' });
     }
-    await pool.query(
+    const { rowCount } = await pool.query(
       'DELETE FROM mistakes WHERE user_id = $1 AND source = $2 AND item_key = $3',
       [req.userId, source, itemKey]
     );
+    // Counted here, not from the page, so only a mistake that really existed counts
+    // (Clean Slate badge), once per question per day
+    const today = todayLocal();
+    if (rowCount) {
+      const first = (await pool.query(
+        'INSERT INTO daily_correct (user_id, day, source, item_key) VALUES ($1, $2, $3, $4) ON CONFLICT DO NOTHING',
+        [req.userId, today, 'cleared', `${source}:${itemKey}`]
+      )).rowCount > 0;
+      if (first) {
+        await pool.query(
+          `INSERT INTO daily_activity (user_id, day, mistakes_cleared) VALUES ($1, $2, 1)
+           ON CONFLICT (user_id, day) DO UPDATE SET mistakes_cleared = daily_activity.mistakes_cleared + 1`,
+          [req.userId, today]
+        );
+      }
+    }
     res.json({ ok: true });
   } catch (err) {
     next(err);

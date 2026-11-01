@@ -12566,6 +12566,13 @@ fieldset.ce-field legend {
     box-shadow: 0 3px 8px rgba(0, 0, 0, 0.12);
 }
 
+.lb-avatar img {
+    width: 100%;
+    height: 100%;
+    border-radius: 50%;
+    object-fit: cover;
+}
+
 .lb-av-0 { background: linear-gradient(135deg, var(--fun-sky), var(--fun-grape)); }
 .lb-av-1 { background: linear-gradient(135deg, var(--fun-pink), var(--fun-coral)); }
 .lb-av-2 { background: linear-gradient(135deg, var(--fun-mint), var(--fun-sky)); }
@@ -15790,10 +15797,12 @@ button.cs-node:hover .cs-node-card {
 
 .ls-stage {
     position: relative;
+    /* 16:9 is the smallest it gets: with overflow visible the slide grows to fit
+       long text instead of scrolling inside (which cut off the speech bubble's border) */
     aspect-ratio: 16 / 9;
     display: flex;
     flex-direction: column;
-    overflow-y: auto;
+    overflow: visible;
     padding: clamp(24px, 5%, 56px);
     border-top: 6px solid var(--ls-color);
     background: #fff;
@@ -15969,7 +15978,19 @@ button.cs-node:hover .cs-node-card {
 .ls-show:fullscreen .ls-stage {
     flex: 1;
     aspect-ratio: auto;
+    overflow-y: auto; /* the screen is the limit here, so long text scrolls */
     padding: 5vh 8vw;
+}
+
+/* Long words and pasted links wrap instead of running through the borders */
+.ls-section h3,
+.ls-section-body,
+.ls-flip-front b,
+.ls-flip-back,
+.ls-check-q,
+.ls-check-options button,
+#lsTitle {
+    overflow-wrap: anywhere;
 }
 
 .ls-show:fullscreen .ls-section h3 {
