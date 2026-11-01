@@ -146,27 +146,6 @@ p {
     box-shadow: 0 0 0 2px #02293d;
 }
 
-/* --- Checkbox --- */
-.checkbox-group {
-    display: flex;
-    align-items: center;
-    margin-bottom: 25px;
-}
-
-.checkbox-group input {
-    margin-right: 8px;
-    width: 16px;
-    height: 16px;
-    cursor: pointer;
-}
-
-.checkbox-group label {
-    font-size: 14px;
-    color: #222;
-    font-weight: 500;
-    cursor: pointer;
-}
-
 /* --- Button --- */
 .login-btn {
     width: 100%;
@@ -183,24 +162,6 @@ p {
 
 .login-btn:hover {
     background-color: #011b29;
-}
-
-/* --- Links --- */
-.signup-link {
-    text-align: center;
-    margin-top: 25px;
-    font-size: 14px;
-    font-weight: 600;
-    color: #222;
-}
-
-.signup-link a {
-    color: #04537b;
-    text-decoration: none;
-}
-
-.signup-link a:hover {
-    text-decoration: underline;
 }
 
 /* --- Responsive Design (Mobile Support) --- */
@@ -252,7 +213,6 @@ p {
     z-index: -1;
 }
 
-
 /* =========================================================
    GLASS CARD
    ========================================================= */
@@ -276,7 +236,6 @@ p {
 
     border: 1px solid rgba(255, 255, 255, 0.50);
 }
-
 
 /* =========================================================
    HEADER
@@ -306,7 +265,6 @@ p {
     color: #333;
 }
 
-
 /* =========================================================
    ERROR MESSAGE
    ========================================================= */
@@ -324,7 +282,6 @@ p {
 
     text-align: center;
 }
-
 
 /* =========================================================
    FORM GRID
@@ -345,7 +302,6 @@ p {
     margin: 0;
 }
 
-
 /* =========================================================
    INPUT GROUP
    ========================================================= */
@@ -362,7 +318,6 @@ p {
 .signup-container .input-group.full {
     grid-column: 1 / -1;
 }
-
 
 /* =========================================================
    LABEL
@@ -381,7 +336,6 @@ p {
 
     color: #222;
 }
-
 
 /* =========================================================
    TEXT INPUTS
@@ -427,7 +381,6 @@ p {
 
     box-shadow: 0 0 0 2px #02293d;
 }
-
 
 /* =========================================================
    YEAR + SECTION SELECT
@@ -482,7 +435,6 @@ p {
     box-shadow: 0 0 0 2px #02293d;
 }
 
-
 /* =========================================================
    PASSWORD NOTE
    ========================================================= */
@@ -498,53 +450,6 @@ p {
 
     color: #666;
 }
-
-
-/* =========================================================
-   SHOW PASSWORD
-   ========================================================= */
-
-.signup-container .checkbox-group {
-    display: flex;
-
-    flex-direction: row;
-
-    align-items: center;
-
-    justify-content: flex-start;
-
-    margin: 5px 0 0 0;
-
-    padding: 0;
-}
-
-.signup-container .checkbox-group input[type="checkbox"] {
-    width: 14px;
-    height: 14px;
-
-    margin: 0 6px 0 0;
-
-    padding: 0;
-
-    cursor: pointer;
-}
-
-.signup-container .checkbox-group label {
-    display: inline-block;
-
-    margin: 0;
-
-    font-size: 13px;
-
-    font-weight: 600;
-
-    line-height: 1.2;
-
-    color: #222;
-
-    cursor: pointer;
-}
-
 
 /* =========================================================
    SIGN UP BUTTON
@@ -602,7 +507,6 @@ p {
     transform: none;
 }
 
-
 /* =========================================================
    LOGIN LINK
    ========================================================= */
@@ -634,7 +538,6 @@ p {
 .signup-container .login-link-container a:hover {
     text-decoration: underline;
 }
-
 
 /* =========================================================
    MOBILE
@@ -686,7 +589,6 @@ p {
 /* ========================================= */
 /* --- DASHBOARD PAGE STYLES ---             */
 /* ========================================= */
-
 
 /* --- Layout --- */
 .dashboard-container {
@@ -750,10 +652,6 @@ p {
 .nav-item:hover, .nav-item.active {
     background-color: #07547b;
     color: white;
-}
-
-.sidebar-footer {
-    margin-top: auto;
 }
 
 /* --- Main Content --- */
@@ -937,14 +835,7 @@ p {
     gap: 20px; /* Nagdagdag ng tamang espasyo sa pagitan ng title at listahan */
 }
 
-.activity-items, .activity-list {
-    display: flex;
-    flex-direction: column;
-    gap: 12px;
-    margin-bottom: 0; /* Tinanggal ang margin-auto para hindi itulak pababa nang sobra */
-}
-
-.activity-list li, .act-item {
+.act-item {
     display: flex;
     align-items: center;
     gap: 15px;
@@ -953,8 +844,7 @@ p {
     font-weight: 500;
 }
 
-.activity-list li:last-child, .act-item:last-child {
-    border-bottom: none; /* Tinanggal ang border sa pinaka-huling item para malapit sa View All */
+.act-item:last-child {
 }
 .act-item {
     display: flex;
@@ -992,10 +882,6 @@ p {
 
 .scrollable-activities::-webkit-scrollbar-track {
     background-color: transparent;
-}
-
-.view-all i {
-    margin-left: 5px;
 }
 
 /* --- Recent Activities --- */
@@ -1365,23 +1251,12 @@ p {
     color: #111;
 }
 
-
 /*READ LESSON PAGE*/
 /* ========================================= */
 /* --- READ LESSON PAGE STYLES ---           */
 /* ========================================= */
 
-.lesson-wrapper {
-    max-width: 950px;
-    margin: 0 auto;
-}
-
 /* --- Top Bar & Search Bar --- */
-.top-bar {
-    display: flex;
-    justify-content: flex-end; /* Itutulak nito ang search bar sa pinakakanan */
-    margin-bottom: 25px; /* Space sa pagitan ng search bar at ng cards */
-}
 
 .search-container {
     position: relative;
@@ -1420,33 +1295,11 @@ p {
 }
 
 /* --- Top Grid (Learning Objectives & Outline) --- */
-.lesson-top-grid {
-    display: grid;
-    grid-template-columns: 1fr 1fr;
-    gap: 30px;
-    margin-bottom: 30px;
-    align-items: stretch; /* ITO ANG FIX: Pipilitin nito ang dalawang card na maging magkapantay ang taas */
-}
-
-.info-card {
-    background-color: #f2f5f7;
-    border-radius: 16px;
-    padding: 25px 30px;
-    display: flex;
-    flex-direction: column;
-    height: 100%; /* Kasama sa fix para pumantay ang taas */
-}
 
 .card-header {
     display: flex;
     align-items: center;
     margin-bottom: 20px;
-}
-
-.icon-purple {
-    font-size: 22px;
-    color: #617582; /* Grayish purple matching the icon */
-    margin-right: 12px;
 }
 
 .card-header h3 {
@@ -1480,91 +1333,7 @@ p {
     background-color: transparent;
 }
 
-/* Pill Boxes inside Learning Objectives */
-.pill-box {
-    background-color: #ffffff;
-    border: 1px solid #dee4e8;
-    border-radius: 8px;
-    padding: 12px 15px;
-    margin-bottom: 12px;
-    font-size: 13px;
-    color: #555;
-    font-weight: 500;
-}
-
-.pill-box:last-child {
-    margin-bottom: 0;
-}
-
-/* Custom Bullet List inside Lesson Outline */
-.custom-bullet-list {
-    list-style: none;
-    padding: 0;
-    margin: 0;
-}
-
-.custom-bullet-list li {
-    position: relative;
-    padding-left: 25px;
-    margin-bottom: 12px;
-    font-size: 14px;
-    color: #444;
-    font-weight: 500;
-}
-
-.custom-bullet-list li::before {
-    content: "";
-    position: absolute;
-    left: 0;
-    top: 5px;
-    width: 10px;
-    height: 10px;
-    background-color: #486b80; /* Dark grayish blue circle */
-    border-radius: 50%;
-}
-
-/* --- Accordion (Expandable Lessons) --- */
-.accordion-container {
-    display: flex;
-    flex-direction: column;
-    gap: 15px; /* Spacing between each lesson bar */
-    position: relative; /* FIX: SIGURADUHING CLICKABLE ANG ACCORDION */
-    z-index: 10;        /* FIX: SIGURADUHING CLICKABLE ANG ACCORDION */
-}
-
-.accordion-item {
-    background-color: #f2f5f7;
-    border-radius: 12px;
-    overflow: hidden; /* Keeps the inside content within the rounded corners */
-    border: 1px solid transparent;
-    transition: all 0.3s ease;
-}
-
 /* Change background slightly when opened */
-.accordion-item.active {
-    background-color: #f2f5f7;
-    border: 1px solid #dee4e8;
-}
-
-.accordion-button {
-    width: 100%;
-    text-align: left;
-    background: transparent;
-    border: none;
-    padding: 20px 25px;
-    font-size: 15px;
-    font-weight: 700;
-    color: #222;
-    cursor: pointer;
-    display: flex;
-    justify-content: space-between;
-    align-items: center;
-    transition: background-color 0.2s;
-}
-
-.accordion-button:hover {
-    background-color: #e8eef2;
-}
 
 .chevron-icon {
     font-size: 14px;
@@ -1572,23 +1341,7 @@ p {
     transition: transform 0.3s ease;
 }
 
-/* Hide content by default */
-.accordion-collapse {
-    display: none;
-    padding: 0 25px 25px 25px;
-}
-
-/* Show content when active */
-.accordion-item.active .accordion-collapse {
-    display: block; /* This pushes elements down without breaking spacing */
-}
-
 /* Sub-cards inside the expanded lesson */
-.accordion-content {
-    display: flex;
-    flex-direction: column;
-    gap: 12px;
-}
 
 .sub-card {
     background-color: #ffffff;
@@ -1621,13 +1374,6 @@ p {
     font-size: 13px;
     color: #555;
     line-height: 1.5;
-}
-
-/* Responsive adjustments */
-@media (max-width: 768px) {
-    .lesson-top-grid {
-        grid-template-columns: 1fr;
-    }
 }
 
 /* ========================================= */
@@ -1757,12 +1503,6 @@ p {
     margin: 0 0 25px 0;
 }
 
-.quiz-divider {
-    border: none;
-    border-top: 2px solid #d1d9df;
-    margin-bottom: 25px;
-}
-
 .question-text {
     font-size: 17px;
     font-weight: 700;
@@ -1866,84 +1606,7 @@ p {
 /* --- STUDY CARDS PAGE STYLES ---           */
 /* ========================================= */
 
-.study-cards-list {
-    display: flex;
-    flex-direction: column;
-    gap: 15px; /* Espasyo sa pagitan ng mga cards */
-}
-
-/* Disenyo ng bawat card */
-.study-card-item {
-    display: flex;
-    align-items: center;
-    background-color: #f2f5f7;
-    padding: 22px 25px;
-    border-radius: 12px;
-    cursor: pointer;
-    border: 1px solid transparent;
-    transition: all 0.2s ease;
-}
-
-.study-card-item:hover {
-    background-color: #ffffff;
-    border-color: #d1d9df;
-    box-shadow: 0 4px 10px rgba(0, 0, 0, 0.05);
-}
-
-/* CSS PARA SA NAKA-LOCK NA LESSONS */
-        .study-card-item.locked {
-            opacity: 0.5;
-            cursor: not-allowed;
-            pointer-events: none;
-        }
-        
-        .study-card-item.locked .custom-box {
-            background-color: #e0e4e7;
-            border-color: #bcc4ca;
-        }
-
-        .study-card-item.locked .custom-box i {
-            color: #9aa6ae;
-        }
-
-/* Itago ang default na checkbox ng browser */
-.hidden-checkbox {
-    display: none;
-}
-
-/* Gawa tayo ng sariling box na pwedeng lagyan ng check */
-.custom-box {
-    width: 24px;
-    height: 24px;
-    border: 2px solid #9aa6ae;
-    border-radius: 6px;
-    display: flex;
-    align-items: center;
-    justify-content: center;
-    margin-right: 20px;
-    background-color: transparent;
-    transition: all 0.2s ease;
-}
-
-/* Disenyo ng check icon (nakatago muna sa simula) */
-.custom-box i {
-    color: white;
-    font-size: 14px;
-    opacity: 0; 
-    transform: scale(0.5); /* Paliitin muna para may pop-up effect mamaya */
-    transition: all 0.2s ease;
-}
-
 /* KAPAG NA-CLICK O NA-CHECK NA ANG CARD: */
-.hidden-checkbox:checked + .custom-box {
-    background-color: #1d4c67; /* Magiging asul ang box */
-    border-color: #1d4c67;
-}
-
-.hidden-checkbox:checked + .custom-box i {
-    opacity: 1; /* Lalabas ang check icon */
-    transform: scale(1);
-}
 
 .card-text {
     font-size: 15px;
@@ -1952,78 +1615,10 @@ p {
     transition: color 0.2s ease;
 }
 
-/* (Opsyonal) Magiging medyo light ang text kapag tapos na ang lesson */
-.hidden-checkbox:checked ~ .card-text {
-    color: #626262;
-}
-
-/* Gray box na bumabalot sa buong quiz */
-.flashcard-quiz-container {
-    background-color: #e0e4e7;
-    border-radius: 15px;
-    padding: 35px 40px;
-    margin-top: 20px;
-    box-shadow: inset 0 2px 4px rgba(0, 0, 0, 0.05);
-}
-
-/* 3D Pop-out Question Card */
-.flashcard-question-box {
-    background: linear-gradient(to bottom, #ffffff, #d2d8dc);
-    border: 1px solid #abb4bb;
-    border-radius: 12px;
-    padding: 45px 20px;
-    text-align: center;
-    box-shadow: 0 8px 15px rgba(0, 0, 0, 0.2);
-    margin-bottom: 25px;
-}
-
-.flashcard-question-box h3 {
-    font-size: 24px;
-    font-weight: 800;
-    color: #111;
-    margin: 0;
-    line-height: 1.4;
-}
-
 /* Flashcard Options Styling */
-.flashcard-options {
-    display: flex;
-    flex-direction: column;
-    gap: 12px;
-    margin-bottom: 30px;
-}
-
-.fc-option {
-    display: block;
-    cursor: pointer;
-}
-
-.fc-option-text {
-    display: block;
-    padding: 15px 20px;
-    background-color: #f0f3f5;
-    border: 1px solid #b5bfc6;
-    border-radius: 8px;
-    font-size: 14px;
-    font-weight: 600;
-    color: #333;
-    transition: all 0.2s ease;
-}
-
-.fc-option:hover .fc-option-text {
-    background-color: #ffffff;
-    border-color: #8b9da9;
-}
 
 .hidden-radio {
     display: none;
-}
-
-.hidden-radio:checked + .fc-option-text {
-    background-color: #ffffff;
-    border: 2px solid #1d4c67;
-    color: #111;
-    box-shadow: 0 2px 6px rgba(0,0,0,0.05);
 }
 
 /* Quiz Action Buttons */
@@ -2081,24 +1676,6 @@ p {
     font-weight: 500;
 }
 
-/* Kapag TAMA ang sagot (Green) */
-.fc-option-text.correct-answer {
-    background-color: #d4edda !important;
-    border: 2px solid #28a745 !important;
-    color: #155724 !important;
-    box-shadow: 0 2px 6px rgba(40, 167, 69, 0.2) !important;
-}
-
-/* Kapag MALI ang sagot (Red) */
-.fc-option-text.wrong-answer {
-    background-color: #f8d7da !important;
-    border: 2px solid #dc3545 !important;
-    color: #721c24 !important;
-    box-shadow: 0 2px 6px rgba(220, 53, 69, 0.2) !important;
-}
-
-
-
 /* ========================================= */
 /* --- ACCOUNT PAGE STYLES ---               */
 /* ========================================= */
@@ -2113,13 +1690,6 @@ p {
 }
 
 /* Edit Information Banner */
-.account-banner {
-    background-color: #e3e9ed; /* Light blue/gray tint */
-    padding: 20px 25px;
-    border-radius: 12px;
-    margin-bottom: 25px;
-    border: 1px solid #d1d9df;
-}
 
 .banner-title {
     display: flex;
@@ -2140,20 +1710,7 @@ p {
     margin: 0;
 }
 
-.account-banner p {
-    font-size: 13px;
-    color: #555;
-    margin: 0;
-}
-
 /* Sections (Profile Photo & Personal Info) */
-.edit-section {
-    background-color: #edf1f4;
-    border-radius: 12px;
-    border: 1px solid #d9e0e5;
-    margin-bottom: 25px;
-    overflow: hidden;
-}
 
 .section-title {
     display: flex;
@@ -2180,201 +1737,7 @@ p {
     padding: 25px;
 }
 
-/* Profile Photo Area */
-.photo-upload-content {
-    display: flex;
-    align-items: center;
-    gap: 20px;
-}
-
-.current-photo {
-    width: 65px;
-    height: 65px;
-    border-radius: 12px; /* Rounded square based on the image */
-    object-fit: cover;
-    border: 1px solid #ccc;
-}
-
-.upload-controls p {
-    font-size: 14px;
-    font-weight: 600;
-    color: #333;
-    margin: 0 0 8px 0;
-}
-
-.file-input {
-    font-size: 13px;
-    color: #555;
-}
-
-/* Custom styling for the file input button (to match the design) */
-.file-input::file-selector-button {
-    background-color: #e3e9ed;
-    border: 1px solid #a9b6be;
-    color: #444;
-    padding: 6px 12px;
-    border-radius: 6px;
-    margin-right: 10px;
-    cursor: pointer;
-    font-weight: 500;
-    transition: 0.2s;
-}
-
-.file-input::file-selector-button:hover {
-    background-color: #d1d9df;
-}
-
-/* Form Grid */
-.form-grid {
-    display: grid;
-    grid-template-columns: 1fr 1fr;
-    gap: 20px;
-}
-
-.form-grid .input-group {
-    margin-bottom: 0; /* Reset global input group margin */
-    display: flex;
-    flex-direction: column;
-}
-
-.form-grid .input-group > label {
-    font-size: 13px;
-    font-weight: 600;
-    color: #333;
-    margin-bottom: 8px;
-}
-
-.form-grid .input-group > input {
-    width: 100%;
-    padding: 10px 15px;
-    border: 1px solid #d1d9df;
-    border-radius: 8px;
-    background-color: #f7f9fb; /* Very light background for inputs */
-    font-size: 14px;
-    color: #333;
-    outline: none;
-    transition: 0.2s;
-}
-
-.form-grid .input-group > input:focus {
-    border-color: #1d4c67;
-    background-color: #ffffff;
-    box-shadow: 0 0 0 2px rgba(29, 76, 103, 0.1);
-}
-
-/* Account page: keep the show-password control compact and inline.
-   The generic .form-grid input/label rules also affect checkboxes, so
-   these rules intentionally override them. */
-.account-password-toggle {
-    display: inline-flex;
-    align-items: center;
-    justify-content: flex-start;
-    gap: 7px;
-    margin-top: 8px;
-    padding: 0;
-    width: fit-content;
-}
-
-.account-password-toggle input[type="checkbox"] {
-    width: 14px !important;
-    height: 14px !important;
-    min-width: 14px;
-    margin: 0 !important;
-    padding: 0 !important;
-    border: 1px solid #94a2ad;
-    border-radius: 3px;
-    background: #ffffff;
-    cursor: pointer;
-    appearance: auto;
-    flex: 0 0 auto;
-}
-
-.account-password-toggle label {
-    display: inline !important;
-    margin: 0 !important;
-    padding: 0;
-    font-size: 13px;
-    font-weight: 600;
-    line-height: 1.2;
-    color: #333;
-    cursor: pointer;
-    white-space: nowrap;
-}
-
-/* Account action buttons: place Save and Delete Account on the same
-   row and give both controls the same visual height. */
-.account-actions,
-.save-action.account-actions {
-    display: flex;
-    align-items: center;
-    justify-content: space-between;
-    gap: 10px;
-    flex-wrap: wrap;
-    width: 100%;
-    box-sizing: border-box;
-    margin-top: 10px;
-}
-
-.account-actions .btn-save,
-.account-actions .btn-delete-account {
-    min-width: 120px;
-    height: 42px;
-    padding: 0 22px;
-    border-radius: 8px;
-    font-family: inherit;
-    font-size: 14px;
-    font-weight: 700;
-    line-height: 42px;
-    cursor: pointer;
-    box-sizing: border-box;
-    transition: background-color 0.2s ease, border-color 0.2s ease, box-shadow 0.2s ease, color 0.2s ease;
-}
-
-.account-actions .btn-save {
-    min-width: 125px;
-    border: 1px solid #155679;
-    background-color: #155679;
-    color: #ffffff;
-    box-shadow: 0 3px 6px rgba(0, 0, 0, 0.10);
-}
-
-.account-actions .btn-save:hover {
-    background-color: #083f5c;
-    border-color: #083f5c;
-}
-
-.account-actions .btn-delete-account {
-    min-width: 145px;
-    display: inline-flex;
-    align-items: center;
-    justify-content: center;
-    gap: 7px;
-    border: 1px solid #aab4bb;
-    background-color: #ffffff;
-    color: #2d3234;
-    line-height: 1;
-    box-shadow: 0 2px 5px rgba(0, 0, 0, 0.05);
-}
-
-.account-actions .btn-delete-account:hover {
-    border-color: #c94c4c;
-    background-color: #fff5f5;
-    color: #b42318;
-}
-
-.account-actions .btn-delete-account:disabled,
-.account-actions .btn-save:disabled {
-    opacity: 0.65;
-    cursor: not-allowed;
-    box-shadow: none;
-}
-
 /* Save Button */
-.save-action {
-    display: flex;
-    justify-content: center;
-    margin-top: 10px;
-}
 
 .btn-save {
     background-color: #155679; /* Muted blue matching the image */
@@ -2391,13 +1754,6 @@ p {
 
 .btn-save:hover {
     background-color: #083f5c;
-}
-
-/* Responsive adjustment for small screens */
-@media (max-width: 600px) {
-    .form-grid {
-        grid-template-columns: 1fr;
-    }
 }
 
 /* ========================================= */
@@ -2456,14 +1812,6 @@ p {
         grid-template-columns: 1fr; /* Gagawin isang column ang mga cards */
     }
 
-    /* 7. I-gitna ang Log out button sa ilalim */
-    .sidebar-footer {
-        display: flex;
-        justify-content: center;
-        width: 100%;
-        margin-top: 15px;
-    }
-
     /* 8. Fix para sa putol na Welcome Text */
     .welcome-card {
         flex-direction: column;
@@ -2500,7 +1848,7 @@ p {
     }
 
     /* 10. Fix para sa malalaking buttons (Quiz at Account) */
-    .quiz-actions, .save-action {
+    .quiz-actions {
         flex-direction: column !important; /* Papatungin ang buttons imbes na magkatabi */
         gap: 12px !important;
         width: 100%;
@@ -2534,12 +1882,12 @@ p {
     /* --- ETO ANG FIX PARA SA PAGKAKASUNOD-SUNOD --- */
     /* I-adjust ang class names kung iba ang ginamit mo sa HTML */
     .welcome-card { order: 1 !important; } /* O kung ano man ang class ng Overall Progress */
-    .quick-actions { order: 2 !important; }
+
     .activities-card { order: 3 !important; } /* O .activities-container */
     .recent-card { order: 4 !important; }
     /* ---------------------------------------------- */
 
-    .card, .quick-actions, .recent-activities, .activities-container, .welcome-card, .activities-card {
+    .card, .welcome-card, .activities-card {
         width: 100% !important; /* Papantayin ang lapad ng lahat ng boxes */
         box-sizing: border-box !important; /* Isasama ang padding sa sukat para hindi lumagpas */
         margin-left: 0 !important; /* Tatanggalin ang anumang extra space sa gilid */
@@ -2550,15 +1898,8 @@ p {
         padding-bottom: 20px !important;
     }
 
-    .action-item, .activity-item, .action-card {
-        height: auto !important;
-        white-space: normal !important; 
-        margin-bottom: 10px;
-    }
-
     /* Fix para tanggalin ang sobrang space sa loob ng Activities at ang scrollbar */
-    .scrollable-activities, 
-    .activity-items {
+    .scrollable-activities {
         height: auto !important;
         min-height: 0 !important;
         max-height: none !important;
@@ -2566,7 +1907,6 @@ p {
         margin-bottom: 0 !important;
     }
 } /* <--- DITO DAPAT ANG CLOSING BRACKET NG @MEDIA */
-
 
 /* ========================================= */
 /* --- LOGIN PAGE ENHANCEMENTS ---           */
@@ -2786,17 +2126,6 @@ p {
 }
 
 /* Inline email error */
-.login-page .field-error {
-    display: none;
-    margin-top: 6px;
-    font-size: 12px;
-    font-weight: 600;
-    color: #c0392b;
-}
-
-.login-page .field-error.visible {
-    display: block;
-}
 
 .login-page .input-wrapper.invalid input {
     border-color: #c0392b;
@@ -3175,8 +2504,6 @@ p {
 }
 
 .modal-btn-secondary:hover { background: #f0f3f5; }
-
-
 
 /* ========================================= */
 /* --- DASHBOARD ENHANCEMENTS ---            */
@@ -4055,16 +3382,6 @@ p {
     padding: 14px 16px 16px;
 }
 
-.video-page .lesson-tag {
-    display: inline-block;
-    margin-bottom: 6px;
-    font-size: 11px;
-    font-weight: 700;
-    letter-spacing: 0.5px;
-    text-transform: uppercase;
-    color: #023047;
-}
-
 .video-page .video-info h4 {
     font-size: 15px;
 }
@@ -4075,10 +3392,6 @@ p {
     justify-content: space-between;
     gap: 8px;
     margin-bottom: 6px;
-}
-
-.video-page .video-meta .lesson-tag {
-    margin-bottom: 0;
 }
 
 .video-page .topic-chip {
@@ -4218,23 +3531,6 @@ p {
 /* ========================================= */
 
 /* Objectives + Outline cards */
-.lesson-page .info-card {
-    background: #fff;
-    border: 1px solid #e8ecef;
-    box-shadow: 0 4px 14px rgba(2, 48, 71, 0.05);
-}
-
-.lesson-page .card-header .icon-purple {
-    width: 36px;
-    height: 36px;
-    border-radius: 10px;
-    background: #e4ebf1;
-    color: #023047;
-    font-size: 16px;
-    display: inline-flex;
-    align-items: center;
-    justify-content: center;
-}
 
 .lesson-page .card-header h3 {
     font-size: 17px;
@@ -4244,117 +3540,9 @@ p {
     margin-bottom: 0;
 }
 
-/* Numbered objectives */
-.lesson-page #learningObjectivesList {
-    counter-reset: objective;
-}
-
-.lesson-page .pill-box {
-    counter-increment: objective;
-    display: flex;
-    gap: 12px;
-    background: #f6f8fa;
-    border-color: #e8ecef;
-    line-height: 1.45;
-}
-
-.lesson-page .pill-box::before {
-    content: counter(objective);
-    flex-shrink: 0;
-    width: 22px;
-    height: 22px;
-    border-radius: 50%;
-    background: #023047;
-    color: #fff;
-    font-size: 11px;
-    font-weight: 700;
-    display: flex;
-    align-items: center;
-    justify-content: center;
-}
-
-.lesson-page .custom-bullet-list li::before {
-    background-color: #07547b;
-    width: 8px;
-    height: 8px;
-    top: 6px;
-}
-
-/* Toolbar */
-.lesson-page .lesson-toolbar {
-    display: flex;
-    justify-content: space-between;
-    align-items: center;
-    gap: 16px;
-    flex-wrap: wrap;
-    padding: 14px 18px;
-    margin-bottom: 18px;
-    background: #fff;
-    border: 1px solid #e8ecef;
-    border-radius: 14px;
-    position: sticky;
-    top: 0;
-    z-index: 20;
-}
-
-.lesson-page .lesson-actions {
-    display: flex;
-    align-items: center;
-    gap: 6px;
-    flex-wrap: wrap;
-}
-
-.lesson-page .lesson-actions .filter-btn i {
-    margin-right: 4px;
-}
-
-.lesson-page .search-count {
-    font-size: 13px;
-    font-weight: 600;
-    color: #023047;
-    margin-right: 6px;
-}
-
-.lesson-page .search-count[hidden] {
-    display: none;
-}
-
 /* Clear (x) button sa search */
 .lesson-page .search-container input {
     padding-right: 40px;
-}
-
-.lesson-page .clear-search {
-    position: absolute;
-    right: 8px;
-    top: 50%;
-    transform: translateY(-50%);
-    width: 28px;
-    height: 28px;
-    border: none;
-    border-radius: 50%;
-    background: #e4ebf1;
-    color: #023047;
-    cursor: pointer;
-    display: flex;
-    align-items: center;
-    justify-content: center;
-}
-
-.lesson-page .clear-search[hidden] {
-    display: none;
-}
-
-.lesson-page .clear-search i {
-    position: static;
-    transform: none;
-    color: inherit;
-    font-size: 13px;
-}
-
-.lesson-page .clear-search:hover {
-    background: #023047;
-    color: #fff;
 }
 
 /* Search highlight */
@@ -4366,21 +3554,6 @@ p {
 }
 
 /* Module (lesson) headers sa listahan */
-.lesson-page .module-header {
-    display: flex;
-    align-items: center;
-    gap: 14px;
-    margin: 18px 0 2px;
-    padding: 14px 18px;
-    border-radius: 14px;
-    background: linear-gradient(120deg, #023047, #07547b);
-    color: #fff;
-    scroll-margin-top: 90px;
-}
-
-.lesson-page .module-header:first-child {
-    margin-top: 0;
-}
 
 .lesson-page .module-icon {
     width: 40px;
@@ -4394,72 +3567,11 @@ p {
     font-size: 17px;
 }
 
-.lesson-page .module-text {
-    flex: 1;
-    min-width: 0;
-}
-
-.lesson-page .module-text small {
-    font-size: 11px;
-    font-weight: 700;
-    text-transform: uppercase;
-    letter-spacing: 1px;
-    color: rgba(255, 255, 255, 0.75);
-}
-
-.lesson-page .module-text h3 {
-    margin: 2px 0 0;
-    font-size: 17px;
-    font-weight: 800;
-}
-
-.lesson-page .module-count {
-    flex-shrink: 0;
-    padding: 4px 10px;
-    border-radius: 12px;
-    background: rgba(255, 255, 255, 0.18);
-    font-size: 12px;
-    font-weight: 700;
-}
-
 .lesson-page .topic-title {
     flex: 1;
 }
 
 /* Accordion */
-.lesson-page .accordion-container {
-    gap: 10px;
-}
-
-.lesson-page .accordion-item {
-    background: #fff;
-    border: 1px solid #e8ecef;
-    transition: box-shadow 0.2s, border-color 0.2s;
-}
-
-.lesson-page .accordion-item:hover {
-    border-color: #d1d9df;
-}
-
-.lesson-page .accordion-item.active {
-    background: #fff;
-    border-color: #c2d1db;
-    box-shadow: 0 6px 18px rgba(2, 48, 71, 0.08);
-}
-
-.lesson-page .accordion-button {
-    justify-content: flex-start;
-    gap: 14px;
-    padding: 16px 20px;
-}
-
-.lesson-page .accordion-button:hover {
-    background: #f6f8fa;
-}
-
-.lesson-page .accordion-item.active .accordion-button {
-    color: #023047;
-}
 
 .lesson-page .topic-num {
     flex-shrink: 0;
@@ -4476,21 +3588,8 @@ p {
     justify-content: center;
 }
 
-.lesson-page .accordion-item.active .topic-num {
-    background: #023047;
-    color: #fff;
-}
-
 .lesson-page .chevron-icon {
     flex-shrink: 0;
-}
-
-.lesson-page .accordion-item.active .chevron-icon {
-    transform: rotate(180deg);
-}
-
-.lesson-page .accordion-collapse {
-    padding: 0 20px 20px 64px;
 }
 
 .lesson-page .sub-card {
@@ -4538,39 +3637,6 @@ p {
 }
 
 @media screen and (max-width: 768px) {
-    .lesson-page .lesson-toolbar {
-        flex-direction: column;
-        align-items: stretch;
-        position: static;
-    }
-
-    .lesson-page .lesson-actions {
-        justify-content: space-between;
-    }
-
-    .lesson-page .module-header {
-        padding: 12px 14px;
-        gap: 10px;
-    }
-
-    .lesson-page .module-text h3 {
-        font-size: 15px;
-    }
-
-    .lesson-page .module-count {
-        display: none;
-    }
-
-
-    .lesson-page .accordion-button {
-        padding: 14px 14px;
-        gap: 10px;
-        font-size: 14px;
-    }
-
-    .lesson-page .accordion-collapse {
-        padding: 0 14px 16px;
-    }
 
     .lesson-page .to-top-btn {
         right: 16px;
@@ -4714,56 +3780,7 @@ p {
     color: inherit;
 }
 
-.case-page .sc-top {
-    display: flex;
-    justify-content: space-between;
-    align-items: center;
-}
-
-.case-page .sc-num {
-    min-width: 32px;
-    height: 32px;
-    padding: 0 6px;
-    border-radius: 9px;
-    background: #e4ebf1;
-    color: #023047;
-    font-size: 13px;
-    font-weight: 800;
-    display: inline-flex;
-    align-items: center;
-    justify-content: center;
-}
-
-.case-page .sc-status {
-    display: inline-flex;
-    align-items: center;
-    gap: 6px;
-    padding: 3px 10px;
-    border-radius: 12px;
-    font-size: 12px;
-    font-weight: 700;
-    background: #f0f3f5;
-    color: #666;
-}
-
-.case-page .sc-question {
-    margin: 0;
-    font-size: 14px;
-    font-weight: 600;
-    line-height: 1.45;
-    color: #222;
-}
-
 /* States */
-.case-page .scenario-card.is-solved .sc-num {
-    background: #1e7e45;
-    color: #fff;
-}
-
-.case-page .scenario-card.is-solved .sc-status {
-    background: #e3f4ea;
-    color: #1e7e45;
-}
 
 .case-page .scenario-card.is-next {
     border: 2px solid #023047;
@@ -4771,28 +3788,9 @@ p {
     box-shadow: 0 6px 18px rgba(2, 48, 71, 0.12);
 }
 
-.case-page .scenario-card.is-next .sc-num {
-    background: #023047;
-    color: #fff;
-}
-
-.case-page .scenario-card.is-next .sc-status {
-    background: #023047;
-    color: #fff;
-}
-
 .case-page .scenario-card.locked {
     background: #f3f5f7;
     box-shadow: none;
-}
-
-.case-page .scenario-card.locked .sc-question {
-    color: #969fa6;
-}
-
-.case-page .scenario-card.locked .sc-num {
-    background: #e4e8eb;
-    color: #969fa6;
 }
 
 .case-page .scenario-card.locked:hover {
@@ -6405,10 +5403,6 @@ p {
 }
 
 /* Log out (Dashboard) */
-.sidebar-footer {
-    padding-top: 14px;
-    border-top: 1px solid rgba(255, 255, 255, 0.1);
-}
 
 .nav-item.logout:hover {
     background-color: rgba(231, 76, 60, 0.9);
@@ -6711,11 +5705,6 @@ p {
         height: 26px;
         font-size: 12px;
         border-radius: 8px;
-    }
-
-    .sidebar-footer {
-        border-top: none;
-        padding-top: 0;
     }
 
     /* Sa phone: slim top bar (☰ + logo kaliwa, profile kanan); ang menu ay drawer */
@@ -7081,7 +6070,6 @@ p {
     }
 }
 
-
 /* ========================================= */
 /* --- FINAL TOUCHES (all pages) ---         */
 /* ========================================= */
@@ -7157,7 +6145,6 @@ body {
     -moz-osx-font-smoothing: grayscale;
     text-rendering: optimizeLegibility;
 }
-
 
 /* ========================================= */
 /* --- FINISHING TOUCHES (all pages) ---     */
@@ -7494,7 +6481,6 @@ body {
 
 /* --- Cards: rounder, colourful top stripe, springy lift --- */
 .dashboard-page .card,
-.lesson-page .info-card,
 .account-page .acct-card,
 .case-page .scenario-card,
 .video-page .video-card {
@@ -7505,7 +6491,6 @@ body {
 }
 
 .dashboard-page .card::before,
-.lesson-page .info-card::before,
 .account-page .acct-card::before {
     content: "";
     position: absolute;
@@ -7521,13 +6506,11 @@ body {
 .dashboard-page .activities-card     { --fun-stripe: linear-gradient(90deg, var(--fun-sky), var(--fun-mint)); }
 .dashboard-page .recent-card         { --fun-stripe: linear-gradient(90deg, var(--fun-sun), var(--fun-coral)); }
 .dashboard-page .quick-actions-card  { --fun-stripe: linear-gradient(90deg, var(--fun-mint), var(--fun-sky)); }
-.lesson-page .info-card:nth-child(1) { --fun-stripe: linear-gradient(90deg, var(--fun-mint), var(--fun-sky)); }
-.lesson-page .info-card:nth-child(2) { --fun-stripe: linear-gradient(90deg, var(--fun-sun), var(--fun-coral)); }
+
 .account-page .acct-card:nth-of-type(odd)  { --fun-stripe: linear-gradient(90deg, var(--fun-grape), var(--fun-pink)); }
 .account-page .acct-card:nth-of-type(even) { --fun-stripe: linear-gradient(90deg, var(--fun-sky), var(--fun-mint)); }
 
 .dashboard-page .card:hover,
-.lesson-page .info-card:hover,
 .video-page .video-card:hover {
     transform: translateY(-5px);
     border-color: #b8c3e4;
@@ -7540,15 +6523,8 @@ body {
     box-shadow: 0 14px 28px rgba(255, 138, 92, 0.18);
 }
 
-.case-page .sc-num {
-    background: linear-gradient(135deg, #fff1e8, #e2f3ff);
-    color: #c2452b;
-    font-weight: 800;
-}
-
 /* Card title icons: candy colour matching each card's stripe */
-.dashboard-page .icon-title,
-.lesson-page .card-header .icon-purple {
+.dashboard-page .icon-title {
     color: #fff;
     border-radius: 11px;
     background: var(--fun-stripe, var(--fun-grape));
@@ -8479,15 +7455,6 @@ body.update-password-page .update-container::before {
     display: none;
 }
 
-.lesson-page .accordion-item {
-    scroll-margin-top: 90px;
-}
-
-.lesson-page .accordion-item.is-highlighted {
-    animation: funGlow 1s ease-in-out 2;
-    border-color: var(--fun-grape);
-}
-
 /* --- Review my mistakes --- */
 .review-btn {
     display: inline-flex;
@@ -9139,7 +8106,6 @@ body.update-password-page .update-container::before {
 @media (prefers-reduced-motion: reduce) {
     .tool-btn.is-active i,
     .resume-note,
-    .lesson-page .accordion-item.is-highlighted,
     .saved-header::before,
     .saved-header::after,
     .saved-header-icon,
@@ -9186,8 +8152,7 @@ body.update-password-page .update-container::before {
 /* Leaderboards card: sits next to Overall Progress and is stretched to its
    height, so the rows grow to fill it (up to a max) and "See all" stays at
    the bottom instead of leaving an empty gap. */
-.dashboard-page .leaderboard-card .card-title,
-.dashboard-page .leaderboard-card .lb-sub {
+.dashboard-page .leaderboard-card .card-title {
     margin-bottom: 12px;
 }
 
@@ -10064,13 +9029,6 @@ div.qs-result {
 }
 
 /* Not an admin */
-.admin-denied {
-    padding: 48px 20px;
-    border-radius: 24px;
-    border: 2px dashed #cfd5ea;
-    background: #fff;
-    text-align: center;
-}
 
 .admin-denied-icon {
     width: 72px;
@@ -10083,46 +9041,6 @@ div.qs-result {
     background: #ffeadf;
     color: #c2452b;
     font-size: 28px;
-}
-
-.admin-denied p {
-    max-width: 420px;
-    margin: 6px auto 18px;
-    color: #666;
-}
-
-/* Tabs */
-.admin-tabs {
-    display: flex;
-    flex-wrap: wrap;
-    gap: 8px;
-    margin-bottom: 18px;
-}
-
-.admin-tab {
-    display: inline-flex;
-    align-items: center;
-    gap: 8px;
-    padding: 9px 16px;
-    border: 2px solid #dfe3f0;
-    border-radius: 999px;
-    background: #fff;
-    color: #555;
-    font-family: inherit;
-    font-size: 14px;
-    font-weight: 700;
-    cursor: pointer;
-    transition: transform 0.3s var(--fun-bounce), background-color 0.2s, color 0.2s;
-}
-
-.admin-tab:hover {
-    transform: translateY(-2px);
-}
-
-.admin-tab.active {
-    background: linear-gradient(135deg, var(--fun-mint), var(--fun-sky));
-    border-color: transparent;
-    color: #fff;
 }
 
 /* Stat tiles */
@@ -10531,49 +9449,6 @@ div.qs-result {
     color: #626262;
 }
 
-.admin-table-wrap {
-    overflow-x: auto;
-    border-radius: 20px;
-    border: 2px solid #dfe3f0;
-    background: #fff;
-}
-
-.admin-table {
-    width: 100%;
-    border-collapse: collapse;
-    font-size: 14px;
-}
-
-.admin-table th {
-    padding: 12px 14px;
-    background: #eff1f9;
-    color: #525c79;
-    font-size: 12px;
-    font-weight: 800;
-    letter-spacing: 0.5px;
-    text-align: left;
-    text-transform: uppercase;
-    white-space: nowrap;
-}
-
-.admin-table td {
-    padding: 12px 14px;
-    border-top: 1px solid #eaecf2;
-    color: #333;
-    vertical-align: middle;
-}
-
-.admin-table tbody tr {
-    cursor: pointer;
-    transition: background-color 0.2s;
-}
-
-.admin-table tbody tr:hover,
-.admin-table tbody tr:focus-visible {
-    background: #f3f5fb;
-    outline: none;
-}
-
 .admin-student {
     display: flex;
     align-items: center;
@@ -10822,50 +9697,6 @@ div.qs-result {
     }
 
     /* Table becomes cards on phones */
-    .admin-table-wrap {
-        border: none;
-        background: none;
-        overflow: visible;
-    }
-
-    .admin-table thead {
-        display: none;
-    }
-
-    .admin-table,
-    .admin-table tbody,
-    .admin-table tr,
-    .admin-table td {
-        display: block;
-    }
-
-    .admin-table tbody tr {
-        margin-bottom: 12px;
-        padding: 12px 14px;
-        border-radius: 18px;
-        border: 2px solid #dfe3f0;
-        background: #fff;
-    }
-
-    .admin-table td {
-        display: flex;
-        justify-content: space-between;
-        align-items: center;
-        gap: 10px;
-        padding: 6px 0;
-        border-top: none;
-    }
-
-    .admin-table td::before {
-        content: attr(data-label);
-        font-size: 12px;
-        font-weight: 700;
-        color: #888da1;
-    }
-
-    .admin-table td[data-label="Student"]::before {
-        display: none;
-    }
 
     .student-stats {
         grid-template-columns: repeat(2, minmax(0, 1fr));
@@ -10957,18 +9788,6 @@ div.qs-result {
     box-shadow: 0 8px 18px rgba(63, 137, 207, 0.35);
 }
 
-.admin-denied-actions {
-    display: flex;
-    justify-content: center;
-    flex-wrap: wrap;
-    gap: 10px;
-}
-
-.admin-denied-actions button.tool-btn {
-    font-family: inherit;
-}
-
-.login-page #emailGroup[hidden],
 .login-page #instructorGroup[hidden],
 .login-page #formOptions[hidden] {
     display: none;
@@ -12181,17 +11000,11 @@ fieldset.ce-field legend {
 .dashboard-page .leaderboard-card { --fun-stripe: linear-gradient(90deg, var(--fun-sun), var(--fun-pink)); }
 
 /* Leaderboard */
-.lb-note,
-.lb-sub {
+.lb-note {
     margin: 0 0 12px;
     font-size: 13px;
     line-height: 1.5;
     color: #666;
-}
-
-.lb-sub {
-    font-weight: 700;
-    color: var(--fun-grape);
 }
 
 .lb-list {
@@ -13423,7 +12236,6 @@ fieldset.ce-field legend {
 }
 
 @media (prefers-reduced-motion: reduce) {
-    .tq-timer.is-low,
     .tq-feedback {
         animation: none;
     }
@@ -15581,7 +14393,6 @@ button.cs-node:hover .cs-node-card {
         bottom: 88px;
     }
 }
-
 
 /* =========================================
    Read Lesson: topic cards + slide presentation
