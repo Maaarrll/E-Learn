@@ -2182,7 +2182,7 @@
 }
 :root[data-theme="dark"] .site-footer {
     border-top: 1px solid hsl(207 20% 22%);
-    color: hsl(206 10% 65%);
+    color: hsl(207 10% 73%);
 }
 :root[data-theme="dark"] .site-footer strong {
     color: hsl(200 75% 88%);
@@ -4553,7 +4553,7 @@
     background: hsl(223 33% 19%);
 }
 :root[data-theme="dark"] .tq-keys {
-    color: hsl(165 12% 67%);
+    color: hsl(207 10% 72%);
 }
 :root[data-theme="dark"] .tq-keys kbd {
     border: 1px solid hsl(219 20% 25%);
@@ -5265,7 +5265,7 @@
     color: var(--ls-ink);
 }
 :root[data-theme="dark"] .ls-aralin-text b {
-    color: var(--ls-color);
+    color: color-mix(in srgb, var(--ls-color) 65%, hsl(203 50% 89%));
 }
 :root[data-theme="dark"] .ls-aralin-dots i {
     border: 2px solid var(--ls-ink);
