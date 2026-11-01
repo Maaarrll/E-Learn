@@ -133,7 +133,8 @@ app.use((err, req, res, next) => {
   }
 
   const status = err.status || err.statusCode;
-  if (status >= 400 && status < 500 && err.message) {
+  // 503 = a feature not set up on this server (e.g. photo uploads); safe to say so
+  if (((status >= 400 && status < 500) || status === 503) && err.message) {
     return res.status(status).json({ error: err.message });
   }
 

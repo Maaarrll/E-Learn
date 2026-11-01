@@ -20,14 +20,7 @@ const {
     PASSWORD_RULES_MESSAGE
 } = require('../utils/passwords');
 
-const cloudinary =
-    require('cloudinary').v2;
-
-const multer =
-    require('multer');
-
-const streamifier =
-    require('streamifier');
+const { photoUpload, uploadPhoto, deletePhoto } = require('../utils/photos');
 
 
 const {
@@ -48,15 +41,6 @@ const MAX_FULL_NAME = 120;
 const MAX_YEAR_SECTION = 40;
 const MAX_PROGRAM = 80;
 
-// Only common photo formats (no SVG/other files that could carry scripts)
-const ALLOWED_IMAGE_TYPES =
-    new Set([
-        'image/jpeg',
-        'image/png',
-        'image/webp',
-        'image/gif'
-    ]);
-
 // Limits wrong "current password" guesses on the account page
 const passwordChangeLimiter = rateLimit({
     windowMs: 15 * 60 * 1000,
@@ -73,117 +57,8 @@ const photoLimiter = rateLimit({
 });
 
 
-/*
-    Cloudinary configuration.
-*/
-cloudinary.config({
-
-    cloud_name:
-        process.env.CLOUDINARY_CLOUD_NAME,
-
-    api_key:
-        process.env.CLOUDINARY_API_KEY,
-
-    api_secret:
-        process.env.CLOUDINARY_API_SECRET
-
-});
-
-
 const router =
     express.Router();
-
-
-/*
-    Image upload configuration.
-*/
-const upload =
-    multer({
-
-        storage:
-            multer.memoryStorage(),
-
-        limits: {
-            fileSize:
-                3 * 1024 * 1024
-        },
-
-        fileFilter:
-            (req, file, cb) => {
-
-                if (
-                    !ALLOWED_IMAGE_TYPES.has(file.mimetype)
-                ) {
-
-                    const err =
-                        new Error(
-                            'Only JPG, PNG, WEBP or GIF images are allowed.'
-                        );
-
-                    err.status = 400;
-
-                    return cb(err);
-                }
-
-                cb(null, true);
-            }
-
-    });
-
-
-/*
-    Upload profile photo to Cloudinary.
-*/
-function uploadToCloudinary(
-    buffer,
-    userId
-) {
-
-    return new Promise(
-        (resolve, reject) => {
-
-            const uploadStream =
-                cloudinary
-                    .uploader
-                    .upload_stream(
-
-                        {
-                            folder:
-                                'hcilearn/profile_photos',
-
-                            public_id:
-                                `user${userId}`,
-
-                            overwrite:
-                                true,
-
-                            /*
-                                Cloudinary checks the real file contents,
-                                not just the type the browser claims.
-                            */
-                            resource_type:
-                                'image',
-
-                            allowed_formats:
-                                ['jpg', 'jpeg', 'png', 'webp', 'gif']
-                        },
-
-                        (err, result) => {
-
-                            if (err)
-                                reject(err);
-                            else
-                                resolve(result);
-                        }
-                    );
-
-
-            streamifier
-                .createReadStream(buffer)
-                .pipe(uploadStream);
-        }
-    );
-}
 
 
 /*
@@ -722,7 +597,7 @@ router.post(
     '/photo',
     requireAuth,
     photoLimiter,
-    upload.single('photo'),
+    photoUpload,
     async (req, res, next) => {
 
         try {
@@ -738,17 +613,15 @@ router.post(
             }
 
 
-            const result =
-                await uploadToCloudinary(
+            const url =
+                await uploadPhoto(
 
                     req.file.buffer,
 
-                    req.userId
+                    'hcilearn/profile_photos',
+
+                    `user${req.userId}`
                 );
-
-
-            const url =
-                result.secure_url;
 
 
             await pool.query(
@@ -842,11 +715,7 @@ router.delete(
                 Also remove the profile photo from Cloudinary.
                 (Best effort: a failure here shouldn't block deletion.)
             */
-            try {
-                cloudinary.uploader
-                    .destroy(`hcilearn/profile_photos/user${req.userId}`, { resource_type: 'image' })
-                    .catch(err => console.error('Could not delete profile photo:', err.message));
-            } catch (err) { /* Cloudinary not set up */ }
+            deletePhoto('hcilearn/profile_photos', `user${req.userId}`);
 
 
             clearSession(res);
