@@ -21,6 +21,9 @@ const {
 
 const {
     LRN_REGEX,
+    USERNAME_REGEX,
+    USERNAME_RULES_MESSAGE,
+    usernameTaken,
     normalizeName,
     findByName,
     nameTaken,
@@ -146,6 +149,9 @@ function publicUser(row) {
         fullName:
             row.full_name,
 
+        username:
+            row.username,
+
         yearSection:
             row.year_section,
 
@@ -177,7 +183,11 @@ router.post(
 
                 firstName,
 
+                middleName,
+
                 lastName,
+
+                username,
 
                 year,
 
@@ -198,6 +208,7 @@ router.post(
             if (
                 !firstName ||
                 !lastName ||
+                !username ||
                 !year ||
                 !section ||
                 !studentId ||
@@ -207,7 +218,7 @@ router.post(
                 return res.status(400).json({
 
                     error:
-                        'First name, last name, year, section, LRN and password are required.'
+                        'First name, last name, username, year, section, LRN and password are required.'
 
                 });
             }
@@ -215,13 +226,20 @@ router.post(
 
             /*
                 Clean user input. Extra spaces are squeezed out because
-                the full name is what the student logs in with.
+                the full name is shown to instructors and is an older login.
             */
             const cleanFirstName =
                 String(firstName).trim().replace(/\s+/g, ' ');
 
+            // Optional: a middle initial or the full middle name
+            const cleanMiddleName =
+                String(middleName || '').trim().replace(/\s+/g, ' ');
+
             const cleanLastName =
                 String(lastName).trim().replace(/\s+/g, ' ');
+
+            const cleanUsername =
+                String(username).trim();
 
             const cleanYear =
                 String(year).trim();
@@ -260,6 +278,7 @@ router.post(
 
             if (
                 cleanFirstName.length > MAX_NAME ||
+                cleanMiddleName.length > MAX_NAME ||
                 cleanLastName.length > MAX_NAME ||
                 cleanProgram.length > MAX_PROGRAM
             ) {
@@ -268,6 +287,19 @@ router.post(
 
                     error:
                         'One of the fields is too long.'
+
+                });
+            }
+
+
+            if (
+                !USERNAME_REGEX.test(cleanUsername)
+            ) {
+
+                return res.status(400).json({
+
+                    error:
+                        USERNAME_RULES_MESSAGE
 
                 });
             }
@@ -355,11 +387,26 @@ router.post(
             }
 
 
+            if (
+                await usernameTaken(cleanUsername)
+            ) {
+
+                return res.status(409).json({
+
+                    error:
+                        'That username is already taken. Please choose another one.'
+
+                });
+            }
+
+
             /*
-                Combine first and last name.
+                Combine first, middle and last name.
             */
             const fullName =
-                `${cleanFirstName} ${cleanLastName}`;
+                [cleanFirstName, cleanMiddleName, cleanLastName]
+                    .filter(Boolean)
+                    .join(' ');
 
 
             /*
@@ -372,7 +419,7 @@ router.post(
                 return res.status(409).json({
 
                     error:
-                        'An account with that name already exists. Add your middle initial to your first name (e.g. "Juan M.").'
+                        'An account with that name already exists. Add your middle name or middle initial.'
 
                 });
             }
@@ -413,7 +460,8 @@ router.post(
                             year_section,
                             program,
                             student_id,
-                            password_hash
+                            password_hash,
+                            username
                         )
 
                         VALUES
@@ -424,7 +472,8 @@ router.post(
                             $4,
                             $5,
                             $6,
-                            $7
+                            $7,
+                            $8
                         )
 
                         RETURNING id`,
@@ -443,19 +492,23 @@ router.post(
 
                             cleanStudentId,
 
-                            passwordHash
+                            passwordHash,
+
+                            cleanUsername
                         ]
                     );
 
             } catch (err) {
 
-                // Two signups with the same LRN at the same moment
+                // Two signups with the same LRN or username at the same moment
                 if (err.code === '23505') {
 
                     return res.status(409).json({
 
                         error:
-                            'An account with that LRN already exists.'
+                            err.constraint === 'users_username_unique'
+                                ? 'That username is already taken. Please choose another one.'
+                                : 'An account with that LRN already exists.'
 
                     });
                 }
@@ -553,14 +606,14 @@ router.post(
                 return res.status(400).json({
 
                     error:
-                        'Name and password are required.'
+                        'Username and password are required.'
 
                 });
             }
 
 
             /*
-                Find the account by full name. Accounts made before
+                Find the account by username or full name. Accounts made before
                 names had to be unique may share a name, so the
                 password decides which one it is.
             */
@@ -598,7 +651,7 @@ router.post(
                 return res.status(401).json({
 
                     error:
-                        'Invalid name or password.'
+                        'Invalid username or password.'
 
                 });
             }
@@ -675,7 +728,7 @@ router.post(
                 return res.status(400).json({
 
                     error:
-                        'Please enter your full name and your 12-digit LRN.'
+                        'Please enter your username (or full name) and your 12-digit LRN.'
 
                 });
             }

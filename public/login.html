@@ -54,10 +54,10 @@
                         <span id="loginErrorText"></span>
                     </div>
 
-                    <!-- FULL NAME (student login) -->
+                    <!-- USERNAME (student login; older accounts use their full name) -->
                     <div class="input-group" id="nameGroup">
 
-                        <label for="loginName">Full name</label>
+                        <label for="loginName">Username</label>
 
                         <div class="input-wrapper">
 
@@ -66,8 +66,9 @@
                             <input
                                 type="text"
                                 id="loginName"
-                                placeholder="e.g. Juan Dela Cruz"
+                                placeholder="Username (or full name for older accounts)"
                                 autocomplete="username"
+                                autocapitalize="none"
                                 maxlength="130"
                                 required
                             >
@@ -198,7 +199,7 @@
             <h3 id="resetTitle">Reset Password</h3>
 
             <p class="modal-text">
-                Enter your full name and LRN to set a new password.
+                Enter your username (or full name) and LRN to set a new password.
             </p>
 
             <p id="resetMsg" class="modal-msg"></p>
@@ -208,8 +209,8 @@
                 <input
                     type="text"
                     id="resetNameInput"
-                    placeholder="Full name"
-                    aria-label="Full name"
+                    placeholder="Username or full name"
+                    aria-label="Username or full name"
                     autocomplete="username"
                     maxlength="130"
                 >
@@ -333,7 +334,7 @@
             if (!name || !/^[0-9]{12}$/.test(lrn)) {
 
                 showResetMsg(
-                    'Please enter your full name and your 12-digit LRN.',
+                    'Please enter your username (or full name) and your 12-digit LRN.',
                     true
                 );
 
@@ -586,7 +587,7 @@
                     if (!name || !password) {
 
                         showLoginError(
-                            'Please enter your full name and password.'
+                            'Please enter your username and password.'
                         );
 
                         return;

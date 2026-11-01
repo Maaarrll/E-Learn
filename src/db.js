@@ -820,6 +820,14 @@ async function init() {
             'ALTER TABLE public.users ADD COLUMN IF NOT EXISTS email_hash TEXT'
         );
 
+        // Login username; older accounts have none and log in with their full name
+        await client.query(
+            'ALTER TABLE public.users ADD COLUMN IF NOT EXISTS username TEXT'
+        );
+        await client.query(
+            'CREATE UNIQUE INDEX IF NOT EXISTS users_username_unique ON public.users (LOWER(username))'
+        );
+
         // Signup is verified by LRN now, so emailed signup codes are gone
         await client.query('DROP TABLE IF EXISTS public.signup_codes');
 
