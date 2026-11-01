@@ -63,21 +63,21 @@
                 <a href="#audit" class="nav-item" data-section="audit">
                     <i class="fa-solid fa-clipboard-list"></i> <span class="nav-text">Activity log</span>
                 </a>
+                <span class="sidebar-label sidebar-label-group">Account</span>
+                <a href="#profile" class="nav-item" data-section="profile">
+                    <i class="fa-solid fa-id-badge"></i> <span class="nav-text">My profile</span>
+                </a>
             </nav>
 
             <!-- Instructor card + log out (filled by init()) -->
             <div class="sidebar-user">
-                <span class="sidebar-user-link">
+                <a href="#profile" class="sidebar-user-link" title="My profile">
                     <span class="sidebar-avatar" id="sidebarAvatar"><i class="fa-solid fa-chalkboard-user"></i></span>
                     <span class="sidebar-user-text">
                         <strong id="sidebarName">Instructor</strong>
                         <small id="sidebarMeta">Instructor</small>
                     </span>
-                </span>
-                <button type="button" class="sidebar-logout" id="changePhotoBtn" aria-label="Change your photo" title="Change your photo">
-                    <i class="fa-solid fa-camera"></i>
-                </button>
-                <input type="file" id="photoInput" accept="image/jpeg,image/png,image/webp,image/gif" hidden>
+                </a>
                 <button type="button" class="sidebar-logout" id="changePasswordBtn" aria-label="Change password" title="Change password">
                     <i class="fa-solid fa-key"></i>
                 </button>
@@ -283,6 +283,31 @@
                     </section>
 
                     <!-- ACTIVITY LOG -->
+                    <section class="admin-panel" id="tab-profile" hidden>
+                        <div class="admin-card">
+                            <div class="student-head">
+                                <span id="profileAvatar"></span>
+                                <div>
+                                    <h3 id="profileName"></h3>
+                                    <p id="profileMeta"></p>
+                                    <small id="profileDates"></small>
+                                </div>
+                            </div>
+                            <div class="student-manage">
+                                <button type="button" class="tool-btn" id="changePhotoBtn"><i class="fa-solid fa-camera"></i> Change photo</button>
+                                <button type="button" class="tool-btn" id="removePhotoBtn" hidden><i class="fa-solid fa-user"></i> Remove photo</button>
+                                <button type="button" class="tool-btn" id="editNameBtn"><i class="fa-solid fa-pen"></i> Edit name</button>
+                                <button type="button" class="tool-btn" id="profilePasswordBtn"><i class="fa-solid fa-key"></i> Change password</button>
+                            </div>
+                            <input type="file" id="photoInput" accept="image/jpeg,image/png,image/webp,image/gif" hidden>
+                            <p class="admin-card-note">Photo: JPG, PNG, WEBP or GIF up to 3 MB. Your Instructor ID, role and sections are set by the main admin.</p>
+                        </div>
+                        <div class="admin-card">
+                            <h3><i class="fa-solid fa-users-rectangle"></i> Sections you see</h3>
+                            <div class="admin-list" id="profileSections"></div>
+                        </div>
+                    </section>
+
                     <section class="admin-panel" id="tab-audit" hidden>
                         <div class="admin-card">
                             <h3><i class="fa-solid fa-clipboard-list"></i> Admin activity log</h3>
@@ -317,7 +342,7 @@
     <script src="js/admin-content.js?v=10"></script>
     <script src="js/quiz-import.js?v=1"></script>
     <script src="js/admin-quizzes.js?v=8"></script>
-    <script src="js/admin-tour.js?v=1"></script>
+    <script src="js/admin-tour.js?v=2"></script>
     <script>
         const ACTIVITY_LABELS = { case_study: 'Situation Quiz', study_card: 'Quiz Card', video: 'Video', lesson: 'Lesson' };
         const AUDIT_ICONS = {
@@ -325,7 +350,7 @@
             post_announcement: 'fa-bullhorn', delete_announcement: 'fa-bullhorn', add_lrns: 'fa-id-card', remove_lrn: 'fa-id-card', reset_progress: 'fa-eraser',
             remind_student: 'fa-bell', signout_student: 'fa-arrow-right-from-bracket', deactivate_student: 'fa-user-slash', reactivate_student: 'fa-user-check', remove_student: 'fa-user-xmark',
             rollback_content: 'fa-clock-rotate-left', add_instructor: 'fa-user-plus', update_instructor: 'fa-user-pen',
-            reset_instructor_password: 'fa-key', remove_instructor: 'fa-user-minus', clear_audit: 'fa-trash',
+            reset_instructor_password: 'fa-key', remove_instructor: 'fa-user-minus', clear_audit: 'fa-trash', update_profile: 'fa-id-badge',
             open_class: 'fa-lock-open', close_class: 'fa-lock',
             create_quiz: 'fa-stopwatch', update_quiz: 'fa-stopwatch', publish_quiz: 'fa-upload', unpublish_quiz: 'fa-eye-slash',
             delete_quiz: 'fa-trash-can', allow_quiz_retake: 'fa-rotate-left', schedule_quiz: 'fa-calendar-days',
@@ -353,6 +378,7 @@
             reset_instructor_password: (e) => `Reset the password of ${e.details}`,
             remove_instructor: (e) => `Removed instructor ${e.details}`,
             clear_audit: () => 'Cleared the activity log',
+            update_profile: (e) => `Changed their name (${e.details})`,
             create_quiz: (e) => `Created quiz "${e.details}"`,
             update_quiz: (e) => `Edited quiz "${e.details}"`,
             publish_quiz: (e) => `Published quiz "${e.details}"`,
@@ -962,6 +988,7 @@
                 if (!res.ok) throw new Error(data.error || 'The photo could not be uploaded.');
                 me.profilePhoto = data.profilePhoto;
                 showMyPhoto();
+                renderProfile();
                 if (me.isAdmin) loadInstructors();
                 adminToast('Photo updated');
             } catch (err) {
@@ -969,6 +996,68 @@
             }
             $('changePhotoBtn').disabled = false;
         });
+
+        // ---------------- My profile ----------------
+        let profileDates = null;    // { createdAt, lastLoginAt }, loaded once
+        function renderProfile() {
+            $('profileAvatar').innerHTML = avatar(me, true);
+            $('profileName').textContent = me.fullName;
+            $('profileMeta').textContent = `Instructor ID ${me.instructorId} · ${me.isAdmin ? 'Main admin' : 'Instructor'}`;
+            const day = (iso) => new Date(iso).toLocaleDateString(undefined, { month: 'short', day: 'numeric', year: 'numeric' });
+            $('profileDates').textContent = profileDates
+                ? `Account made ${day(profileDates.createdAt)}${profileDates.lastLoginAt ? ` · Last login ${formatDateTime(profileDates.lastLoginAt)}` : ''}` : '';
+            $('removePhotoBtn').hidden = !hasPhoto(me);
+            $('profileSections').innerHTML = me.isAdmin
+                ? '<p class="admin-empty"><i class="fa-solid fa-eye"></i> As main admin you see every section.</p>'
+                : me.sections.length ? me.sections.map(sec => `<div class="admin-list-item is-static">
+                        <span class="admin-tag is-video"><i class="fa-solid fa-users"></i></span>
+                        <span class="admin-list-text"><strong>${escapeHtml(sec.yearSection || sec.program)}</strong><small>${escapeHtml(sec.program)}</small></span>
+                    </div>`).join('') : '<p class="admin-empty">No sections yet. Ask the main admin to assign them.</p>';
+        }
+
+        // The name shows in the sidebar and the welcome line
+        function showMyName() {
+            $('sidebarName').textContent = me.fullName;
+            const hour = Number(new Intl.DateTimeFormat('en-US', { hour: 'numeric', hour12: false, timeZone: 'Asia/Manila' }).format(new Date())) % 24;
+            const greet = hour < 12 ? 'Good morning' : hour < 18 ? 'Good afternoon' : 'Good evening';
+            const nameParts = me.fullName.split(' ').filter(Boolean);
+            const firstName = nameParts.find(p => !/^(mr|ms|mrs|dr|prof|sir|ma'?am).?$/i.test(p)) || nameParts[0] || '';
+            $('welcomeLine').textContent = `${greet}${firstName ? `, ${firstName}` : ''}!`;
+        }
+
+        $('editNameBtn').addEventListener('click', () => formModal({
+            title: 'Edit your name', submitLabel: 'Save',
+            subtitle: 'Shown to other instructors and in the activity log.',
+            body: `<label class="ce-field"><span>Full name</span><input type="text" name="fullName" maxlength="120" value="${escapeHtml(me.fullName)}"></label>`,
+            onSubmit: async (form) => {
+                ({ fullName: me.fullName } = await api.put('/instructor/profile', { fullName: form.elements.fullName.value }));
+                showMyName();
+                showMyPhoto();  // initials follow the name
+                renderProfile();
+                if (me.isAdmin) loadInstructors();
+                loadAudit();
+                adminToast('Name updated');
+            },
+        }));
+
+        $('removePhotoBtn').addEventListener('click', () => confirmDialog({
+            title: 'Remove your photo?', message: 'Your initials will show instead.',
+            confirmText: 'Remove photo', icon: 'fa-user', danger: true,
+            onConfirm: async () => {
+                try {
+                    await api.del('/instructor/photo');
+                    me.profilePhoto = null;
+                    showMyPhoto();
+                    renderProfile();
+                    if (me.isAdmin) loadInstructors();
+                    adminToast('Photo removed');
+                } catch (err) {
+                    adminToast(err.message, true);
+                }
+            },
+        }));
+
+        $('profilePasswordBtn').addEventListener('click', () => $('changePasswordBtn').click());
 
         // ---------------- Change my password ----------------
         $('changePasswordBtn').addEventListener('click', () => formModal({
@@ -1152,6 +1241,7 @@
             announcements: { icon: 'fa-bullhorn',        title: 'Announcements', desc: 'Post a message; students get a pop-up notification.' },
             instructors:   { icon: 'fa-chalkboard-user', title: 'Instructors',   desc: 'Add instructors and choose which sections they see.', adminOnly: true },
             audit:         { icon: 'fa-clipboard-list',  title: 'Activity log',  desc: 'Every view, export and change made in this dashboard.' },
+            profile:       { icon: 'fa-id-badge',        title: 'My profile',    desc: 'Your photo, name and password.' },
         };
         let me = null;
         let sectionSubtitle = null; // instructors: their sections replace the overview text
@@ -1267,19 +1357,14 @@
                 window.location.href = 'login.html#admin';
                 return;
             }
-            $('sidebarName').textContent = instructor.fullName;
             $('sidebarMeta').textContent = `ID ${instructor.instructorId}`;
             $('sidebarMeta').title = instructor.isAdmin ? 'Main admin' : 'Instructor';
             me = instructor;
+            showMyName();
             $('navContent').hidden = !instructor.isAdmin;
             $('navInstructors').hidden = !instructor.isAdmin;
             $('quickContent').hidden = !instructor.isAdmin;
             $('clearAuditBtn').hidden = !instructor.isAdmin;
-            const hour = Number(new Intl.DateTimeFormat('en-US', { hour: 'numeric', hour12: false, timeZone: 'Asia/Manila' }).format(new Date())) % 24;
-            const greet = hour < 12 ? 'Good morning' : hour < 18 ? 'Good afternoon' : 'Good evening';
-            const nameParts = instructor.fullName.split(' ').filter(Boolean);
-            const firstName = nameParts.find(p => !/^(mr|ms|mrs|dr|prof|sir|ma'?am).?$/i.test(p)) || nameParts[0] || '';
-            $('welcomeLine').textContent = `${greet}${firstName ? `, ${firstName}` : ''}!`;
             $('noSectionsNote').hidden = instructor.isAdmin || instructor.sections.length > 0;
             if (!instructor.isAdmin) {
                 sectionSubtitle = instructor.sections.length
@@ -1287,6 +1372,8 @@
                     : 'How the students in your sections are doing.';
             }
             showMyPhoto();
+            renderProfile();
+            api.get('/instructor/profile').then(p => { profileDates = p; renderProfile(); }).catch(() => {});
             api.get('/instructor/class').then(({ open }) => { classOpen = open; renderClassToggle(); }).catch(() => {});
 
             try {
