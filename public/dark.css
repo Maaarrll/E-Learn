@@ -96,7 +96,7 @@
     box-shadow: none;
 }
 :root[data-theme="dark"] .signup-container .input-group input::placeholder {
-    color: hsl(165 12% 67%);
+    color: hsl(165 12% 75%);
 }
 :root[data-theme="dark"] .signup-container .input-group input:focus {
     background: hsl(165 14% 17% / 0.95);
@@ -109,7 +109,7 @@
     outline: none;
 }
 :root[data-theme="dark"] .signup-container .input-group select:invalid {
-    color: hsl(165 12% 70%);
+    color: hsl(165 12% 76%);
 }
 :root[data-theme="dark"] .signup-container .input-group select:valid {
     color: hsl(165 12% 85%);
@@ -170,7 +170,7 @@
     color: hsl(165 12% 78%);
 }
 :root[data-theme="dark"] .welcome-text .subtitle {
-    color: hsl(165 12% 67%);
+    color: hsl(165 12% 75%);
 }
 :root[data-theme="dark"] .card {
     background-color: hsl(210 29% 19%);
@@ -197,7 +197,7 @@
 }
 :root[data-theme="dark"] .video-icon {
     background-color: hsl(205 41% 25%);
-    color: hsl(200 75% 79%);
+    color: hsl(200 75% 81%);
 }
 :root[data-theme="dark"] .read-icon {
     background-color: hsl(221 37% 26%);
@@ -255,10 +255,10 @@
 }
 :root[data-theme="dark"] .recent-info p,
 :root[data-theme="dark"] .quick-info p {
-    color: hsl(165 12% 70%);
+    color: hsl(165 12% 76%);
 }
 :root[data-theme="dark"] .time {
-    color: hsl(165 12% 67%);
+    color: hsl(165 12% 75%);
 }
 :root[data-theme="dark"] .dashboard-page .quick-row-card {
     --fun-stripe: linear-gradient(90deg, var(--fun-mint), var(--fun-sky));
@@ -345,7 +345,7 @@
     box-shadow: 0 0 0 3px rgba(29, 76, 103, 0.1);
 }
 :root[data-theme="dark"] .search-container input::placeholder {
-    color: hsl(165 12% 67%);
+    color: hsl(165 12% 75%);
 }
 :root[data-theme="dark"] .info-card {
     background-color: hsl(204 24% 19%);
@@ -412,7 +412,7 @@
     color: hsl(165 12% 92%);
 }
 :root[data-theme="dark"] .cs-header-text p {
-    color: hsl(165 12% 67%);
+    color: hsl(165 12% 75%);
 }
 :root[data-theme="dark"] .cs-divider {
     border: 0;
@@ -439,7 +439,7 @@
     background-color: hsl(204 24% 19%);
     border: 1px solid transparent;
     box-shadow: none;
-    color: hsl(165 12% 67%);
+    color: hsl(165 12% 75%);
 }
 :root[data-theme="dark"] .quiz-container {
     background-color: hsl(204 24% 19%);
@@ -531,7 +531,7 @@
     color: hsl(165 12% 81%);
 }
 :root[data-theme="dark"] .hidden-checkbox:checked ~ .card-text {
-    color: hsl(165 12% 67%);
+    color: hsl(165 12% 75%);
 }
 :root[data-theme="dark"] .flashcard-quiz-container {
     background-color: hsl(206 13% 23%);
@@ -971,7 +971,7 @@
     background-color: hsl(165 14% 17%);
 }
 :root[data-theme="dark"] .dashboard-page .inner-circle small {
-    color: hsl(165 12% 67%);
+    color: hsl(165 12% 75%);
 }
 :root[data-theme="dark"] .dashboard-page .stat-item {
     color: hsl(165 12% 85%);
@@ -1021,7 +1021,7 @@
     color: #bdcad2;
 }
 :root[data-theme="dark"] .dashboard-page .recent-empty p {
-    color: hsl(165 12% 67%);
+    color: hsl(165 12% 75%);
 }
 :root[data-theme="dark"] .dashboard-page .quick-item {
     background-color: hsl(210 29% 19%);
@@ -1031,7 +1031,7 @@
     box-shadow: 0 8px 18px rgba(2, 48, 71, 0.1);
 }
 :root[data-theme="dark"] .dashboard-page .stat-item span em {
-    color: #999;
+    color: hsl(165 12% 74%);
 }
 :root[data-theme="dark"] .dashboard-page .mini-bar {
     background: hsl(207 20% 22%);
@@ -1063,7 +1063,7 @@
     color: #fff;
 }
 :root[data-theme="dark"] .dashboard-page .act-text small {
-    color: hsl(165 12% 67%);
+    color: hsl(165 12% 75%);
 }
 :root[data-theme="dark"] .dashboard-page .act-text small.is-done {
     color: hsl(144 62% 79%);
@@ -1210,13 +1210,13 @@
     border-color: #023047;
 }
 :root[data-theme="dark"] :is(.video-page, .lesson-page) .video-empty {
-    color: hsl(165 12% 67%);
+    color: hsl(165 12% 75%);
 }
 :root[data-theme="dark"] :is(.video-page, .lesson-page) .video-empty i {
     color: #bdcad2;
 }
 :root[data-theme="dark"] :is(.video-page, .lesson-page) .video-empty p {
-    color: hsl(165 12% 67%);
+    color: hsl(165 12% 75%);
 }
 :root[data-theme="dark"] .lesson-page .info-card {
     background: hsl(165 14% 17%);
@@ -1553,7 +1553,7 @@
     box-shadow: 0 14px 28px rgba(2, 48, 71, 0.15);
 }
 :root[data-theme="dark"] .study-page .deck-lesson {
-    color: hsl(165 12% 67%);
+    color: hsl(165 12% 75%);
 }
 :root[data-theme="dark"] .study-page .deck-title {
     color: hsl(165 12% 92%);
@@ -1562,7 +1562,7 @@
     border-top: 1px dashed hsl(204 18% 24%);
 }
 :root[data-theme="dark"] .study-page .deck-count {
-    color: hsl(165 12% 70%);
+    color: hsl(165 12% 76%);
 }
 :root[data-theme="dark"] .study-page .deck-status {
     background: hsl(208 32% 22%);
@@ -1592,11 +1592,11 @@
 }
 :root[data-theme="dark"] .study-page .deck.is-locked .deck-title,
 :root[data-theme="dark"] .study-page .deck.is-locked .deck-count {
-    color: #969fa6;
+    color: hsl(213 10% 73%);
 }
 :root[data-theme="dark"] .study-page .deck.is-locked .deck-status {
     background: hsl(206 15% 23%);
-    color: hsl(204 7% 65%);
+    color: hsl(213 10% 73%);
 }
 :root[data-theme="dark"] .study-page .deck:focus-visible {
     outline: none;
@@ -1812,14 +1812,14 @@
     color: hsl(165 12% 92%);
 }
 :root[data-theme="dark"] .account-page .acct-card-head p {
-    color: hsl(165 12% 70%);
+    color: hsl(165 12% 76%);
 }
 :root[data-theme="dark"] .account-page .acct-field label {
     color: hsl(165 12% 85%);
 }
 :root[data-theme="dark"] .account-page .acct-optional {
     background: hsl(204 20% 20%);
-    color: hsl(165 12% 67%);
+    color: hsl(165 12% 75%);
 }
 :root[data-theme="dark"] .account-page .acct-input > i {
     color: hsl(206 10% 65%);
@@ -1861,7 +1861,7 @@
     color: hsl(200 75% 88%);
 }
 :root[data-theme="dark"] .account-page .acct-hint {
-    color: hsl(165 12% 67%);
+    color: hsl(165 12% 75%);
 }
 :root[data-theme="dark"] .account-page .acct-hint.is-ok {
     color: hsl(144 62% 79%);
@@ -1878,7 +1878,7 @@
     box-shadow: 0 8px 20px rgba(2, 48, 71, 0.08);
 }
 :root[data-theme="dark"] .account-page .acct-save-note {
-    color: hsl(165 12% 67%);
+    color: hsl(165 12% 75%);
 }
 :root[data-theme="dark"] .account-page .acct-save-note.is-dirty {
     color: hsl(37 75% 75%);
@@ -2698,7 +2698,7 @@
     box-shadow: 0 0 0 4px rgba(6, 66, 153, 0.15);
 }
 :root[data-theme="dark"] .note-card .note-count {
-    color: hsl(165 12% 67%);
+    color: hsl(165 12% 75%);
 }
 :root[data-theme="dark"] .hci-toast {
     background: #01112f;
@@ -2773,7 +2773,7 @@
     color: hsl(211 56% 75%);
 }
 :root[data-theme="dark"] .saved-card-meta {
-    color: hsl(165 12% 67%);
+    color: hsl(165 12% 75%);
 }
 :root[data-theme="dark"] .saved-card.is-lesson .saved-kind {
     background: hsl(212 45% 21%);
@@ -2815,7 +2815,7 @@
 :root[data-theme="dark"] .saved-loading,
 :root[data-theme="dark"] .saved-no-match,
 :root[data-theme="dark"] .saved-error {
-    color: hsl(165 12% 70%);
+    color: hsl(165 12% 76%);
 }
 :root[data-theme="dark"] .badge-mint {
     --b1: #3f89cf;
@@ -2858,7 +2858,7 @@
     border-color: hsl(226 36% 27%);
 }
 :root[data-theme="dark"] .lb-row.is-open .lb-name {
-    color: hsl(225 16% 65%);
+    color: hsl(223 15% 70%);
 }
 :root[data-theme="dark"] .lb-avatar.is-open {
     background: hsl(227 35% 22%);
@@ -2885,7 +2885,7 @@
 }
 :root[data-theme="dark"] .streak-text small,
 :root[data-theme="dark"] .streak-best {
-    color: hsl(165 12% 70%);
+    color: hsl(165 12% 76%);
 }
 :root[data-theme="dark"] .streak-dot {
     background: hsl(225 24% 21%);
@@ -2898,10 +2898,10 @@
     box-shadow: 0 0 0 3px hsl(165 14% 17%), 0 0 0 5px var(--fun-coral);
 }
 :root[data-theme="dark"] .streak-day small {
-    color: hsl(165 12% 67%);
+    color: hsl(165 12% 75%);
 }
 :root[data-theme="dark"] .streak-day.is-today small {
-    color: var(--fun-coral);
+    color: hsl(16 72% 72%);
 }
 :root[data-theme="dark"] .badge-count {
     background: hsl(226 45% 23%);
@@ -2949,7 +2949,7 @@
     color: hsl(221 75% 92%);
 }
 :root[data-theme="dark"] .badge-desc {
-    color: hsl(165 12% 70%);
+    color: hsl(165 12% 76%);
 }
 :root[data-theme="dark"] .badge-progress {
     background: hsl(230 26% 22%);
@@ -2958,13 +2958,13 @@
     background: linear-gradient(90deg, var(--b1), var(--b2));
 }
 :root[data-theme="dark"] .badge-state {
-    color: hsl(165 12% 67%);
+    color: hsl(165 12% 75%);
 }
 :root[data-theme="dark"] .badge-tile.is-earned .badge-state {
     color: var(--b2);
 }
 :root[data-theme="dark"] .badge-loading {
-    color: hsl(165 12% 70%);
+    color: hsl(165 12% 76%);
 }
 :root[data-theme="dark"] .badge-pop {
     background: hsl(165 14% 17%);
@@ -2987,7 +2987,7 @@
 :root[data-theme="dark"] .badge-pop-close {
     border: none;
     background: none;
-    color: #999;
+    color: hsl(165 12% 74%);
 }
 :root[data-theme="dark"] .case-page .scenario-card.is-highlighted,
 :root[data-theme="dark"] .study-page .deck.is-highlighted .deck-face {
@@ -3087,7 +3087,7 @@
 }
 :root[data-theme="dark"] .qs-empty,
 :root[data-theme="dark"] .qs-status {
-    color: hsl(165 12% 70%);
+    color: hsl(165 12% 76%);
 }
 :root[data-theme="dark"] .qs-chip {
     border: 2px solid hsl(226 36% 23%);
@@ -3137,7 +3137,7 @@
 }
 :root[data-theme="dark"] .admin-loading,
 :root[data-theme="dark"] .admin-empty {
-    color: hsl(165 12% 70%);
+    color: hsl(165 12% 76%);
 }
 :root[data-theme="dark"] .admin-denied {
     border: 2px dashed hsl(227 39% 25%);
@@ -3176,7 +3176,7 @@
     color: hsl(221 75% 92%);
 }
 :root[data-theme="dark"] .admin-stat span {
-    color: hsl(165 12% 70%);
+    color: hsl(165 12% 76%);
 }
 :root[data-theme="dark"] .admin-card {
     border: 2px solid hsl(226 36% 23%);
@@ -3190,13 +3190,13 @@
     color: var(--fun-grape);
 }
 :root[data-theme="dark"] .admin-card-note {
-    color: hsl(165 12% 67%);
+    color: hsl(165 12% 75%);
 }
 :root[data-theme="dark"] .section-name {
     color: hsl(165 12% 85%);
 }
 :root[data-theme="dark"] .section-name small {
-    color: #999;
+    color: hsl(165 12% 74%);
 }
 :root[data-theme="dark"] .admin-progress {
     background: hsl(227 37% 23%);
@@ -3223,10 +3223,10 @@
     color: hsl(221 75% 92%);
 }
 :root[data-theme="dark"] .admin-list-text small {
-    color: hsl(165 12% 67%);
+    color: hsl(165 12% 75%);
 }
 :root[data-theme="dark"] .admin-drop-arrow {
-    color: #aaa;
+    color: hsl(165 12% 73%);
 }
 :root[data-theme="dark"] .admin-drop[open] summary {
     background: hsl(228 45% 20%);
@@ -3235,7 +3235,7 @@
     color: hsl(221 75% 92%);
 }
 :root[data-theme="dark"] .admin-drop-body small {
-    color: hsl(165 12% 67%);
+    color: hsl(165 12% 75%);
 }
 :root[data-theme="dark"] .admin-avatar {
     background: linear-gradient(135deg, var(--fun-grape), var(--fun-pink));
@@ -3278,7 +3278,7 @@
     color: hsl(165 12% 81%);
 }
 :root[data-theme="dark"] .admin-count {
-    color: hsl(165 12% 67%);
+    color: hsl(165 12% 75%);
 }
 :root[data-theme="dark"] .admin-table-wrap {
     border: 2px solid hsl(226 36% 23%);
@@ -3301,7 +3301,7 @@
     color: hsl(221 75% 92%);
 }
 :root[data-theme="dark"] .admin-student small {
-    color: #999;
+    color: hsl(165 12% 74%);
 }
 :root[data-theme="dark"] .admin-drawer-overlay {
     background: rgba(0, 8, 28, 0.45);
@@ -3320,7 +3320,7 @@
     color: hsl(165 12% 78%);
 }
 :root[data-theme="dark"] .student-head small {
-    color: #999;
+    color: hsl(165 12% 74%);
 }
 :root[data-theme="dark"] .student-stats div {
     background: hsl(228 45% 20%);
@@ -3329,7 +3329,7 @@
     color: hsl(221 75% 92%);
 }
 :root[data-theme="dark"] .student-stats span {
-    color: hsl(165 12% 70%);
+    color: hsl(165 12% 76%);
 }
 :root[data-theme="dark"] .student-days {
     background: hsl(228 45% 20%);
@@ -3344,7 +3344,7 @@
     color: hsl(165 12% 85%);
 }
 :root[data-theme="dark"] .student-modules small {
-    color: hsl(165 12% 67%);
+    color: hsl(165 12% 75%);
 }
 :root[data-theme="dark"] .student-decks span {
     background: hsl(225 24% 21%);
@@ -3392,7 +3392,7 @@
     box-shadow: 0 8px 18px rgba(63, 137, 207, 0.35);
 }
 :root[data-theme="dark"] .lesson-loading {
-    color: hsl(165 12% 70%);
+    color: hsl(165 12% 76%);
 }
 :root[data-theme="dark"] .rt-note {
     color: hsl(165 12% 78%);
@@ -3447,7 +3447,7 @@
     color: hsl(221 75% 92%);
 }
 :root[data-theme="dark"] .ce-main small {
-    color: hsl(165 12% 67%);
+    color: hsl(165 12% 75%);
 }
 :root[data-theme="dark"] .ce-chip.is-new {
     background: hsl(212 45% 21%);
@@ -3490,13 +3490,13 @@
     color: hsl(221 75% 92%);
 }
 :root[data-theme="dark"] .ce-modal-head small {
-    color: hsl(165 12% 67%);
+    color: hsl(165 12% 75%);
 }
 :root[data-theme="dark"] .ce-field {
     color: hsl(165 12% 81%);
 }
 :root[data-theme="dark"] .ce-field small {
-    color: #999;
+    color: hsl(165 12% 74%);
 }
 :root[data-theme="dark"] .ce-field input,
 :root[data-theme="dark"] .ce-field textarea,
@@ -3585,7 +3585,7 @@
     color: hsl(5 68% 75%);
 }
 :root[data-theme="dark"] .ce-modal-foot small {
-    color: hsl(165 12% 67%);
+    color: hsl(165 12% 75%);
 }
 :root[data-theme="dark"] .announce-body {
     color: hsl(165 12% 78%) !important;
@@ -3609,7 +3609,7 @@
     color: hsl(165 12% 81%);
 }
 :root[data-theme="dark"] .ce-check small {
-    color: #999;
+    color: hsl(165 12% 74%);
 }
 :root[data-theme="dark"] fieldset.ce-field {
     border: none;
@@ -3655,14 +3655,14 @@
     color: hsl(165 12% 78%);
 }
 :root[data-theme="dark"] .notif-text small {
-    color: #999;
+    color: hsl(165 12% 74%);
 }
 :root[data-theme="dark"] .notif-new {
     background: #ff4d6d;
     color: #fff;
 }
 :root[data-theme="dark"] .notif-empty {
-    color: hsl(165 12% 67%);
+    color: hsl(165 12% 75%);
 }
 :root[data-theme="dark"] .notif-pop {
     border: 2px solid #ffe08a;
@@ -3675,7 +3675,7 @@
 :root[data-theme="dark"] .notif-pop-close {
     border: none;
     background: none;
-    color: #999;
+    color: hsl(165 12% 74%);
 }
 :root[data-theme="dark"] .ce-drag {
     border: none;
@@ -3771,7 +3771,7 @@
     color: hsl(221 75% 92%);
 }
 :root[data-theme="dark"] .admin-quick-btn small {
-    color: hsl(165 12% 67%);
+    color: hsl(165 12% 75%);
 }
 :root[data-theme="dark"] .ce-sortable > .ce-row[data-drag-id]:hover,
 :root[data-theme="dark"] .ce-sortable > .ce-group[data-drag-id] > .ce-row:hover {
@@ -3835,17 +3835,17 @@
     box-shadow: 0 4px 12px rgba(6, 66, 153, 0.18);
 }
 :root[data-theme="dark"] .lb-rank {
-    color: hsl(165 12% 70%);
+    color: hsl(165 12% 76%);
 }
 :root[data-theme="dark"] .lb-name small,
 :root[data-theme="dark"] .lb-points small {
-    color: hsl(165 12% 67%);
+    color: hsl(165 12% 75%);
 }
 :root[data-theme="dark"] .lb-points b {
     color: var(--fun-grape);
 }
 :root[data-theme="dark"] .lb-gap {
-    color: #aaa;
+    color: hsl(165 12% 73%);
 }
 :root[data-theme="dark"] .risk-more {
     color: var(--fun-grape);
@@ -4114,7 +4114,7 @@
     color: hsl(4 75% 74%);
 }
 :root[data-theme="dark"] .class-switch-text small {
-    color: hsl(165 12% 70%);
+    color: hsl(165 12% 76%);
 }
 :root[data-theme="dark"] .class-switch .theme-switch {
     background: #f3b8b8;
@@ -4206,7 +4206,7 @@
     color: hsl(165 12% 78%);
 }
 :root[data-theme="dark"] .tq-card-text small {
-    color: hsl(165 12% 67%);
+    color: hsl(165 12% 75%);
 }
 :root[data-theme="dark"] .tq-card .tq-start {
     border: none;
@@ -4252,7 +4252,7 @@
     background: hsl(165 14% 17%);
 }
 :root[data-theme="dark"] .qz-hint {
-    color: hsl(165 12% 67%);
+    color: hsl(165 12% 75%);
 }
 :root[data-theme="dark"] .qz-subhead {
     color: hsl(221 75% 92%);
@@ -4264,7 +4264,7 @@
     background: linear-gradient(90deg, var(--fun-mint), var(--fun-sky));
 }
 :root[data-theme="dark"] .qz-stats small {
-    color: hsl(165 12% 70%);
+    color: hsl(165 12% 76%);
 }
 :root[data-theme="dark"] .tq-scores h3 {
     color: hsl(221 75% 92%);
@@ -4299,7 +4299,7 @@
     color: hsl(221 75% 92%);
 }
 :root[data-theme="dark"] .tq-score-text small {
-    color: hsl(165 12% 67%);
+    color: hsl(165 12% 75%);
 }
 :root[data-theme="dark"] .tq-score-link {
     color: hsl(201 75% 82%);
@@ -4313,7 +4313,7 @@
     color: hsl(41 75% 84%);
 }
 :root[data-theme="dark"] .qz-window-hint {
-    color: hsl(165 12% 67%);
+    color: hsl(165 12% 75%);
 }
 :root[data-theme="dark"] .qz-results .qz-missed td {
     background: hsl(0 45% 19%);
@@ -4334,7 +4334,7 @@
     color: hsl(165 12% 78%);
 }
 :root[data-theme="dark"] .qz-scores-table td small {
-    color: hsl(165 12% 67%);
+    color: hsl(165 12% 75%);
 }
 :root[data-theme="dark"] .qz-score.is-high {
     background: hsl(221 45% 21%);
@@ -4419,7 +4419,7 @@
     color: hsl(221 75% 92%);
 }
 :root[data-theme="dark"] .qz-card-title small {
-    color: hsl(165 12% 67%);
+    color: hsl(165 12% 75%);
 }
 :root[data-theme="dark"] .qz-chip {
     background: color-mix(in srgb, var(--qz-color) 14%, hsl(165 14% 17%));
@@ -4441,7 +4441,7 @@
     color: hsl(221 75% 92%);
 }
 :root[data-theme="dark"] .qz-numbers small {
-    color: hsl(165 12% 70%);
+    color: hsl(165 12% 76%);
 }
 :root[data-theme="dark"] .qz-numbers .is-bad {
     background: hsl(0 45% 19%);
@@ -4471,7 +4471,7 @@
     color: hsl(201 75% 82%);
 }
 :root[data-theme="dark"] .qz-menu button small {
-    color: #999;
+    color: hsl(165 12% 74%);
 }
 :root[data-theme="dark"] .qz-menu .is-danger,
 :root[data-theme="dark"] .qz-menu .is-danger i {
@@ -4742,7 +4742,7 @@
 }
 :root[data-theme="dark"] .cs-node.is-next .cs-node-status {
     background: hsl(206 45% 20%);
-    color: hsl(205 57% 72%);
+    color: hsl(207 65% 76%);
 }
 :root[data-theme="dark"] .cs-node-q {
     color: hsl(165 12% 78%);
