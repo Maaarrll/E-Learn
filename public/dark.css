@@ -4499,6 +4499,13 @@
 :root[data-theme="dark"] .sb-reader .sb-content li {
     color: hsl(165 12% 87%);
 }
+:root[data-theme="dark"] .sb-slide-bar span {
+    border: 2px solid var(--sb-ink);
+    background: hsl(165 14% 17%);
+}
+:root[data-theme="dark"] .sb-slide-bar span.is-on {
+    background: var(--book);
+}
 :root[data-theme="dark"] .sb-turn {
     border: 3px solid var(--sb-ink);
     background: hsl(165 14% 17%);
