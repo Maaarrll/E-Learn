@@ -12,7 +12,8 @@ const HCIContentEditor = (function () {
     { id: 'case',   label: 'Case studies',  icon: 'fa-folder' },
     { id: 'deck',   label: 'Study cards',   icon: 'fa-clone' },
   ];
-  const STATUS_LABEL = { new: 'New', changed: 'Edited', deleted: 'Removed' };
+  const STATUS_LABEL = { new: 'New · not live yet', changed: 'Edited · not live yet', deleted: 'Removed · not live yet' };
+  const STATUS_VERB = { new: 'Added', changed: 'Edited', deleted: 'Removed' };
   const ICON_IDEAS = ['fa-book-open', 'fa-lightbulb', 'fa-brain', 'fa-users', 'fa-eye', 'fa-hand-pointer', 'fa-pen-ruler',
     'fa-universal-access', 'fa-scale-balanced', 'fa-face-smile', 'fa-robot', 'fa-vr-cardboard', 'fa-house-signal',
     'fa-desktop', 'fa-magnifying-glass', 'fa-bullseye', 'fa-layer-group', 'fa-shield-halved', 'fa-chart-line', 'fa-star'];
@@ -69,12 +70,13 @@ const HCIContentEditor = (function () {
     root.innerHTML = `
       <div class="ce-bar${data.pending ? ' has-changes' : ''}">
         <span class="ce-bar-text">${data.pending
-          ? `<i class="fa-solid fa-pen-to-square"></i> <b>${data.pending}</b> unpublished change${data.pending === 1 ? '' : 's'}. Students won't see ${data.pending === 1 ? 'it' : 'them'} until you publish.`
-          : '<i class="fa-solid fa-circle-check"></i> Everything is published. Students see exactly what is listed here.'}</span>
+          ? `<b><i class="fa-solid fa-hourglass-half"></i> ${data.pending} change${data.pending === 1 ? ' is' : 's are'} waiting. Students can't see ${data.pending === 1 ? 'it' : 'them'} yet.</b>
+             <ul class="ce-pending">${pendingLines().slice(0, 4).map(l => `<li>${esc(l)}</li>`).join('')}${data.pending > 4 ? `<li>…and ${data.pending - 4} more</li>` : ''}</ul>`
+          : '<i class="fa-solid fa-circle-check"></i> Everything is live. Students see exactly what is listed here.'}</span>
         <span class="ce-bar-actions">
           <button type="button" class="tool-btn" data-act="history"><i class="fa-solid fa-clock-rotate-left"></i> History</button>
-          <button type="button" class="tool-btn" data-act="discard" ${data.pending ? '' : 'disabled'}><i class="fa-solid fa-rotate-left"></i> Discard changes</button>
-          <button type="button" class="tool-btn ce-publish" data-act="publish" ${data.pending ? '' : 'disabled'}><i class="fa-solid fa-upload"></i> Publish</button>
+          <button type="button" class="tool-btn" data-act="discard" ${data.pending ? '' : 'disabled'}><i class="fa-solid fa-rotate-left"></i> Undo all changes</button>
+          <button type="button" class="tool-btn ce-publish" data-act="publish" ${data.pending ? '' : 'disabled'}><i class="fa-solid fa-upload"></i> Publish to students</button>
         </span>
       </div>
       <div class="ce-tabs" role="tablist">
@@ -82,6 +84,22 @@ const HCIContentEditor = (function () {
           <i class="fa-solid ${t.icon}"></i> ${t.label}${counts[t.id] ? ` <span class="ce-dot">${counts[t.id]}</span>` : ''}</button>`).join('')}
       </div>
       <div class="ce-list">${tab === 'video' ? renderVideos() : tab === 'lesson' ? renderGroups('module', 'topic') : tab === 'case' ? renderCases() : renderGroups('deck', 'card')}</div>`;
+  }
+
+  // "Edited topic: Mga Paraan..." for every change that is not live yet
+  function pendingLines(exceptId) {
+    return data.items.filter(i => i.status !== 'live' && i.id !== exceptId).map(i => {
+      const v = view(i);
+      return `${STATUS_VERB[i.status]} ${KIND_NAMES[i.kind]}: ${v.title || v.question || i.key}`;
+    });
+  }
+
+  async function publishAll() {
+    try {
+      const r = await api.post('/admin/content/publish');
+      toast(r.published ? 'Published! Students can see it now.' : 'Nothing to publish');
+    } catch (err) { toast(err.message, true); }
+    await load();
   }
 
   function chip(item) {
@@ -157,7 +175,7 @@ const HCIContentEditor = (function () {
             ${g.draft && childKind === 'card' ? `<button type="button" class="tool-btn ce-add is-small" data-act="bulk" data-parent="${esc(g.key)}"><i class="fa-solid fa-layer-group"></i> Bulk add cards</button>` : ''}
             <div class="ce-sortable">${children.map(c => row(c, children, nextChild(c),
               childKind === 'topic' ? view(c).title : view(c).question,
-              childKind === 'topic' ? `${view(c).sections.length} section${view(c).sections.length === 1 ? '' : 's'}` : esc(`Answer: ${view(c).options[view(c).answer]}`))).join('') || '<p class="admin-empty">Nothing here yet.</p>'}</div>
+              childKind === 'topic' ? `${view(c).sections.length} slide${view(c).sections.length === 1 ? '' : 's'}` : esc(`Answer: ${view(c).options[view(c).answer]}`))).join('') || '<p class="admin-empty">Nothing here yet.</p>'}</div>
           </div>` : ''}
         </div>`;
       }).join('')}</div>`;
@@ -201,24 +219,18 @@ const HCIContentEditor = (function () {
     }
     if (act === 'publish') {
       return confirmDialog({
-        title: `Publish ${data.pending} change${data.pending === 1 ? '' : 's'}?`,
-        message: 'Students will see the new content right away. Their progress on items you kept is not affected.',
+        title: `Publish ${data.pending} change${data.pending === 1 ? '' : 's'} to students?`,
+        message: `${pendingLines().map(l => `• ${l}`).join('\n')}\n\nStudents see this right away. Their progress is kept.`,
         confirmText: 'Publish', icon: 'fa-upload',
-        onConfirm: async () => {
-          try {
-            const r = await api.post('/admin/content/publish');
-            toast(`Published: ${r.summary}`);
-          } catch (err) { toast(err.message, true); }
-          await load();
-        },
+        onConfirm: publishAll,
       });
     }
     if (act === 'history') return openHistory();
     if (act === 'discard') {
       return confirmDialog({
-        title: 'Discard all changes?',
-        message: 'Every unpublished edit, addition and removal will be thrown away. This cannot be undone.',
-        confirmText: 'Discard', icon: 'fa-rotate-left', danger: true,
+        title: 'Undo all changes?',
+        message: `${pendingLines().map(l => `• ${l}`).join('\n')}\n\nAll of these go back to what students see now. This cannot be undone.`,
+        confirmText: 'Undo all', icon: 'fa-rotate-left', danger: true,
         onConfirm: () => run(api.post('/admin/content/discard'), 'Changes discarded'),
       });
     }
@@ -307,11 +319,11 @@ const HCIContentEditor = (function () {
   function sectionEditor(s, i) {
     return `<div class="ce-section" data-index="${i}">
       <div class="ce-section-head">
-        <b>Section ${i + 1}</b>
+        <b>Slide ${i + 1}</b>
         <span>
-          <button type="button" class="ce-icon-btn" data-sec="up" aria-label="Move section up"><i class="fa-solid fa-arrow-up"></i></button>
-          <button type="button" class="ce-icon-btn" data-sec="down" aria-label="Move section down"><i class="fa-solid fa-arrow-down"></i></button>
-          <button type="button" class="ce-icon-btn is-danger" data-sec="remove" aria-label="Remove section"><i class="fa-solid fa-trash-can"></i></button>
+          <button type="button" class="ce-icon-btn" data-sec="up" aria-label="Move slide up"><i class="fa-solid fa-arrow-up"></i></button>
+          <button type="button" class="ce-icon-btn" data-sec="down" aria-label="Move slide down"><i class="fa-solid fa-arrow-down"></i></button>
+          <button type="button" class="ce-icon-btn is-danger" data-sec="remove" aria-label="Remove slide"><i class="fa-solid fa-trash-can"></i></button>
         </span>
       </div>
       <div class="ce-row2">
@@ -347,7 +359,7 @@ const HCIContentEditor = (function () {
         return field('Topic title', inputBox('title', d.title))
           + `<div class="ce-topic-layout">
               <div class="ce-sections">${(d.sections || []).map(sectionEditor).join('')}
-                <button type="button" class="tool-btn" data-sec="add"><i class="fa-solid fa-plus"></i> Add section</button></div>
+                <button type="button" class="tool-btn" data-sec="add"><i class="fa-solid fa-plus"></i> Add slide</button></div>
               <div class="ce-preview"><b>Preview</b><div class="ce-preview-body accordion-content"></div></div>
             </div>`;
       default:
@@ -411,9 +423,10 @@ const HCIContentEditor = (function () {
         <div class="ce-modal-body">${formFor(kind, d, isNew, item)}</div>
         <p class="ce-error" role="alert" hidden></p>
         <div class="ce-modal-foot">
-          <small><i class="fa-solid fa-circle-info"></i> Saved as a draft. Students see it after you publish.</small>
+          <small><i class="fa-solid fa-circle-info"></i> <b>Save for later</b> keeps it hidden from students. <b>Save &amp; publish</b> shows it to them now.</small>
           <span><button type="button" class="tool-btn" data-close>Cancel</button>
-          <button type="submit" class="tool-btn ce-publish"><i class="fa-solid fa-floppy-disk"></i> Save draft</button></span>
+          <button type="submit" class="tool-btn" data-save="later"><i class="fa-solid fa-floppy-disk"></i> Save for later</button>
+          <button type="submit" class="tool-btn ce-publish" data-save="publish"><i class="fa-solid fa-upload"></i> Save &amp; publish</button></span>
         </div>
         <datalist id="ceIconIdeas">${ICON_IDEAS.map(i => `<option value="${i}">`).join('')}</datalist>
       </form>`;
@@ -453,28 +466,37 @@ const HCIContentEditor = (function () {
       if (b.dataset.sec === 'up' && i > 0) [sections[i - 1], sections[i]] = [sections[i], sections[i - 1]];
       if (b.dataset.sec === 'down' && i < sections.length - 1) [sections[i + 1], sections[i]] = [sections[i], sections[i + 1]];
       form.querySelector('.ce-sections').innerHTML = sections.map(sectionEditor).join('')
-        + '<button type="button" class="tool-btn" data-sec="add"><i class="fa-solid fa-plus"></i> Add section</button>';
+        + '<button type="button" class="tool-btn" data-sec="add"><i class="fa-solid fa-plus"></i> Add slide</button>';
       refreshPreview();
     });
 
     form.addEventListener('submit', async (e) => {
       e.preventDefault();
+      const publishNow = !!(e.submitter && e.submitter.dataset.save === 'publish');
       const errorEl = form.querySelector('.ce-error');
-      const saveBtn = form.querySelector('[type="submit"]');
+      const saveBtns = form.querySelectorAll('[type="submit"]');
+      // Publishing sends every waiting change live, so name the others first
+      const others = publishNow ? pendingLines(item && item.id) : [];
+      if (others.length && !(await confirmDialog({
+        title: `Also publish ${others.length} other change${others.length === 1 ? '' : 's'}?`,
+        message: `${others.map(l => `• ${l}`).join('\n')}\n\nPublishing sends every waiting change to students together.`,
+        confirmText: 'Publish all', icon: 'fa-upload',
+      }))) return;
       errorEl.hidden = true;
-      saveBtn.disabled = true;
+      saveBtns.forEach(b => { b.disabled = true; });
       try {
         const body = readForm(form, kind);
         if (isNew) await api.post('/admin/content', { kind, parentKey, data: body });
         else await api.put(`/admin/content/${item.id}`, { data: body });
         close();
         if (parentKey) open.add(`${kind === 'topic' ? 'module' : 'deck'}:${parentKey}`);
-        toast(isNew ? 'Added as a draft' : 'Draft saved');
+        if (publishNow) return publishAll();
+        toast('Saved. Not live yet: click "Publish to students" when ready.');
         await load();
       } catch (err) {
         errorEl.textContent = err.message;
         errorEl.hidden = false;
-        saveBtn.disabled = false;
+        saveBtns.forEach(b => { b.disabled = false; });
       }
     });
 
