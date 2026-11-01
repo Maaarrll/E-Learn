@@ -10205,7 +10205,7 @@ div.qs-result {
 /* Stat tiles */
 .admin-stats {
     display: grid;
-    grid-template-columns: repeat(5, minmax(0, 1fr));
+    grid-template-columns: repeat(6, minmax(0, 1fr));
     gap: 14px;
     margin-bottom: 18px;
 }
@@ -13288,6 +13288,11 @@ fieldset.ce-field legend {
 .admin-stat:nth-child(3) { --stat-color: var(--fun-sky); }
 .admin-stat:nth-child(4) { --stat-color: var(--fun-coral); }
 .admin-stat:nth-child(5) { --stat-color: var(--fun-grape); }
+
+.admin-stat.is-online { --stat-color: #1f9d55; }
+.admin-stat.is-online i { background: #dcf5e6; color: #157a41; }
+.admin-pill.is-online { background: #dcf5e6; color: #146c3a; }
+.admin-pill.is-online i { font-size: 8px; vertical-align: 2px; }
 
 .admin-stat:nth-child(1) i { background: #e3f3ff; color: #187bc2; }
 .admin-stat:nth-child(2) i { background: #fff4d6; color: #a86b00; }

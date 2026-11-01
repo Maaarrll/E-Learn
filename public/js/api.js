@@ -36,6 +36,8 @@ async function requireAuth() {
   try {
     const { user } = await api.get('/auth/me');
     renderSidebarUser(user);
+    // Keeps the student "Online now" for the admin while the page is open and visible
+    setInterval(() => { if (!document.hidden) api.get('/auth/me').catch(() => {}); }, 60000);
     return user;
   } catch (err) {
     window.location.href = 'login.html';

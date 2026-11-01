@@ -142,6 +142,19 @@ router.get('/students', async (req, res, next) => {
   }
 });
 
+// GET /api/admin/online — ids of students seen in the last 3 minutes (pages ping once a minute)
+router.get('/online', async (req, res, next) => {
+  try {
+    const { rows } = await pool.query(
+      `SELECT id, program, year_section FROM users
+       WHERE last_seen_at > NOW() - INTERVAL '3 minutes' AND disabled_at IS NULL`
+    );
+    res.json({ ids: rows.filter(r => canSee(req.instructor, r)).map(r => r.id) });
+  } catch (err) {
+    next(err);
+  }
+});
+
 // GET /api/admin/insights — most-missed questions and least-watched videos
 router.get('/insights', async (req, res, next) => {
   try {

@@ -56,13 +56,20 @@ async function requireAuth(req, res, next) {
     // The cookie is only valid while its session version matches the user's
     // current one (it changes when the password is changed or reset).
     const { rows } = await pool.query(
-      'SELECT session_version, disabled_at FROM users WHERE id = $1',
+      `SELECT session_version, disabled_at,
+              last_seen_at IS NULL OR last_seen_at < NOW() - INTERVAL '30 seconds' AS seen_stale
+       FROM users WHERE id = $1`,
       [payload.userId]
     );
 
     if (!rows[0] || rows[0].session_version !== (payload.sv || 0) || rows[0].disabled_at) {
       clearSession(res);
       return res.status(401).json({ error: 'Session expired. Please log in again.' });
+    }
+
+    // For "Online now" on the admin dashboard; at most one write per 30 seconds
+    if (rows[0].seen_stale) {
+      pool.query('UPDATE users SET last_seen_at = NOW() WHERE id = $1', [payload.userId]).catch(() => {});
     }
 
     req.userId = payload.userId;
