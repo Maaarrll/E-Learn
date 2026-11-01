@@ -11088,8 +11088,36 @@ div.qs-result {
 
 .ce-bar-actions {
     display: flex;
+    flex-wrap: wrap;
     gap: 8px;
     margin-left: auto;
+}
+
+/* What is waiting to be published, in plain words */
+.ce-pending {
+    margin: 6px 0 0;
+    padding-left: 20px;
+    font-size: 13px;
+    line-height: 1.6;
+}
+
+.ce-pending li {
+    overflow-wrap: anywhere;
+}
+
+.ce-bar-text {
+    flex: 1 1 320px;
+    min-width: 0;
+}
+
+/* Lists in confirm dialogs (one change per line) */
+#confirmMessage {
+    white-space: pre-line;
+}
+
+/* A confirm opened from the content editor shows above the editor */
+.ce-overlay ~ .confirm-overlay {
+    z-index: 10010;
 }
 
 .tool-btn.ce-publish {
