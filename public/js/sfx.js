@@ -167,6 +167,11 @@
       tone({ freq: N.C6, start: 0.12, dur: 0.30, type: 'triangle', vol: 0.25 });
     },
 
+    // Read Lesson: soft "whoosh" when the slide changes
+    slide: function () {
+      tone({ freq: 420, slideTo: 760, start: 0.00, dur: 0.09, type: 'sine', vol: 0.10 });
+    },
+
     // Naubos ang oras: alarm-clock na "brring" + pababang tono
     timeUp: function () {
       for (var i = 0; i < 6; i++) {

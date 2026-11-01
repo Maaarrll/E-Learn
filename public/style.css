@@ -16694,3 +16694,172 @@ button.cs-node:hover .cs-node-card {
 .ls-preview *::after {
     animation: none !important;
 }
+
+/* ---------- Read Lesson: comic "POW!" bursts ---------- */
+.ls-burst {
+    position: absolute;
+    top: 50%;
+    left: 50%;
+    z-index: 5;
+    pointer-events: none;
+    filter: drop-shadow(5px 5px 0 var(--ls-ink, #102430));
+    animation: lsBurst 1.3s var(--fun-bounce) forwards;
+}
+
+/* A yellow starburst with the word on top */
+.ls-burst span {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    width: 230px;
+    height: 230px;
+    background: var(--ls-pow, #ffe14d);
+    clip-path: polygon(50% 0%, 61% 18%, 82% 8%, 80% 30%, 100% 35%, 85% 52%, 98% 70%, 76% 72%, 74% 95%, 56% 82%, 40% 100%, 33% 78%, 10% 88%, 15% 65%, 0% 52%, 17% 40%, 6% 18%, 28% 22%, 36% 3%);
+    color: var(--ls-c1, #e8467c);
+    font-family: 'Bangers', 'Nunito', cursive;
+    font-size: 46px;
+    letter-spacing: 2px;
+    text-shadow: 3px 3px 0 var(--ls-ink, #102430);
+}
+
+.ls-burst.is-big span {
+    width: 330px;
+    height: 330px;
+    font-size: 64px;
+}
+
+@keyframes lsBurst {
+    0%   { opacity: 0; transform: translate(-50%, -50%) scale(0.2) rotate(-25deg); }
+    25%  { opacity: 1; transform: translate(-50%, -50%) scale(1.1) rotate(-8deg); }
+    40%  { transform: translate(-50%, -50%) scale(1) rotate(-6deg); }
+    80%  { opacity: 1; transform: translate(-50%, -50%) scale(1.04) rotate(-4deg); }
+    100% { opacity: 0; transform: translate(-50%, -50%) scale(1.3) rotate(0deg); }
+}
+
+/* ---------- Read Lesson: Aralin progress badges ---------- */
+.ls-aralins {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 12px;
+    margin: 0 0 22px;
+}
+
+.ls-aralin {
+    flex: 1 1 200px;
+    display: flex;
+    align-items: center;
+    gap: 10px;
+    padding: 10px 14px;
+    border: 3px solid var(--ls-ink);
+    border-radius: 16px;
+    background: #fff;
+    box-shadow: 4px 4px 0 var(--ls-ink);
+    color: var(--ls-ink);
+    font: inherit;
+    text-align: left;
+    cursor: pointer;
+    transition: transform 0.3s var(--fun-bounce), box-shadow 0.2s;
+}
+
+.ls-aralin:hover {
+    transform: translate(-2px, -3px) rotate(-1deg);
+    box-shadow: 6px 7px 0 var(--ls-ink);
+}
+
+.ls-aralin[aria-pressed="true"] {
+    background: var(--ls-pow);
+}
+
+.ls-aralin:focus-visible {
+    outline: 3px solid var(--ls-color);
+    outline-offset: 3px;
+}
+
+.ls-aralin-icon {
+    flex-shrink: 0;
+    width: 40px;
+    height: 40px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    border: 3px solid var(--ls-ink);
+    border-radius: 50%;
+    background: var(--ls-color);
+    color: #fff;
+    font-size: 17px;
+}
+
+.ls-aralin.is-done .ls-aralin-icon {
+    background: var(--ls-pow);
+    color: var(--ls-ink);
+    animation: funJiggle 0.8s ease 0.3s 2;
+}
+
+.ls-aralin-text {
+    flex: 1;
+    min-width: 0;
+    display: flex;
+    flex-direction: column;
+    gap: 5px;
+}
+
+.ls-aralin-text b {
+    font-family: 'Bangers', 'Nunito', cursive;
+    font-weight: 400;
+    font-size: 21px;
+    letter-spacing: 1px;
+    line-height: 1;
+    color: var(--ls-color);
+}
+
+/* One dot per topic, filled when read */
+.ls-aralin-dots {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 4px;
+}
+
+.ls-aralin-dots i {
+    width: 12px;
+    height: 12px;
+    border: 2px solid var(--ls-ink);
+    border-radius: 50%;
+    background: #fff;
+}
+
+.ls-aralin-dots i.is-read {
+    background: var(--ls-color);
+    animation: funPop 0.4s var(--fun-bounce) both;
+}
+
+.ls-aralin-count {
+    flex-shrink: 0;
+    font-family: 'Bangers', 'Nunito', cursive;
+    font-size: 19px;
+    letter-spacing: 1px;
+}
+
+@media screen and (max-width: 640px) {
+    .ls-aralin {
+        flex-basis: 100%;
+    }
+
+    .ls-burst span {
+        width: 180px;
+        height: 180px;
+        font-size: 36px;
+    }
+
+    .ls-burst.is-big span {
+        width: 250px;
+        height: 250px;
+        font-size: 48px;
+    }
+}
+
+@media (prefers-reduced-motion: reduce) {
+    .ls-aralin.is-done .ls-aralin-icon,
+    .ls-aralin-dots i.is-read {
+        animation: none;
+    }
+}

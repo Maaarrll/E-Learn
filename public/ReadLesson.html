@@ -8,7 +8,7 @@
     <link rel="icon" href="favicon-32.png?v=3" type="image/png" sizes="32x32">
     <link rel="apple-touch-icon" href="apple-touch-icon.png?v=3">
     <meta name="theme-color" content="#023047">
-    <link rel="stylesheet" href="style.css?v=110">
+    <link rel="stylesheet" href="style.css?v=111">
     <link rel="stylesheet" href="dark.css?v=64">
     <script src="js/theme.js?v=3"></script>
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
@@ -24,7 +24,7 @@
     <script src="js/notifications.js?v=2"></script>
     <script src="js/richtext.js?v=1"></script>
     <script src="js/bookmarks.js?v=2"></script>
-    <script src="js/sfx.js?v=9"></script>
+    <script src="js/sfx.js?v=10"></script>
     <script src="js/gamify.js?v=3"></script>
     <script src="js/search.js?v=3"></script>
     <script>
@@ -133,6 +133,9 @@
                         <button type="button" class="filter-btn" data-filter="read">Read</button>
                     </div>
                 </div>
+
+                <!-- One badge per Aralin: a dot per topic, a trophy when done. Tap to show only that Aralin -->
+                <div class="ls-aralins" id="lsAralins"></div>
 
                 <div class="video-grid" id="lessonGrid">
                     <p class="lesson-loading"><span class="btn-spinner"></span> Loading lessons...</p>
@@ -324,6 +327,20 @@
                 </div>`;
             }
 
+            // Big comic "POW!" over the slide for a moment (kept in the slide box so it shows in full screen too)
+            const BURST_WORDS = ['POW!', 'WOW!', 'TAMA!', 'BOOM!', 'GALING!', 'ASTIG!'];
+            function comicBurst(word, big) {
+                if (window.matchMedia && window.matchMedia('(prefers-reduced-motion: reduce)').matches) return;
+                const burst = document.createElement('div');
+                burst.className = `ls-burst${big ? ' is-big' : ''}`;
+                burst.setAttribute('aria-hidden', 'true');
+                burst.innerHTML = '<span></span>';
+                burst.firstChild.textContent = word;
+                $('lsStage').appendChild(burst);
+                setTimeout(() => burst.remove(), 1400);
+            }
+            const randomWord = () => BURST_WORDS[Math.floor(Math.random() * BURST_WORDS.length)];
+
             function answerCheck(btn) {
                 const box = btn.closest('.ls-check');
                 const right = Number(btn.dataset.choice) === Number(box.dataset.answer);
@@ -332,6 +349,7 @@
                 box.querySelector('.ls-check-msg').textContent = right ? 'Tama! Ang galing mo!' : 'Hindi pa. Subukan ulit!';
                 HCISfx.play(right ? 'correct' : 'wrong');
                 if (right) {
+                    comicBurst(randomWord());
                     box.classList.add('is-done');
                     box.querySelectorAll('[data-choice]').forEach(b => { b.disabled = true; });
                 }
@@ -377,8 +395,36 @@
                     : `${done >= total / 2 ? '🔥' : '📖'} ${done} of ${total} read · ${total - done} to go!`;
                 $('readBar').style.width = `${total ? (done / total) * 100 : 0}%`;
                 document.querySelector('.video-toolbar').classList.toggle('is-complete', allDone);
+                renderAralins();
                 applyFilters();
             }
+
+            function renderAralins() {
+                const picked = $('lessonFilter').value;
+                $('lsAralins').innerHTML = modules.map((mod, m) => {
+                    const pages = bookPages(m);
+                    if (!pages.length) return ''; // a lesson with no topics yet gets no badge
+                    const done = pages.filter(p => read.has(p.key)).length;
+                    const finished = done === pages.length;
+                    return `<button type="button" class="ls-aralin ls-c${m % 4}${finished ? ' is-done' : ''}" data-aralin="${m}" aria-pressed="${picked === String(m)}"
+                        aria-label="Aralin ${m + 1}: ${done} of ${pages.length} read${finished ? ', finished' : ''}. Show only this Aralin">
+                        <span class="ls-aralin-icon"><i class="fa-solid ${finished ? 'fa-trophy' : HCIRichText.safeIcon(mod.icon)}"></i></span>
+                        <span class="ls-aralin-text"><b>Aralin ${m + 1}</b>
+                            <span class="ls-aralin-dots" aria-hidden="true">${pages.map(p => `<i class="${read.has(p.key) ? 'is-read' : ''}"></i>`).join('')}</span>
+                        </span>
+                        <span class="ls-aralin-count">${finished ? 'Done!' : `${done}/${pages.length}`}</span>
+                    </button>`;
+                }).join('');
+            }
+
+            // Tapping a badge shows only that Aralin (tap again to show all)
+            $('lsAralins').addEventListener('click', (e) => {
+                const b = e.target.closest('[data-aralin]');
+                if (!b) return;
+                $('lessonFilter').value = $('lessonFilter').value === b.dataset.aralin ? 'all' : b.dataset.aralin;
+                renderAralins();
+                applyFilters();
+            });
 
             function applyFilters() {
                 const q = normalizeText($('searchInput').value.trim());
@@ -398,7 +444,7 @@
             }
 
             $('searchInput').addEventListener('input', applyFilters);
-            $('lessonFilter').addEventListener('change', applyFilters);
+            $('lessonFilter').addEventListener('change', () => { renderAralins(); applyFilters(); });
             document.querySelectorAll('.filter-btn').forEach(btn => btn.addEventListener('click', () => {
                 document.querySelectorAll('.filter-btn').forEach(b => b.classList.remove('active'));
                 btn.classList.add('active');
@@ -429,6 +475,7 @@
                     : `<i class="fa-solid fa-star"></i> ${PRAISE[read.size % PRAISE.length]} Marked as read.`;
                 $('lsReadMsg').hidden = false;
                 HCISfx.play(aralinDone ? 'mastered' : 'levelUp');
+                comicBurst(aralinDone ? 'KA-BOOM!' : randomWord(), aralinDone);
             }
 
             // startSlide -1 = the topic's last slide (going back)
@@ -480,11 +527,13 @@
             }
 
             function goNext() {
+                if (slide < slides.length - 1 || current + 1 < topics.length) HCISfx.play('slide');
                 if (slide < slides.length - 1) { slide++; return renderSlide(1); }
                 if (current + 1 < topics.length) goTopic(current + 1, 0);
             }
 
             function goPrev() {
+                if (slide > 0 || current > 0) HCISfx.play('slide');
                 if (slide > 0) { slide--; return renderSlide(-1); }
                 if (current > 0) goTopic(current - 1, -1);
             }
