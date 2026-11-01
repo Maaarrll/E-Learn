@@ -9,6 +9,7 @@ const { pool } = require('../db');
 const { rateLimit } = require('../middleware/rateLimit');
 const { isValidPassword, PASSWORD_RULES_MESSAGE } = require('../utils/passwords');
 const { isClassOpen, setClassOpen } = require('../middleware/classOpen');
+const { photoUpload, uploadPhoto } = require('../utils/photos');
 const {
   requireInstructor,
   issueInstructorSession,
@@ -69,8 +70,28 @@ router.post('/logout', (req, res) => {
 
 // GET /api/instructor/me
 router.get('/me', requireInstructor, (req, res) => {
-  const { instructorId, fullName, role, isAdmin, sections } = req.instructor;
-  res.json({ instructor: { instructorId, fullName, role, isAdmin, sections } });
+  const { instructorId, fullName, role, isAdmin, sections, profilePhoto } = req.instructor;
+  res.json({ instructor: { instructorId, fullName, role, isAdmin, sections, profilePhoto } });
+});
+
+// Every upload uses Cloudinary quota
+const photoLimiter = rateLimit({
+  windowMs: 60 * MINUTE,
+  max: 10,
+  keyFn: (req) => `instructor-photo:${req.instructor.id}`,
+  message: 'Too many photo uploads. Please try again in an hour.',
+});
+
+// POST /api/instructor/photo  (multipart "photo") -> { profilePhoto }
+router.post('/photo', requireInstructor, photoLimiter, photoUpload, async (req, res, next) => {
+  try {
+    if (!req.file) return res.status(400).json({ error: 'No file uploaded.' });
+    const url = await uploadPhoto(req.file.buffer, 'hcilearn/instructor_photos', `instructor${req.instructor.id}`);
+    await pool.query('UPDATE instructors SET profile_photo = $1 WHERE id = $2', [url, req.instructor.id]);
+    res.json({ profilePhoto: url });
+  } catch (err) {
+    next(err);
+  }
 });
 
 // GET /api/instructor/class  -> { open }

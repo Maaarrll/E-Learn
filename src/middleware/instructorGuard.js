@@ -32,7 +32,7 @@ function clearInstructorSession(res) {
   res.clearCookie(COOKIE_NAME, options);
 }
 
-// Sets req.instructor = { id, instructorId, fullName, role, isAdmin, sections }
+// Sets req.instructor = { id, instructorId, fullName, role, isAdmin, sections, profilePhoto }
 // or answers 401. sections = [{ program, yearSection }] (admins see everyone).
 async function requireInstructor(req, res, next) {
   const token = req.cookies && req.cookies[COOKIE_NAME];
@@ -52,7 +52,7 @@ async function requireInstructor(req, res, next) {
 
   try {
     const { rows } = await pool.query(
-      'SELECT id, instructor_id, full_name, role, session_version FROM instructors WHERE id = $1',
+      'SELECT id, instructor_id, full_name, role, session_version, profile_photo FROM instructors WHERE id = $1',
       [payload.instructorId]
     );
     if (!rows[0] || rows[0].session_version !== (payload.sv || 0)) {
@@ -70,6 +70,7 @@ async function requireInstructor(req, res, next) {
       role: rows[0].role,
       isAdmin: rows[0].role === 'admin',
       sections: sections.map(r => ({ program: r.program, yearSection: r.year_section })),
+      profilePhoto: rows[0].profile_photo || null,
     };
     next();
   } catch (err) {

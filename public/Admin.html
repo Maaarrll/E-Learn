@@ -8,7 +8,7 @@
     <link rel="icon" href="favicon-32.png?v=4" type="image/png" sizes="32x32">
     <link rel="apple-touch-icon" href="apple-touch-icon.png?v=4">
     <meta name="theme-color" content="#023047">
-    <link rel="stylesheet" href="style.css?v=118">
+    <link rel="stylesheet" href="style.css?v=119">
     <link rel="stylesheet" href="dark.css?v=72">
     <script src="js/theme.js?v=3"></script>
     <!-- FontAwesome para sa icons -->
@@ -74,6 +74,10 @@
                         <small id="sidebarMeta">Instructor</small>
                     </span>
                 </span>
+                <button type="button" class="sidebar-logout" id="changePhotoBtn" aria-label="Change your photo" title="Change your photo">
+                    <i class="fa-solid fa-camera"></i>
+                </button>
+                <input type="file" id="photoInput" accept="image/jpeg,image/png,image/webp,image/gif" hidden>
                 <button type="button" class="sidebar-logout" id="changePasswordBtn" aria-label="Change password" title="Change password">
                     <i class="fa-solid fa-key"></i>
                 </button>
@@ -366,6 +370,10 @@
         const $ = (id) => document.getElementById(id);
         const escapeHtml = (text) => String(text).replace(/[&<>"']/g, c => ({ '&': '&amp;', '<': '&lt;', '>': '&gt;', '"': '&quot;', "'": '&#39;' }[c]));
         const initials = (name) => name.split(' ').filter(Boolean).slice(0, 2).map(n => n[0].toUpperCase()).join('');
+        // Profile photo if they have one (only https links from our uploads), else initials
+        const hasPhoto = (p) => /^https:\/\//.test(p.profilePhoto || '');
+        const avatar = (p, big) => `<span class="admin-avatar${big ? ' is-big' : ''}">${hasPhoto(p)
+            ? `<img src="${escapeHtml(p.profilePhoto)}" alt="" loading="lazy">` : escapeHtml(initials(p.fullName))}</span>`;
 
         function daysBetween(a, b) {
             return Math.round((Date.parse(b) - Date.parse(a)) / 86400000);
@@ -428,7 +436,7 @@
             $('statOnline').textContent = online.length;
             $('onlineList').innerHTML = online.length ? online.map(s => `
                 <button type="button" class="admin-list-item" data-student="${s.id}">
-                    <span class="admin-avatar">${escapeHtml(initials(s.fullName))}</span>
+                    ${avatar(s)}
                     <span class="admin-list-text"><strong>${escapeHtml(s.fullName)}</strong><small>${escapeHtml(sectionOf(s))}</small></span>
                     <span class="admin-pill is-online"><i class="fa-solid fa-circle"></i> Online</span>
                 </button>`).join('')
@@ -474,7 +482,7 @@
             $('inactiveList').innerHTML = atRisk.length ? atRisk.slice(0, RISK_SHOWN).map(({ s, reasons }) => `
                 <div class="risk-row">
                     <button type="button" class="admin-list-item" data-student="${s.id}">
-                        <span class="admin-avatar">${escapeHtml(initials(s.fullName))}</span>
+                        ${avatar(s)}
                         <span class="admin-list-text"><strong>${escapeHtml(s.fullName)}</strong><small>${escapeHtml(sectionOf(s))}</small></span>
                         <span class="risk-reasons">${reasons.map(r => `<span class="admin-pill is-warn">${escapeHtml(r)}</span>`).join('')}</span>
                     </button>
@@ -560,7 +568,7 @@
                 <tr data-student="${s.id}" tabindex="0">
                     <td data-label="Student">
                         <span class="admin-student">
-                            <span class="admin-avatar">${escapeHtml(initials(s.fullName))}</span>
+                            ${avatar(s)}
                             <span><strong>${escapeHtml(s.fullName)}</strong><small>${s.username ? '@' + escapeHtml(s.username) + ' · ' : ''}${escapeHtml(s.studentId || '—')}</small></span>
                         </span>
                     </td>
@@ -590,7 +598,7 @@
 
                 $('drawerBody').innerHTML = `
                     <div class="student-head">
-                        <span class="admin-avatar is-big">${escapeHtml(initials(s.fullName))}</span>
+                        ${avatar(s, true)}
                         <div>
                             <h3 id="drawerName">${escapeHtml(s.fullName)}</h3>
                             <p>${s.username ? '@' + escapeHtml(s.username) + ' · ' : ''}${escapeHtml(s.studentId || 'No student ID')} · ${escapeHtml(sectionOf(s))}</p>
@@ -927,6 +935,41 @@
             return form;
         }
 
+        // ---------------- My photo ----------------
+        function showMyPhoto() {
+            const box = $('sidebarAvatar');
+            box.textContent = initials(me.fullName) || 'IN';
+            if (hasPhoto(me)) {
+                const img = new Image();
+                img.alt = '';
+                img.onload = () => { box.textContent = ''; box.appendChild(img); };
+                img.src = me.profilePhoto;
+            }
+        }
+
+        $('changePhotoBtn').addEventListener('click', () => $('photoInput').click());
+        $('photoInput').addEventListener('change', async () => {
+            const file = $('photoInput').files[0];
+            $('photoInput').value = ''; // so the same file can be picked again
+            if (!file) return;
+            if (file.size > 3 * 1024 * 1024) return adminToast('The photo must be 3 MB or smaller.', true);
+            const body = new FormData();
+            body.append('photo', file);
+            $('changePhotoBtn').disabled = true;
+            try {
+                const res = await fetch('/api/instructor/photo', { method: 'POST', credentials: 'include', body });
+                const data = await res.json().catch(() => ({}));
+                if (!res.ok) throw new Error(data.error || 'The photo could not be uploaded.');
+                me.profilePhoto = data.profilePhoto;
+                showMyPhoto();
+                if (me.isAdmin) loadInstructors();
+                adminToast('Photo updated');
+            } catch (err) {
+                adminToast(err.message, true);
+            }
+            $('changePhotoBtn').disabled = false;
+        });
+
         // ---------------- Change my password ----------------
         $('changePasswordBtn').addEventListener('click', () => formModal({
             title: 'Change your password', submitLabel: 'Change password',
@@ -964,7 +1007,7 @@
                 knownSections = instructorData.availableSections.map(a => ({ program: a.program, yearSection: a.yearSection }));
                 $('instructorList').innerHTML = instructorData.instructors.map(i => `
                     <div class="admin-list-item is-static">
-                        <span class="admin-avatar">${escapeHtml(initials(i.fullName))}</span>
+                        ${avatar(i)}
                         <span class="admin-list-text"><strong>${escapeHtml(i.fullName)} ${i.id === instructorData.me ? '<small>(you)</small>' : ''}</strong>
                             <small>ID ${escapeHtml(i.instructorId)} · last login ${i.lastLoginAt ? formatDateTime(i.lastLoginAt) : 'never'}</small>
                             <small>${i.role === 'admin' ? 'Sees every section' : i.sections.length ? escapeHtml(i.sections.map(sectionLabel).join(', ')) : 'No sections yet'}</small></span>
@@ -1243,7 +1286,7 @@
                     ? `Your sections: ${instructor.sections.map(sec => sec.yearSection || sec.program).join(', ')}`
                     : 'How the students in your sections are doing.';
             }
-            $('sidebarAvatar').textContent = initials(instructor.fullName) || 'IN';
+            showMyPhoto();
             api.get('/instructor/class').then(({ open }) => { classOpen = open; renderClassToggle(); }).catch(() => {});
 
             try {

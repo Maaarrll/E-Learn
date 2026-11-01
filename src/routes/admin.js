@@ -12,6 +12,7 @@ const { decryptEmail } = require('../utils/emailSecurity');
 const { sendInactiveReminder } = require('../utils/mailer');
 const { adminName } = require('../utils/names');
 const { markUpdated } = require('../updates');
+const { deletePhoto } = require('../utils/photos');
 
 const router = express.Router();
 router.use(requireInstructor);
@@ -356,12 +357,7 @@ router.post('/students/:id/remove', async (req, res, next) => {
     if (!student) return res.status(404).json({ error: 'Student not found.' });
     await audit(req.instructor.id, 'remove_student', null, adminName(student));
     await pool.query('DELETE FROM users WHERE id = $1', [student.id]);
-    // Best effort: also remove the profile photo from Cloudinary
-    try {
-      require('cloudinary').v2.uploader
-        .destroy(`hcilearn/profile_photos/user${student.id}`, { resource_type: 'image' })
-        .catch(err => console.error('Could not delete profile photo:', err.message));
-    } catch (err) { /* Cloudinary not set up */ }
+    deletePhoto('hcilearn/profile_photos', `user${student.id}`);
     res.json({ ok: true });
   } catch (err) {
     next(err);

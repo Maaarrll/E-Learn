@@ -941,6 +941,11 @@ async function init() {
             "ALTER TABLE public.instructors ADD COLUMN IF NOT EXISTS role TEXT NOT NULL DEFAULT 'instructor'"
         );
 
+        /* Instructor's own profile photo (Cloudinary URL), shown in the admin panel */
+        await client.query(
+            'ALTER TABLE public.instructors ADD COLUMN IF NOT EXISTS profile_photo TEXT'
+        );
+
         /* There must always be an admin: the first instructor becomes one. */
         await client.query(`
             UPDATE public.instructors SET role = 'admin'

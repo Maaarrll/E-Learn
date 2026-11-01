@@ -7,6 +7,7 @@ const bcrypt = require('bcryptjs');
 const { pool } = require('../db');
 const { requireInstructor, requireAdminRole } = require('../middleware/instructorGuard');
 const { isValidPassword, PASSWORD_RULES_MESSAGE } = require('../utils/passwords');
+const { deletePhoto } = require('../utils/photos');
 
 const router = express.Router();
 router.use(requireInstructor, requireAdminRole);
@@ -82,7 +83,7 @@ async function adminCount() {
 // GET /api/admin/instructors — instructors + the sections students are in
 router.get('/', handle(async (req, res) => {
   const { rows } = await pool.query(
-    'SELECT id, instructor_id, full_name, role, created_at, last_login_at FROM instructors ORDER BY full_name'
+    'SELECT id, instructor_id, full_name, role, created_at, last_login_at, profile_photo FROM instructors ORDER BY full_name'
   );
   const { rows: secRows } = await pool.query('SELECT instructor_id, program, year_section FROM instructor_sections ORDER BY program, year_section');
   const { rows: available } = await pool.query(
@@ -94,7 +95,7 @@ router.get('/', handle(async (req, res) => {
     me: req.instructor.id,
     instructors: rows.map(r => ({
       id: r.id, instructorId: r.instructor_id, fullName: r.full_name, role: r.role,
-      createdAt: r.created_at, lastLoginAt: r.last_login_at,
+      createdAt: r.created_at, lastLoginAt: r.last_login_at, profilePhoto: r.profile_photo || null,
       sections: secRows.filter(s => s.instructor_id === r.id).map(s => ({ program: s.program, yearSection: s.year_section })),
     })),
     availableSections: available.map(a => ({ program: a.program, yearSection: a.year_section, students: a.students })),
@@ -159,6 +160,7 @@ router.delete('/:id', handle(async (req, res) => {
   if (target.id === req.instructor.id) fail('You can\'t remove your own account.');
   if (target.role === 'admin' && await adminCount() <= 1) fail('There must be at least one main admin.');
   await pool.query('DELETE FROM instructors WHERE id = $1', [target.id]);
+  deletePhoto('hcilearn/instructor_photos', `instructor${target.id}`);
   await audit(req.instructor.id, 'remove_instructor', `${target.full_name} (ID ${target.instructor_id})`);
   res.json({ ok: true });
 }));
