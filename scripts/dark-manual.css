@@ -125,3 +125,25 @@
 :root[data-theme="dark"] .lesson-page .ls-aralin[aria-pressed="true"] .ls-aralin-dots i:not(.is-read) {
     background: transparent;
 }
+
+/* Dashboard "See all badges": the dark blue link was almost invisible */
+:root[data-theme="dark"] .badge-link {
+    color: #8fbfff;
+}
+
+/* Read Lesson Aralin badge titles: lighter shade of the lesson colour */
+:root[data-theme="dark"] .lesson-page .ls-aralin-text b {
+    color: color-mix(in srgb, var(--ls-color) 55%, #ffffff);
+}
+
+/* Selected (yellow) Aralin badge and the two bright quiz tiles keep dark ink text */
+:root[data-theme="dark"] .lesson-page .ls-aralin[aria-pressed="true"] .ls-aralin-text b,
+:root[data-theme="dark"] .tq-choice.tq-c0,
+:root[data-theme="dark"] .tq-choice.tq-c2 {
+    color: #102430;
+}
+
+/* Login "Hello, welcome!": the navy title was invisible on the dark card */
+:root[data-theme="dark"] .login-page .glass-panel h1 {
+    color: #e6edf5;
+}
