@@ -788,6 +788,35 @@ async function init() {
             )
         );
 
+
+        /* Time each student spent on each lesson topic (for the teacher),
+           and when they last opened it (a topic read too fast is refused). */
+        CREATE TABLE IF NOT EXISTS topic_time (
+
+            user_id
+                INTEGER
+                NOT NULL
+                REFERENCES users(id)
+                ON DELETE CASCADE,
+
+            topic_key
+                TEXT
+                NOT NULL,
+
+            seconds
+                INTEGER
+                NOT NULL
+                DEFAULT 0,
+
+            opened_at
+                TIMESTAMPTZ,
+
+            PRIMARY KEY (
+                user_id,
+                topic_key
+            )
+        );
+
     `);
 
 

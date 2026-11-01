@@ -623,6 +623,21 @@
                             <small>${d.videos.length ? d.videos.map(v => escapeHtml(v.title)).join(' · ') : 'None yet'}</small></div>
                     </div>
 
+                    ${(() => {
+                        // Time on each lesson topic; "read" in under a minute is flagged
+                        const mins = (sec) => sec < 60 ? `${sec}s` : `${Math.round(sec / 60)} min`;
+                        // 0s = read before tracking started, so not flagged
+                        const fast = (r) => r.read && r.seconds > 0 && r.seconds < 60;
+                        const opened = d.reading.filter(r => r.seconds || r.read);
+                        const total = d.reading.reduce((sum, r) => sum + r.seconds, 0);
+                        return `<h4>Lesson reading (${mins(total)} total)</h4>
+                        <div class="admin-list">${opened.length ? opened.map(r => `
+                            <div class="admin-list-item is-static">
+                                <span class="admin-tag${fast(r) ? ' is-case' : ''}">${r.seconds ? mins(r.seconds) : '–'}</span>
+                                <span class="admin-list-text"><strong>${r.number}. ${escapeHtml(r.title)}</strong><small>${!r.read ? 'Started, not finished' : !r.seconds ? 'Read before time was tracked' : fast(r) ? 'Read very fast' : 'Read'}</small></span>
+                            </div>`).join('') : '<p class="admin-empty">No lessons opened yet.</p>'}</div>`;
+                    })()}
+
                     <h4>Questions to review (${d.mistakes.length})</h4>
                     <div class="admin-list">
                         ${d.mistakes.length ? d.mistakes.slice(0, 10).map(m => `

@@ -224,6 +224,10 @@ router.get('/students/:id', async (req, res, next) => {
        ORDER BY a.finished_at DESC`,
       [id]
     );
+    const { rows: topicTime } = await pool.query('SELECT topic_key, seconds FROM topic_time WHERE user_id = $1', [id]);
+    const { rows: topicReads } = await pool.query('SELECT topic_key FROM topic_reads WHERE user_id = $1', [id]);
+    const secondsOn = new Map(topicTime.map(r => [r.topic_key, r.seconds]));
+    const readSet = new Set(topicReads.map(r => r.topic_key));
     const today = todayLocal();
     const { rows: dayRows } = await pool.query(
       'SELECT day, answers, correct, videos, topics_read FROM daily_activity WHERE user_id = $1 AND day >= $2',
@@ -255,6 +259,8 @@ router.get('/students/:id', async (req, res, next) => {
       badges: getBadges(content.totals).map(b => ({ id: b.id, name: b.name, icon: b.icon, color: b.color, earnedAt: earnedAt.get(b.id) || null })),
       recentActivity: activity,
       quizzes: quizzes.map(q => ({ title: q.title, score: q.score, total: q.total, finishedAt: q.finished_at })),
+      // Lesson order; the teacher can spot topics that were read suspiciously fast
+      reading: content.topics.map(t => ({ title: t.title, number: t.number, seconds: secondsOn.get(t.key) || 0, read: readSet.has(t.key) })),
       last14,
     });
   } catch (err) {
@@ -385,7 +391,7 @@ router.post('/students/:id/remind', async (req, res, next) => {
 });
 
 // Start over: clears learning progress (keeps the account, profile and saved items)
-const PROGRESS_TABLES = ['case_study_progress', 'study_card_progress', 'lesson_progress', 'topic_reads', 'video_progress',
+const PROGRESS_TABLES = ['case_study_progress', 'study_card_progress', 'lesson_progress', 'topic_reads', 'topic_time', 'video_progress',
   'video_positions', 'mistakes', 'daily_activity', 'user_badges', 'activity_log'];
 router.post('/students/:id/reset', studentAction('reset_progress', async (s) => {
   const client = await pool.connect();

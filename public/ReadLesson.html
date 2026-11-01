@@ -267,18 +267,43 @@
             // Topics read are saved on the server: reading a lesson unlocks its quizzes.
             let read = new Set();
             try { read = new Set((await api.get('/progress/lesson')).readTopics); } catch (e) { /* offline: topics show as unread */ }
-            const saveRead = (keys) => api.post('/progress/lesson/read', { topicKeys: keys });
+            const saveRead = (key) => api.post('/progress/lesson/read', { topicKey: key });
 
-            // Topics read before that were kept in this browser: upload them once
-            const readKey = `readTopics:${user ? user.id : 'me'}`;
-            try {
-                const local = JSON.parse(localStorage.getItem(readKey) || '[]');
-                const missing = Array.isArray(local) ? local.filter(k => !read.has(k)) : [];
-                missing.forEach(k => read.add(k));
-                (missing.length ? saveRead(missing) : Promise.resolve())
-                    .then(() => localStorage.removeItem(readKey))
-                    .catch(() => { /* try again next visit */ });
-            } catch (e) { /* storage blocked */ }
+            // ---------------- Reading time ----------------
+            // Each slide waits a little before Next works (about 4 words a second,
+            // 3 to 20 seconds), so a topic can't be finished by tapping Next.
+            // The server checks the same 3s-per-slide floor.
+            const MAX_SLIDE_SECONDS = 180;  // time on one slide counts up to 3 minutes (left open, walked away)
+            const wordCount = (text) => String(text || '').split(/\s+/).filter(Boolean).length;
+            function waitSeconds(t, s) {
+                if (s.check) return 0;      // the quick check waits for a right answer instead
+                const n = s.flip ? t.sections.filter(x => x.heading).length * 8 : wordCount(s.section.heading) + wordCount(s.section.body);
+                return Math.min(20, Math.max(3, Math.round(n / 4)));
+            }
+
+            // Time spent goes to the teacher's student panel
+            let timeKey = null;             // topic the running clock belongs to
+            let slideStart = 0;
+            let pendingSecs = 0;
+            function stopClock() {
+                if (slideStart) pendingSecs += Math.min((Date.now() - slideStart) / 1000, MAX_SLIDE_SECONDS);
+                slideStart = 0;
+            }
+            function startClock() { if (!document.hidden && !$('lessonPlayer').hidden) slideStart = Date.now(); }
+            function flushTime() {
+                stopClock();
+                const seconds = Math.round(pendingSecs);
+                pendingSecs = 0;
+                if (!timeKey || seconds < 1) return;
+                // keepalive so the last bit still arrives when the tab is closing
+                fetch('/api/progress/lesson/time', {
+                    method: 'POST', credentials: 'include', keepalive: true,
+                    headers: { 'Content-Type': 'application/json' },
+                    body: JSON.stringify({ topicKey: timeKey, seconds: Math.min(seconds, 1800) }),
+                }).catch(() => {});
+            }
+            document.addEventListener('visibilitychange', () => { if (document.hidden) flushTime(); else startClock(); });
+            window.addEventListener('pagehide', flushTime);
 
             // ---------------- Slides ----------------
             // One section per slide. Key-word pages ("Salita") are one slide of
@@ -352,6 +377,17 @@
                     comicBurst(randomWord());
                     box.classList.add('is-done');
                     box.querySelectorAll('[data-choice]').forEach(b => { b.disabled = true; });
+                    passedChecks.add(topics[current].key);
+                    slideDone();
+                } else {
+                    // New order each miss, so tapping down the list isn't a strategy
+                    const list = box.querySelector('.ls-check-options');
+                    const buttons = [...list.children];
+                    for (let i = buttons.length - 1; i > 0; i--) {
+                        const j = Math.floor(Math.random() * (i + 1));
+                        [buttons[i], buttons[j]] = [buttons[j], buttons[i]];
+                    }
+                    buttons.forEach((b, k) => { b.firstElementChild.textContent = 'ABCD'[k]; list.appendChild(b); });
                 }
             }
 
@@ -458,6 +494,10 @@
             let slides = [];
             let openedFromList = false;     // Back can then use the browser's history
             const countedThisVisit = new Set();
+            const seenSlides = new Set();   // "topicKey:slide" whose wait ran out this visit
+            const passedChecks = new Set(); // topics whose quick check was answered right this visit
+            let waitLeft = 0;
+            let waitTimer = null;
             const PRAISE = ['Ang galing!', 'Astig!', 'Nice one!', 'Panalo!', 'Keep it up!'];
 
             function markRead(t) {
@@ -467,7 +507,7 @@
                 }
                 if (read.has(t.key)) return;
                 read.add(t.key);
-                saveRead([t.key]).catch(() => {});
+                saveRead(t.key).catch(() => {});
                 // Finishing every topic of an Aralin gets the big fanfare
                 const aralinDone = bookPages(t.lesson).every(p => read.has(p.key));
                 $('lsReadMsg').innerHTML = aralinDone
@@ -483,6 +523,9 @@
                 const t = topics[i];
                 if (!t) return showList();
                 const fromList = player.hidden;
+                flushTime();
+                if (timeKey !== t.key) api.post('/progress/lesson/open', { topicKey: t.key }).catch(() => {});
+                timeKey = t.key;
                 current = i;
                 slides = slidesOf(t);
                 slide = startSlide < 0 ? slides.length - 1 : Math.min(startSlide, slides.length - 1);
@@ -502,22 +545,59 @@
             function renderSlide(dir) {
                 const t = topics[current];
                 const s = slides[slide];
-                const last = slide === slides.length - 1;
-                const next = topics[current + 1];
                 const box = $('lsSlide');
                 box.className = `ls-slide${s.flip ? ' is-flip' : ''}${s.check ? ' is-check' : ''}`;
                 box.innerHTML = s.flip ? renderFlipCards(t.sections) : s.check ? quickCheck(t) : renderSection(s.section);
                 if (dir) { void box.offsetWidth; box.classList.add(dir > 0 ? 'is-from-right' : 'is-from-left'); }
                 $('lsStage').scrollTop = 0;
                 $('lsBar').style.width = `${((slide + 1) / slides.length) * 100}%`;
-                $('lsCounter').textContent = last && slides.length > 1 ? `Last slide! 🎯` : `Slide ${slide + 1} of ${slides.length}`;
                 $('lsPrev').disabled = current === 0 && slide === 0;
                 $('lsPrev').setAttribute('aria-label', slide > 0 ? 'Previous slide' : 'Previous topic');
-                $('lsNext').disabled = last && !next;
-                $('lsNext').setAttribute('aria-label', !last ? 'Next slide' : 'Next topic');
-                $('lsNext').classList.toggle('is-topic', last && !!next);
-                // A topic counts as read once its last slide is reached
-                if (last) markRead(t);
+                stopClock();
+                startClock();
+
+                // Topics already read can be flipped through freely; new slides wait
+                clearInterval(waitTimer);
+                const id = `${t.key}:${slide}`;
+                waitLeft = read.has(t.key) || seenSlides.has(id) ? 0 : waitSeconds(t, s);
+                if (waitLeft) {
+                    waitTimer = setInterval(() => {
+                        if (document.hidden) return;    // waiting in another tab doesn't count
+                        waitLeft--;
+                        if (waitLeft <= 0) { clearInterval(waitTimer); slideDone(); } else updateNav();
+                    }, 1000);
+                    updateNav();
+                } else if (!s.check || passedChecks.has(t.key) || read.has(t.key)) {
+                    slideDone();
+                } else {
+                    updateNav();
+                }
+            }
+
+            // Next is locked while the slide's wait runs, and on an unanswered quick check
+            function updateNav() {
+                const t = topics[current];
+                const s = slides[slide];
+                const last = slide === slides.length - 1;
+                const next = topics[current + 1];
+                const mustAnswer = s.check && !passedChecks.has(t.key) && !read.has(t.key);
+                const locked = waitLeft > 0 || mustAnswer;
+                $('lsNext').disabled = (last && !next) || locked;
+                $('lsNext').innerHTML = waitLeft > 0 ? `<b aria-hidden="true">${waitLeft}</b>` : '<i class="fa-solid fa-chevron-right"></i>';
+                $('lsNext').setAttribute('aria-label', waitLeft > 0 ? 'Next, after you read this slide' : !last ? 'Next slide' : 'Next topic');
+                $('lsNext').classList.toggle('is-topic', last && !!next && !locked);
+                $('lsCounter').textContent = mustAnswer ? 'Answer to finish! 🎯'
+                    : last && slides.length > 1 ? 'Last slide! 🎯' : `Slide ${slide + 1} of ${slides.length}`;
+            }
+
+            // The current slide is done: a topic counts as read only once every
+            // slide's wait has run out and its quick check is answered right
+            function slideDone() {
+                const t = topics[current];
+                seenSlides.add(`${t.key}:${slide}`);
+                updateNav();
+                const complete = slides.every((s, k) => s.check ? passedChecks.has(t.key) || read.has(t.key) : seenSlides.has(`${t.key}:${k}`));
+                if (complete && slide === slides.length - 1) markRead(t);
             }
 
             // Moving between topics swaps the address without adding history entries
@@ -527,6 +607,7 @@
             }
 
             function goNext() {
+                if ($('lsNext').disabled) return;
                 if (slide < slides.length - 1 || current + 1 < topics.length) HCISfx.play('slide');
                 if (slide < slides.length - 1) { slide++; return renderSlide(1); }
                 if (current + 1 < topics.length) goTopic(current + 1, 0);
@@ -541,6 +622,8 @@
             function showList() {
                 if (document.fullscreenElement) document.exitFullscreen().catch(() => {});
                 const was = current;
+                flushTime();
+                clearInterval(waitTimer);
                 player.hidden = true;
                 listView.hidden = false;
                 document.title = 'Read Lesson · ALLEARN';

@@ -322,21 +322,71 @@ router.get('/lesson', async (req, res, next) => {
   }
 });
 
-// POST /api/progress/lesson/read  { topicKeys: [...] }  — pages read (also uploads
-// ones read before this was saved on the server); all read = lessons completed
+// Fewest seconds a topic can take: the page waits at least 3s on each slide
+// (one slide for a key-word page, else one per section). Matches ReadLesson.html.
+function minReadSeconds(topic) {
+  const slides = /salita/i.test(topic.title || '') ? 1 : Math.max(1, (topic.sections || []).length);
+  return slides * 3;
+}
+
+// POST /api/progress/lesson/open  { topicKey } — starts the reading clock. A topic
+// reopened within the hour keeps its clock, so stepping out to the list is fine.
+router.post('/lesson/open', async (req, res, next) => {
+  try {
+    const { topicKey } = req.body || {};
+    const content = await getContent();
+    if (typeof topicKey !== 'string' || !content.topicByKey.has(topicKey)) return res.status(400).json({ error: 'Invalid topic.' });
+    await pool.query(
+      `INSERT INTO topic_time (user_id, topic_key, opened_at) VALUES ($1, $2, NOW())
+       ON CONFLICT (user_id, topic_key) DO UPDATE SET opened_at = CASE
+         WHEN topic_time.opened_at > NOW() - INTERVAL '1 hour' THEN topic_time.opened_at ELSE NOW() END`,
+      [req.userId, topicKey]
+    );
+    res.json({ ok: true });
+  } catch (err) {
+    next(err);
+  }
+});
+
+// POST /api/progress/lesson/time  { topicKey, seconds } — time spent on a topic, for the teacher
+router.post('/lesson/time', async (req, res, next) => {
+  try {
+    const { topicKey, seconds } = req.body || {};
+    const content = await getContent();
+    // The page caps each slide at 3 minutes, so one report is never this long
+    if (typeof topicKey !== 'string' || !content.topicByKey.has(topicKey)
+      || !Number.isInteger(seconds) || seconds < 1 || seconds > 1800) return res.status(400).json({ error: 'Invalid time.' });
+    await pool.query(
+      `INSERT INTO topic_time (user_id, topic_key, seconds) VALUES ($1, $2, $3)
+       ON CONFLICT (user_id, topic_key) DO UPDATE SET seconds = topic_time.seconds + $3`,
+      [req.userId, topicKey, seconds]
+    );
+    res.json({ ok: true });
+  } catch (err) {
+    next(err);
+  }
+});
+
+// POST /api/progress/lesson/read  { topicKey } — one topic finished; all read = lessons completed.
+// Refused if it came sooner after opening than the slides allow.
 router.post('/lesson/read', async (req, res, next) => {
   try {
-    const { topicKeys } = req.body || {};
+    const { topicKey } = req.body || {};
     const content = await getContent();
-    if (!Array.isArray(topicKeys) || topicKeys.length > 500) return res.status(400).json({ error: 'Invalid topics.' });
-    const keys = [...new Set(topicKeys)].filter(k => typeof k === 'string' && content.topicByKey.has(k));
-    if (keys.length) {
-      await pool.query(
-        `INSERT INTO topic_reads (user_id, topic_key)
-         SELECT $1, unnest($2::text[]) ON CONFLICT DO NOTHING`,
-        [req.userId, keys]
-      );
+    const topic = typeof topicKey === 'string' && content.topicByKey.get(topicKey);
+    if (!topic) return res.status(400).json({ error: 'Invalid topic.' });
+    const opened = (await pool.query(
+      'SELECT EXTRACT(EPOCH FROM NOW() - opened_at) AS secs FROM topic_time WHERE user_id = $1 AND topic_key = $2',
+      [req.userId, topicKey]
+    )).rows[0];
+    // 1s of slack for request timing
+    if (!opened || opened.secs === null || Number(opened.secs) < minReadSeconds(topic) - 1) {
+      return res.status(400).json({ error: 'Go through every slide first.' });
     }
+    await pool.query(
+      'INSERT INTO topic_reads (user_id, topic_key) VALUES ($1, $2) ON CONFLICT DO NOTHING',
+      [req.userId, topicKey]
+    );
     const read = await getReadTopics(req.userId);
     const allRead = content.topics.length > 0 && content.topics.every(t => read.has(t.key));
     const row = await getLessonRow(req.userId);
