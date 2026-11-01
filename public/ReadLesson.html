@@ -8,7 +8,7 @@
     <link rel="icon" href="favicon-32.png?v=3" type="image/png" sizes="32x32">
     <link rel="apple-touch-icon" href="apple-touch-icon.png?v=3">
     <meta name="theme-color" content="#023047">
-    <link rel="stylesheet" href="style.css?v=102">
+    <link rel="stylesheet" href="style.css?v=103">
     <link rel="stylesheet" href="dark.css?v=64">
     <script src="js/theme.js?v=3"></script>
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
@@ -406,13 +406,15 @@
 
             // Presentation style: each section is its own slide (word pages keep their flip cards)
             const isSlides = (t) => !isWordPage(t) && t.sections.length > 1;
-            const lastSlide = (t) => t.sections.length - 1;
+            // The quick check gets its own last slide, so it fits on a phone screen
+            const hasCheck = (t) => checkCards.has(String(modules[t.lesson].key));
+            const slideCount = (t) => t.sections.length + (hasCheck(t) ? 1 : 0);
+            const lastSlide = (t) => slideCount(t) - 1;
 
             function renderSlide(t, pos) {
-                const bar = t.sections.map((_, k) => `<span class="${k <= slide ? 'is-on' : ''}"></span>`).join('');
-                return `<div class="sb-slide-bar" aria-hidden="true">${bar}</div>
-                    <div class="sb-slide">${HCIRichText.renderSection(t.sections[slide])}</div>`
-                    + (slide === lastSlide(t) ? quickCheck(t, pos) : '');
+                const bar = Array.from({ length: slideCount(t) }, (_, k) => `<span class="${k <= slide ? 'is-on' : ''}"></span>`).join('');
+                return `<div class="sb-slide-bar" aria-hidden="true">${bar}</div>`
+                    + (slide < t.sections.length ? `<div class="sb-slide">${HCIRichText.renderSection(t.sections[slide])}</div>` : quickCheck(t, pos));
             }
             function renderFlipCards(sections) {
                 const words = sections.filter(s => s.heading);
@@ -491,7 +493,7 @@
                 $('sbBookName').textContent = `Aralin ${t.lesson + 1} · ${t.lessonTitle}`;
                 $('sbLessonBadge').textContent = `Aralin ${t.lesson + 1}`;
                 $('sbTopicTitle').textContent = t.title;
-                $('sbPageTag').textContent = `Pahina ${pos + 1} / ${pages.length}` + (slides ? ` · Slide ${slide + 1} / ${t.sections.length}` : '');
+                $('sbPageTag').textContent = `Pahina ${pos + 1} / ${pages.length}` + (slides ? ` · Slide ${slide + 1} / ${slideCount(t)}` : '');
                 // Each section is a speech bubble (or one slide at a time)
                 $('sbContent').classList.toggle('is-slides', slides);
                 $('sbContent').innerHTML = slides ? renderSlide(t, pos)
