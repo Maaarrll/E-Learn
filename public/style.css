@@ -15510,10 +15510,14 @@ button.cs-node:hover .cs-node-card {
    ========================================= */
 
 .lesson-page {
-    --ls-c0: #046a9d;
-    --ls-c1: #013785;
-    --ls-c2: #4d67a3;
-    --ls-c3: #d68748;
+    /* Bright comic colours, one per Aralin */
+    --ls-c0: #1478c8;
+    --ls-c1: #e8467c;
+    --ls-c2: #f08c00;
+    --ls-c3: #7b5cd6;
+    --ls-ink: #102430;
+    --ls-paper: #fffaf0;
+    --ls-pow: #ffe14d;
 }
 
 .lesson-page [hidden] {
@@ -16180,5 +16184,322 @@ button.cs-node:hover .cs-node-card {
 @media screen and (min-width: 769px) {
     .lesson-page:has(#sfxToggle) .main-content {
         padding-right: 76px;
+    }
+}
+
+/* ---------- Read Lesson: comic book look ----------
+   Thick ink outlines, hard offset shadows, halftone dots, bright colours
+   and comic lettering. Layout and behaviour are unchanged. */
+
+.lesson-page .ls-comic,
+.lesson-page .ls-section h3,
+.lesson-page .ls-check-title,
+.lesson-page .ls-counter,
+.lesson-page .ls-player .title-with-icon h2,
+.lesson-page .video-header h2 {
+    font-family: 'Bangers', 'Nunito', cursive;
+    font-weight: 400;
+    letter-spacing: 1px;
+}
+
+/* --- List page --- */
+.lesson-page .video-header h2 {
+    font-size: 34px;
+    color: var(--ls-c0);
+    text-shadow: 2px 2px 0 var(--ls-pow);
+}
+
+.lesson-page .video-card {
+    border: 3px solid var(--ls-ink);
+    border-radius: 16px;
+    box-shadow: 5px 5px 0 var(--ls-ink);
+    transition: transform 0.3s var(--fun-bounce), box-shadow 0.2s;
+}
+
+.lesson-page .video-link:nth-child(odd):hover .video-card {
+    transform: translate(-2px, -4px) rotate(-1deg);
+    box-shadow: 8px 9px 0 var(--ls-ink);
+}
+
+.lesson-page .video-link:nth-child(even):hover .video-card {
+    transform: translate(-2px, -4px) rotate(1deg);
+    box-shadow: 8px 9px 0 var(--ls-ink);
+}
+
+/* Thumbnail: halftone dots over the Aralin colour */
+.lesson-page .ls-thumb {
+    border-bottom: 3px solid var(--ls-ink);
+    background-color: var(--ls-color);
+    background-image: radial-gradient(rgba(255, 255, 255, 0.25) 1.6px, transparent 2px);
+    background-size: 12px 12px;
+}
+
+.lesson-page .ls-thumb-icon {
+    border: 3px solid var(--ls-ink);
+    background: #fff;
+    color: var(--ls-color);
+    box-shadow: 3px 3px 0 var(--ls-ink);
+}
+
+.lesson-page .ls-thumb-title {
+    font-size: 14px;
+    text-shadow: 2px 2px 0 var(--ls-ink);
+    opacity: 1;
+}
+
+.lesson-page .ls-thumb .duration-badge,
+.lesson-page .ls-thumb .watched-badge {
+    border: 2px solid var(--ls-ink);
+    box-shadow: 2px 2px 0 var(--ls-ink);
+}
+
+.lesson-page .ls-thumb .duration-badge {
+    background: var(--ls-pow);
+    color: var(--ls-ink);
+    font-weight: 800;
+}
+
+/* Aralin tag: yellow comic label, a little tilted */
+.lesson-page .video-card .topic-chip {
+    display: inline-block;
+    padding: 2px 10px;
+    border: 2px solid var(--ls-ink);
+    border-radius: 8px;
+    background: var(--ls-pow);
+    color: var(--ls-ink);
+    transform: rotate(-3deg);
+}
+
+.lesson-page .video-info h4 {
+    color: var(--ls-ink);
+    font-weight: 800;
+}
+
+.lesson-page .video-toolbar,
+.lesson-page .ls-goals {
+    border: 3px solid var(--ls-ink);
+    box-shadow: 4px 4px 0 var(--ls-ink);
+}
+
+.lesson-page .video-progress-bar {
+    border: 2px solid var(--ls-ink);
+}
+
+/* --- Presentation --- */
+.lesson-page .ls-player {
+    background: transparent;
+}
+
+.lesson-page .ls-player .title-with-icon h2 {
+    font-size: clamp(26px, 3vw, 34px);
+    line-height: 1.1;
+    color: var(--ls-color);
+    text-shadow: 2px 2px 0 var(--ls-ink);
+}
+
+.lesson-page .ls-player .title-with-icon i {
+    color: var(--ls-color);
+}
+
+.lesson-page .ls-player #lsLesson {
+    display: inline-block;
+    padding: 3px 12px;
+    border: 2px solid var(--ls-ink);
+    border-radius: 10px;
+    background: var(--ls-pow);
+    color: var(--ls-ink);
+    font-weight: 800;
+    transform: rotate(-1.5deg);
+}
+
+.lesson-page .ls-player .header-divider {
+    display: none;
+}
+
+/* The slide is a comic panel */
+.lesson-page .ls-show {
+    border: 3px solid var(--ls-ink);
+    border-radius: 18px;
+    box-shadow: 7px 7px 0 var(--ls-ink);
+}
+
+.lesson-page .ls-stage {
+    border-top: 10px solid var(--ls-color);
+    background-color: var(--ls-paper);
+    background-image: radial-gradient(rgba(16, 36, 48, 0.08) 1.5px, transparent 2px);
+    background-size: 16px 16px;
+}
+
+.lesson-page .ls-section-icon {
+    border: 3px solid var(--ls-ink);
+    border-radius: 50%;
+    box-shadow: 3px 3px 0 var(--ls-ink);
+}
+
+.lesson-page .ls-section h3 {
+    font-size: clamp(30px, 3.6vw, 44px);
+    line-height: 1.05;
+    color: var(--ls-color);
+    text-shadow: 2px 2px 0 var(--ls-ink);
+}
+
+/* The text sits in a speech bubble */
+.lesson-page .ls-section-body {
+    position: relative;
+    padding: 16px 20px;
+    border: 3px solid var(--ls-ink);
+    border-radius: 22px;
+    background: #fff;
+    box-shadow: 4px 4px 0 var(--ls-ink);
+}
+
+.lesson-page .ls-section-body::after {
+    content: "";
+    position: absolute;
+    bottom: -14px;
+    left: 36px;
+    width: 22px;
+    height: 22px;
+    background: #fff;
+    border-right: 3px solid var(--ls-ink);
+    border-bottom: 3px solid var(--ls-ink);
+    transform: rotate(45deg) skew(12deg, 12deg);
+}
+
+.lesson-page .ls-section-body > :last-child {
+    margin-bottom: 0;
+}
+
+.lesson-page .ls-bar {
+    height: 8px;
+    border-top: 2px solid var(--ls-ink);
+}
+
+/* Controls: yellow strip with chunky buttons */
+.lesson-page .ls-controls {
+    border-top: 3px solid var(--ls-ink);
+    background: var(--ls-pow);
+}
+
+.lesson-page .ls-nav {
+    border: 3px solid var(--ls-ink);
+    box-shadow: 3px 3px 0 var(--ls-ink);
+    color: var(--ls-ink);
+}
+
+.lesson-page .ls-nav.is-next {
+    border-color: var(--ls-ink);
+    color: #fff;
+}
+
+.lesson-page .ls-nav:active:not(:disabled) {
+    transform: translate(3px, 3px);
+    box-shadow: none;
+}
+
+.lesson-page .ls-counter {
+    font-size: 20px;
+    color: var(--ls-ink);
+}
+
+/* "POW!"-style read message */
+.lesson-page .ls-read-msg {
+    padding: 4px 14px;
+    border: 3px solid var(--ls-ink);
+    border-radius: 12px;
+    background: var(--ls-pow);
+    color: var(--ls-ink);
+    box-shadow: 3px 3px 0 var(--ls-ink);
+    transform: rotate(-2deg);
+}
+
+.lesson-page .ls-read-msg .fa-trophy,
+.lesson-page .ls-read-msg .fa-star {
+    color: var(--ls-c1);
+}
+
+.lesson-page .player-tool-buttons .tool-btn,
+.lesson-page .btn-back-centered {
+    border: 3px solid var(--ls-ink);
+    box-shadow: 3px 3px 0 var(--ls-ink);
+    color: var(--ls-ink);
+}
+
+/* Quick check: yellow panel, chunky answers */
+.lesson-page .ls-check {
+    padding: clamp(16px, 2.5vw, 26px);
+    border: 3px solid var(--ls-ink);
+    border-radius: 18px;
+    background: #fff4c2;
+    box-shadow: 5px 5px 0 var(--ls-ink);
+}
+
+.lesson-page .ls-check-title {
+    font-size: clamp(28px, 3.2vw, 38px);
+    color: var(--ls-color);
+    text-shadow: 2px 2px 0 var(--ls-ink);
+}
+
+.lesson-page .ls-check-q {
+    color: var(--ls-ink);
+}
+
+.lesson-page .ls-check-options button {
+    border: 3px solid var(--ls-ink);
+    box-shadow: 3px 3px 0 var(--ls-ink);
+    color: var(--ls-ink);
+}
+
+.lesson-page .ls-check-options button span {
+    border: 2px solid var(--ls-ink);
+}
+
+.lesson-page .ls-check-options button.is-right {
+    border-color: var(--ls-ink);
+    background: #b9f0c9;
+}
+
+.lesson-page .ls-check-options button.is-wrong {
+    border-color: var(--ls-ink);
+    background: #ffc9c9;
+}
+
+/* Flip cards: comic panels */
+.lesson-page .ls-flip-front,
+.lesson-page .ls-flip-back {
+    border: 3px solid var(--ls-ink);
+    box-shadow: 4px 4px 0 var(--ls-ink);
+}
+
+.lesson-page .ls-flip-front {
+    background-color: var(--ls-color);
+    background-image: radial-gradient(rgba(255, 255, 255, 0.25) 1.6px, transparent 2px);
+    background-size: 12px 12px;
+}
+
+.lesson-page .ls-flip-front b {
+    font-family: 'Bangers', 'Nunito', cursive;
+    font-weight: 400;
+    font-size: 26px;
+    letter-spacing: 1px;
+    text-shadow: 2px 2px 0 var(--ls-ink);
+}
+
+.lesson-page .ls-flip-back {
+    border-color: var(--ls-ink);
+}
+
+/* Phones: slightly thinner ink so text keeps its room */
+@media screen and (max-width: 640px) {
+    .lesson-page .ls-show {
+        box-shadow: 5px 5px 0 var(--ls-ink);
+    }
+
+    .lesson-page .ls-section-body {
+        padding: 12px 14px;
+    }
+
+    .lesson-page .ls-counter {
+        font-size: 17px;
     }
 }

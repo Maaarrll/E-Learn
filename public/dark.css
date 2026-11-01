@@ -4828,10 +4828,13 @@
     }
 }
 :root[data-theme="dark"] .lesson-page {
-    --ls-c0: #046a9d;
-    --ls-c1: #013785;
-    --ls-c2: #4d67a3;
-    --ls-c3: #d68748;
+    --ls-c0: #1478c8;
+    --ls-c1: #e8467c;
+    --ls-c2: #f08c00;
+    --ls-c3: #7b5cd6;
+    --ls-ink: #102430;
+    --ls-paper: hsl(40 45% 19%);
+    --ls-pow: #ffe14d;
 }
 :root[data-theme="dark"] .ls-c0 {
     --ls-color: var(--ls-c0);
@@ -5004,6 +5007,180 @@
 :root[data-theme="dark"] .lesson-page .ls-thumb:has(.watched-badge) .ls-thumb-icon {
     box-shadow: 0 0 0 3px var(--fun-sun);
 }
+:root[data-theme="dark"] .lesson-page .video-header h2 {
+    color: var(--ls-c0);
+}
+:root[data-theme="dark"] .lesson-page .video-card {
+    border: 3px solid var(--ls-ink);
+    box-shadow: 5px 5px 0 var(--ls-ink);
+}
+:root[data-theme="dark"] .lesson-page .video-link:nth-child(odd):hover .video-card {
+    box-shadow: 8px 9px 0 var(--ls-ink);
+}
+:root[data-theme="dark"] .lesson-page .video-link:nth-child(even):hover .video-card {
+    box-shadow: 8px 9px 0 var(--ls-ink);
+}
+:root[data-theme="dark"] .lesson-page .ls-thumb {
+    border-bottom: 3px solid var(--ls-ink);
+    background-color: var(--ls-color);
+    background-image: radial-gradient(rgba(255, 255, 255, 0.25) 1.6px, transparent 2px);
+    background-size: 12px 12px;
+}
+:root[data-theme="dark"] .lesson-page .ls-thumb-icon {
+    border: 3px solid var(--ls-ink);
+    background: hsl(165 14% 17%);
+    color: var(--ls-color);
+    box-shadow: 3px 3px 0 var(--ls-ink);
+}
+:root[data-theme="dark"] .lesson-page .ls-thumb .duration-badge,
+:root[data-theme="dark"] .lesson-page .ls-thumb .watched-badge {
+    border: 2px solid var(--ls-ink);
+    box-shadow: 2px 2px 0 var(--ls-ink);
+}
+:root[data-theme="dark"] .lesson-page .ls-thumb .duration-badge {
+    background: var(--ls-pow);
+    color: var(--ls-ink);
+}
+:root[data-theme="dark"] .lesson-page .video-card .topic-chip {
+    border: 2px solid var(--ls-ink);
+    background: var(--ls-pow);
+    color: var(--ls-ink);
+}
+:root[data-theme="dark"] .lesson-page .video-info h4 {
+    color: var(--ls-ink);
+}
+:root[data-theme="dark"] .lesson-page .video-toolbar,
+:root[data-theme="dark"] .lesson-page .ls-goals {
+    border: 3px solid var(--ls-ink);
+    box-shadow: 4px 4px 0 var(--ls-ink);
+}
+:root[data-theme="dark"] .lesson-page .video-progress-bar {
+    border: 2px solid var(--ls-ink);
+}
+:root[data-theme="dark"] .lesson-page .ls-player {
+    background: transparent;
+}
+:root[data-theme="dark"] .lesson-page .ls-player .title-with-icon h2 {
+    color: var(--ls-color);
+}
+:root[data-theme="dark"] .lesson-page .ls-player .title-with-icon i {
+    color: var(--ls-color);
+}
+:root[data-theme="dark"] .lesson-page .ls-player #lsLesson {
+    border: 2px solid var(--ls-ink);
+    background: var(--ls-pow);
+    color: var(--ls-ink);
+}
+:root[data-theme="dark"] .lesson-page .ls-show {
+    border: 3px solid var(--ls-ink);
+    box-shadow: 7px 7px 0 var(--ls-ink);
+}
+:root[data-theme="dark"] .lesson-page .ls-stage {
+    border-top: 10px solid var(--ls-color);
+    background-color: var(--ls-paper);
+    background-image: radial-gradient(rgba(16, 36, 48, 0.08) 1.5px, transparent 2px);
+    background-size: 16px 16px;
+}
+:root[data-theme="dark"] .lesson-page .ls-section-icon {
+    border: 3px solid var(--ls-ink);
+    box-shadow: 3px 3px 0 var(--ls-ink);
+}
+:root[data-theme="dark"] .lesson-page .ls-section h3 {
+    color: var(--ls-color);
+}
+:root[data-theme="dark"] .lesson-page .ls-section-body {
+    border: 3px solid var(--ls-ink);
+    background: hsl(165 14% 17%);
+    box-shadow: 4px 4px 0 var(--ls-ink);
+}
+:root[data-theme="dark"] .lesson-page .ls-section-body::after {
+    background: hsl(165 14% 17%);
+    border-right: 3px solid var(--ls-ink);
+    border-bottom: 3px solid var(--ls-ink);
+}
+:root[data-theme="dark"] .lesson-page .ls-bar {
+    border-top: 2px solid var(--ls-ink);
+}
+:root[data-theme="dark"] .lesson-page .ls-controls {
+    border-top: 3px solid var(--ls-ink);
+    background: var(--ls-pow);
+}
+:root[data-theme="dark"] .lesson-page .ls-nav {
+    border: 3px solid var(--ls-ink);
+    box-shadow: 3px 3px 0 var(--ls-ink);
+    color: var(--ls-ink);
+}
+:root[data-theme="dark"] .lesson-page .ls-nav.is-next {
+    border-color: var(--ls-ink);
+    color: #fff;
+}
+:root[data-theme="dark"] .lesson-page .ls-nav:active:not(:disabled) {
+    box-shadow: none;
+}
+:root[data-theme="dark"] .lesson-page .ls-counter {
+    color: var(--ls-ink);
+}
+:root[data-theme="dark"] .lesson-page .ls-read-msg {
+    border: 3px solid var(--ls-ink);
+    background: var(--ls-pow);
+    color: var(--ls-ink);
+    box-shadow: 3px 3px 0 var(--ls-ink);
+}
+:root[data-theme="dark"] .lesson-page .ls-read-msg .fa-trophy,
+:root[data-theme="dark"] .lesson-page .ls-read-msg .fa-star {
+    color: var(--ls-c1);
+}
+:root[data-theme="dark"] .lesson-page .player-tool-buttons .tool-btn,
+:root[data-theme="dark"] .lesson-page .btn-back-centered {
+    border: 3px solid var(--ls-ink);
+    box-shadow: 3px 3px 0 var(--ls-ink);
+    color: var(--ls-ink);
+}
+:root[data-theme="dark"] .lesson-page .ls-check {
+    border: 3px solid var(--ls-ink);
+    background: hsl(49 45% 24%);
+    box-shadow: 5px 5px 0 var(--ls-ink);
+}
+:root[data-theme="dark"] .lesson-page .ls-check-title {
+    color: var(--ls-color);
+}
+:root[data-theme="dark"] .lesson-page .ls-check-q {
+    color: var(--ls-ink);
+}
+:root[data-theme="dark"] .lesson-page .ls-check-options button {
+    border: 3px solid var(--ls-ink);
+    box-shadow: 3px 3px 0 var(--ls-ink);
+    color: var(--ls-ink);
+}
+:root[data-theme="dark"] .lesson-page .ls-check-options button span {
+    border: 2px solid var(--ls-ink);
+}
+:root[data-theme="dark"] .lesson-page .ls-check-options button.is-right {
+    border-color: var(--ls-ink);
+    background: #b9f0c9;
+}
+:root[data-theme="dark"] .lesson-page .ls-check-options button.is-wrong {
+    border-color: var(--ls-ink);
+    background: hsl(0 45% 23%);
+}
+:root[data-theme="dark"] .lesson-page .ls-flip-front,
+:root[data-theme="dark"] .lesson-page .ls-flip-back {
+    border: 3px solid var(--ls-ink);
+    box-shadow: 4px 4px 0 var(--ls-ink);
+}
+:root[data-theme="dark"] .lesson-page .ls-flip-front {
+    background-color: var(--ls-color);
+    background-image: radial-gradient(rgba(255, 255, 255, 0.25) 1.6px, transparent 2px);
+    background-size: 12px 12px;
+}
+:root[data-theme="dark"] .lesson-page .ls-flip-back {
+    border-color: var(--ls-ink);
+}
+@media screen and (max-width: 640px) {
+    :root[data-theme="dark"] .lesson-page .ls-show {
+        box-shadow: 5px 5px 0 var(--ls-ink);
+    }
+}
 
 /* ---------- from update-password.html ---------- */
 :root[data-theme="dark"] body.update-password-page {
@@ -5126,4 +5303,36 @@
 :root[data-theme="dark"] .ls-check-title,
 :root[data-theme="dark"] .ls-flip-back b {
     color: #6cb8e6;
+}
+
+/* Read Lesson comic look: light ink lines on a navy page, dark text stays on the yellow labels */
+:root[data-theme="dark"] .lesson-page {
+    --ls-ink: #9fb3c8;
+    --ls-paper: #121a29;
+}
+
+:root[data-theme="dark"] .lesson-page .ls-stage {
+    background-image: radial-gradient(rgba(255, 255, 255, 0.07) 1.5px, transparent 2px);
+}
+
+:root[data-theme="dark"] .lesson-page .ls-counter,
+:root[data-theme="dark"] .lesson-page .ls-read-msg,
+:root[data-theme="dark"] .lesson-page #lsLesson,
+:root[data-theme="dark"] .lesson-page .video-card .topic-chip,
+:root[data-theme="dark"] .lesson-page .ls-thumb .duration-badge {
+    color: #102430;
+}
+
+:root[data-theme="dark"] .lesson-page .ls-check-q,
+:root[data-theme="dark"] .lesson-page .video-info h4,
+:root[data-theme="dark"] .lesson-page .player-tool-buttons .tool-btn,
+:root[data-theme="dark"] .lesson-page .btn-back-centered,
+:root[data-theme="dark"] .lesson-page .ls-check-options button {
+    color: #e6edf5;
+}
+
+:root[data-theme="dark"] .lesson-page .ls-player #lsLesson,
+:root[data-theme="dark"] .lesson-page .ls-check-options button.is-right,
+:root[data-theme="dark"] .lesson-page .ls-check-options button.is-wrong {
+    color: #102430;
 }

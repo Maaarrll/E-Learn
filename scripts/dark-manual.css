@@ -78,3 +78,35 @@
 :root[data-theme="dark"] .ls-flip-back b {
     color: #6cb8e6;
 }
+
+/* Read Lesson comic look: light ink lines on a navy page, dark text stays on the yellow labels */
+:root[data-theme="dark"] .lesson-page {
+    --ls-ink: #9fb3c8;
+    --ls-paper: #121a29;
+}
+
+:root[data-theme="dark"] .lesson-page .ls-stage {
+    background-image: radial-gradient(rgba(255, 255, 255, 0.07) 1.5px, transparent 2px);
+}
+
+:root[data-theme="dark"] .lesson-page .ls-counter,
+:root[data-theme="dark"] .lesson-page .ls-read-msg,
+:root[data-theme="dark"] .lesson-page #lsLesson,
+:root[data-theme="dark"] .lesson-page .video-card .topic-chip,
+:root[data-theme="dark"] .lesson-page .ls-thumb .duration-badge {
+    color: #102430;
+}
+
+:root[data-theme="dark"] .lesson-page .ls-check-q,
+:root[data-theme="dark"] .lesson-page .video-info h4,
+:root[data-theme="dark"] .lesson-page .player-tool-buttons .tool-btn,
+:root[data-theme="dark"] .lesson-page .btn-back-centered,
+:root[data-theme="dark"] .lesson-page .ls-check-options button {
+    color: #e6edf5;
+}
+
+:root[data-theme="dark"] .lesson-page .ls-player #lsLesson,
+:root[data-theme="dark"] .lesson-page .ls-check-options button.is-right,
+:root[data-theme="dark"] .lesson-page .ls-check-options button.is-wrong {
+    color: #102430;
+}
