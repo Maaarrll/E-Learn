@@ -38,7 +38,7 @@
 
                 <p>
                     Just a few quick things to get started.
-                    You'll log in with your first and last name.
+                    You'll log in with your username.
                 </p>
 
             </div>
@@ -71,6 +71,21 @@
                         </div>
                     </div>
 
+                    <!-- MIDDLE NAME -->
+                    <div class="input-group">
+                        <label for="middleName">Middle Name <small>(optional)</small></label>
+                        <div class="field">
+                            <i class="fa-regular fa-user"></i>
+                            <input
+                                type="text"
+                                id="middleName"
+                                maxlength="60"
+                                placeholder="Full name or initial"
+                                autocomplete="additional-name"
+                            >
+                        </div>
+                    </div>
+
                     <!-- LAST NAME -->
                     <div class="input-group">
                         <label for="lastName">Last Name</label>
@@ -84,6 +99,27 @@
                                 required
                             >
                         </div>
+                    </div>
+
+                    <!-- USERNAME -->
+                    <div class="input-group">
+                        <label for="username">Username</label>
+                        <div class="field">
+                            <i class="fa-solid fa-at"></i>
+                            <input
+                                type="text"
+                                id="username"
+                                minlength="3"
+                                maxlength="20"
+                                autocomplete="username"
+                                autocapitalize="none"
+                                spellcheck="false"
+                                required
+                            >
+                        </div>
+                        <small class="password-note">
+                            3-20 letters, numbers, dots or underscores.
+                        </small>
                     </div>
 
                     <!-- YEAR -->
@@ -352,7 +388,9 @@
         function readForm() {
             return {
                 firstName: document.getElementById('firstName').value.trim(),
+                middleName: document.getElementById('middleName').value.trim(),
                 lastName: document.getElementById('lastName').value.trim(),
+                username: document.getElementById('username').value.trim(),
                 year: document.getElementById('year').value,
                 section: document.getElementById('section').value,
                 program: document.getElementById('program').value.trim(),
@@ -386,6 +424,16 @@
                         showError(
                             'Please enter both your first name and last name.',
                             payload.firstName ? 'lastName' : 'firstName'
+                        );
+                        return;
+                    }
+
+
+                    /* USERNAME VALIDATION */
+                    if (!/^[a-z0-9._]{3,20}$/i.test(payload.username)) {
+                        showError(
+                            'Username must be 3 to 20 characters: letters, numbers, dots or underscores (no spaces).',
+                            'username'
                         );
                         return;
                     }
