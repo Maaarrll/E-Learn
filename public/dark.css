@@ -209,6 +209,9 @@
 :root[data-theme="dark"] .act-item {
     border-bottom: 1px solid hsl(222 14% 21%);
 }
+:root[data-theme="dark"] .act-item:last-child {
+    border-bottom: none;
+}
 :root[data-theme="dark"] .act-item {
     color: hsl(222 12% 81%);
 }
@@ -2920,6 +2923,23 @@
 :root[data-theme="dark"] .admin-count {
     color: hsl(222 12% 75%);
 }
+:root[data-theme="dark"] .admin-table-wrap {
+    border: 2px solid hsl(226 36% 23%);
+    background: hsl(222 14% 17%);
+}
+:root[data-theme="dark"] .admin-table th {
+    background: hsl(228 45% 20%);
+    color: hsl(225 19% 74%);
+}
+:root[data-theme="dark"] .admin-table td {
+    border-top: 1px solid hsl(225 24% 21%);
+    color: hsl(222 12% 85%);
+}
+:root[data-theme="dark"] .admin-table tbody tr:hover,
+:root[data-theme="dark"] .admin-table tbody tr:focus-visible {
+    background: hsl(225 45% 19%);
+    outline: none;
+}
 :root[data-theme="dark"] .admin-student strong {
     color: hsl(221 75% 92%);
 }
@@ -2976,6 +2996,22 @@
 :root[data-theme="dark"] .student-decks span.is-done {
     background: linear-gradient(135deg, var(--fun-sun), var(--fun-coral));
     color: #fff;
+}
+@media screen and (max-width: 768px) {
+    :root[data-theme="dark"] .admin-table-wrap {
+        border: none;
+        background: none;
+    }
+    :root[data-theme="dark"] .admin-table tbody tr {
+        border: 2px solid hsl(226 36% 23%);
+        background: hsl(222 14% 17%);
+    }
+    :root[data-theme="dark"] .admin-table td {
+        border-top: none;
+    }
+    :root[data-theme="dark"] .admin-table td::before {
+        color: hsl(228 12% 64%);
+    }
 }
 :root[data-theme="dark"] .login-page .admin-login-toggle {
     border: 2px dashed rgba(63, 137, 207, 0.6);
