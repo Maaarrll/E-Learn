@@ -120,7 +120,8 @@ async function loadStudents(instructor) {
       longestStreak: streak.longest,
       badges: badges.get(s.id) ? badges.get(s.id).n : 0,
       lastActive,
-      inactive: !lastActive || lastActive < addDays(today, -INACTIVE_AFTER_DAYS),
+      // Never active: counted from the day they joined, so a new student isn't "inactive 7+ days"
+      inactive: (lastActive || tsToYmd(s.created_at)) < addDays(today, -INACTIVE_AFTER_DAYS),
       deactivated: !!s.disabled_at,
       canEmail: s.can_email,
       remindedAt: s.reminded_at,
@@ -163,14 +164,17 @@ router.get('/insights', async (req, res, next) => {
     const students = await loadStudents(req.instructor);
     const ids = students.map(s => s.id);
 
-    const { rows: missed } = await pool.query(
+    const content = await getContent();
+    // Only questions still published, so deleted ones don't push real ones out of the top 10
+    const live = (m) => m.source === 'case_study' ? content.caseByKey.has(Number(m.item_key)) : content.cardKeys.has(m.item_key);
+    const { rows: allMissed } = await pool.query(
       `SELECT source, item_key, COUNT(*)::int AS students, SUM(wrong_count)::int AS wrong
        FROM mistakes WHERE user_id = ANY($1::int[])
        GROUP BY source, item_key
-       ORDER BY students DESC, wrong DESC
-       LIMIT 10`,
+       ORDER BY students DESC, wrong DESC`,
       [ids]
     );
+    const missed = allMissed.filter(live).slice(0, 10);
 
     const { rows: watchRows } = await pool.query(
       `SELECT video_id, COUNT(DISTINCT user_id)::int AS n FROM video_progress
@@ -178,7 +182,7 @@ router.get('/insights', async (req, res, next) => {
       [ids]
     );
     const watchCount = new Map(watchRows.map(r => [r.video_id, r.n]));
-    const videos = [...(await getContent()).videoTitles.entries()]
+    const videos = [...content.videoTitles.entries()]
       .map(([id, title]) => ({ id, title, watchedBy: watchCount.get(id) || 0 }))
       .sort((a, b) => a.watchedBy - b.watchedBy);
 
@@ -449,6 +453,10 @@ router.post('/lrns', async (req, res, next) => {
 // DELETE /api/admin/lrns/:lrn — stops new signups with it (an existing account keeps working)
 router.delete('/lrns/:lrn', async (req, res, next) => {
   try {
+    const { rows: [owner] } = await pool.query('SELECT program, year_section FROM users WHERE student_id = $1', [req.params.lrn]);
+    if (owner && !canSee(req.instructor, owner)) {
+      return res.status(403).json({ error: 'A student in another section signed up with this LRN. Ask the main admin.' });
+    }
     const { rowCount } = await pool.query('DELETE FROM allowed_lrns WHERE lrn = $1', [req.params.lrn]);
     if (rowCount) await audit(req.instructor.id, 'remove_lrn', null, req.params.lrn);
     res.json({ ok: true });
