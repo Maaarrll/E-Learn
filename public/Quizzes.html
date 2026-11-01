@@ -368,8 +368,10 @@
                 try { HCISfx.confetti(pct >= 50 ? 140 : 70); } catch (e) { /* visuals must never break the quiz */ }
             }
             justAnswered = false;
+            // Leaderboard points (+2 per right answer) are only for fun, never the grade
+            const bonus = !state.missed && state.score ? ` · ⭐ +${state.score * 2} leaderboard points` : '';
             $('resultLabel').textContent = state.missed ? 'Missed · the deadline passed before you took it'
-                : pct >= 75 ? `${pct}% · Great job!` : pct >= 50 ? `${pct}% · Nice try!` : `${pct}% · Keep studying!`;
+                : (pct >= 75 ? `${pct}% · Great job!` : pct >= 50 ? `${pct}% · Nice try!` : `${pct}% · Keep studying!`) + bonus;
         }
 
         $('backToList').addEventListener('click', loadList);

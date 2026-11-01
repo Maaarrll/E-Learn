@@ -272,6 +272,7 @@ router.post('/activity', async (req, res, next) => {
       if (isQuestion(await getContent(), source, itemKey)) countsCorrect = await firstToday(userId, today, source, itemKey);
       // A repeat right answer counts as neither, so replaying doesn't lower accuracy either
       if (countsCorrect) inc.correct = 1; else inc.answers = 0;
+      if (countsCorrect) await pool.query('UPDATE users SET last_point_at = NOW() WHERE id = $1', [userId]);
     } else if (type !== 'answer') {
       const itemKey = req.body.itemKey === undefined ? undefined : String(req.body.itemKey);
       const real = type !== 'cleared' && await counts(type, userId, await getContent(), itemKey)
@@ -364,28 +365,42 @@ router.put('/goal', async (req, res, next) => {
 });
 
 // ---------- Leaderboards ----------
-// Ranks every student by correct answers in the last 7 days. Students with
-// no points are left off the top list (you always see your own rank).
-// Names show as "Ordonia, Marl June S." (same as the admin) and no ids are sent.
+// Points (last 7 days, for motivation only; grades are never touched):
+//   +1 per practice answer right (Quiz Cards / Situation Quizzes, once per question per day)
+//   +2 per right answer in a teacher quiz finished in those 7 days
+// Every student gets their own place: on a tie, whoever reached that score first
+// ranks higher. Students with no points are left off the top list (you always see
+// your own place). Names show as "Ordonia, Marl June S." and no ids are sent.
+const PRACTICE_POINTS = 1;
+const QUIZ_POINTS = 2;
 const LEADERBOARD_TOP = 10;
 const LEADERBOARD_ALL_MAX = 2000; // shortcut: whole list in one response, add paging if students ever exceed this
 
 // GET /api/gamify/leaderboard
 router.get('/leaderboard', async (req, res, next) => {
   try {
+    const since = addDays(todayLocal(), -6);
     const { rows } = await pool.query(
-      `SELECT u.id, u.full_name, u.first_name, u.last_name, u.profile_photo, COALESCE(SUM(d.correct), 0)::int AS points
+      `WITH practice AS (
+         SELECT user_id, SUM(correct)::int AS n FROM daily_activity WHERE day >= $1 GROUP BY user_id
+       ), quiz AS (
+         -- Week starts at midnight Philippine time
+         SELECT user_id, SUM(score)::int AS n, MAX(finished_at) AS last FROM quiz_attempts
+         WHERE finished_at >= ($1::date)::timestamp AT TIME ZONE 'Asia/Manila' GROUP BY user_id
+       )
+       SELECT u.id, u.full_name, u.first_name, u.last_name, u.profile_photo,
+              (COALESCE(p.n, 0) * $2 + COALESCE(q.n, 0) * $3)::int AS points,
+              GREATEST(CASE WHEN p.n > 0 THEN u.last_point_at END, CASE WHEN q.n > 0 THEN q.last END) AS reached_at
        FROM users u
-       LEFT JOIN daily_activity d ON d.user_id = u.id AND d.day >= $1
+       LEFT JOIN practice p ON p.user_id = u.id
+       LEFT JOIN quiz q ON q.user_id = u.id
        WHERE u.disabled_at IS NULL
-       GROUP BY u.id
-       ORDER BY points DESC, u.last_name, u.first_name`,
-      [addDays(todayLocal(), -6)]
+       ORDER BY points DESC, reached_at ASC NULLS LAST, u.last_name, u.first_name, u.id`,
+      [since, PRACTICE_POINTS, QUIZ_POINTS]
     );
-    // Same points = same rank
-    let rank = 0;
+    // One place each (ties are already ordered by who got there first); no points = no place yet
     const ranked = rows.map((r, i) => {
-      if (i === 0 || r.points !== rows[i - 1].points) rank = i + 1;
+      const rank = r.points > 0 ? i + 1 : '–';
       // Profile photo the student uploaded (only our https Cloudinary links), else the page shows initials
       const photo = /^https:\/\//.test(r.profile_photo || '') ? r.profile_photo : null;
       return { rank, name: adminName(r) || 'Student', photo, points: r.points, isMe: r.id === req.userId };

@@ -979,6 +979,12 @@ async function init() {
             'ALTER TABLE public.video_positions ADD COLUMN IF NOT EXISTS watched_seconds INTEGER NOT NULL DEFAULT 0'
         );
 
+        /* When the student last earned a practice point; on the leaderboard, equal
+           points go to whoever reached that score first */
+        await client.query(
+            'ALTER TABLE public.users ADD COLUMN IF NOT EXISTS last_point_at TIMESTAMPTZ'
+        );
+
         /* Instructor's own profile photo (Cloudinary URL), shown in the admin panel */
         await client.query(
             'ALTER TABLE public.instructors ADD COLUMN IF NOT EXISTS profile_photo TEXT'
