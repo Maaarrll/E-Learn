@@ -209,10 +209,48 @@ function isQuestion(content, source, itemKey) {
   return false;
 }
 
+// Saves "this item counted today"; false if it already did. Only today's rows matter.
+async function firstToday(userId, today, source, itemKey) {
+  await pool.query('DELETE FROM daily_correct WHERE user_id = $1 AND day < $2', [userId, today]);
+  return (await pool.query(
+    'INSERT INTO daily_correct (user_id, day, source, item_key) VALUES ($1, $2, $3, $4) ON CONFLICT DO NOTHING',
+    [userId, today, source, itemKey]
+  )).rowCount > 0;
+}
+
+// Streak days and badges can't be claimed by just calling this: each kind must name a
+// real thing the server already saw done, and counts once per item per day.
+//   read    = a topic marked read, opened in the last hour (Read Lesson's clock)
+//   video   = a video marked watched, played in the last hour
+//   perfect = a deck already mastered (the page finished it with no mistakes)
+//   cleared = counted by /progress/mistakes/resolve itself; ignored here
+async function counts(type, userId, content, itemKey) {
+  if (typeof itemKey !== 'string' || itemKey.length > 40) return false;
+  if (type === 'read') {
+    if (!content.topicByKey.has(itemKey)) return false;
+    return (await pool.query(
+      `SELECT 1 FROM topic_reads r JOIN topic_time t ON t.user_id = r.user_id AND t.topic_key = r.topic_key
+       WHERE r.user_id = $1 AND r.topic_key = $2 AND t.opened_at > NOW() - INTERVAL '1 hour'`, [userId, itemKey])).rowCount > 0;
+  }
+  if (type === 'video') {
+    if (!content.videoTitles.has(itemKey)) return false;
+    return (await pool.query(
+      `SELECT 1 FROM video_progress w JOIN video_positions p ON p.user_id = w.user_id AND p.video_id = w.video_id
+       WHERE w.user_id = $1 AND w.video_id = $2 AND p.updated_at > NOW() - INTERVAL '1 hour'`, [userId, itemKey])).rowCount > 0;
+  }
+  if (type === 'perfect') {
+    if (!/^\d{1,6}$/.test(itemKey) || !content.deckByKey.has(Number(itemKey))) return false;
+    const row = (await pool.query('SELECT completed_ids FROM study_card_progress WHERE user_id = $1', [userId])).rows[0];
+    return !!row && JSON.parse(row.completed_ids).map(Number).includes(Number(itemKey));
+  }
+  return false;
+}
+
 // POST /api/gamify/activity
 //   { type: 'answer', correct, combo?, source?, itemKey? }   combo = correct answers in a row so far.
 //   A right answer must name its question and counts once per question per day, so the
 //   leaderboard can't be pumped by a script or by replaying the same deck all day.
+//   { type: 'read' | 'video' | 'perfect', itemKey }   see counts() above
 //   { type: 'video' | 'read' | 'cleared' | 'perfect' }   perfect = deck with no mistakes
 router.post('/activity', async (req, res, next) => {
   try {
@@ -231,16 +269,14 @@ router.post('/activity', async (req, res, next) => {
     let countsCorrect = false;
     if (type === 'answer' && correct === true) {
       const { source, itemKey } = req.body;
-      if (isQuestion(await getContent(), source, itemKey)) {
-        // Only today's rows matter; drop older ones as we go
-        await pool.query('DELETE FROM daily_correct WHERE user_id = $1 AND day < $2', [userId, today]);
-        countsCorrect = (await pool.query(
-          'INSERT INTO daily_correct (user_id, day, source, item_key) VALUES ($1, $2, $3, $4) ON CONFLICT DO NOTHING',
-          [userId, today, source, itemKey]
-        )).rowCount > 0;
-      }
+      if (isQuestion(await getContent(), source, itemKey)) countsCorrect = await firstToday(userId, today, source, itemKey);
       // A repeat right answer counts as neither, so replaying doesn't lower accuracy either
       if (countsCorrect) inc.correct = 1; else inc.answers = 0;
+    } else if (type !== 'answer') {
+      const itemKey = req.body.itemKey === undefined ? undefined : String(req.body.itemKey);
+      const real = type !== 'cleared' && await counts(type, userId, await getContent(), itemKey)
+        && await firstToday(userId, today, type, itemKey);
+      if (!real) inc[columns[type]] = 0;
     }
     // A run of correct answers can't be longer than today's correct answers
     const combo = countsCorrect
@@ -338,7 +374,7 @@ const LEADERBOARD_ALL_MAX = 2000; // shortcut: whole list in one response, add p
 router.get('/leaderboard', async (req, res, next) => {
   try {
     const { rows } = await pool.query(
-      `SELECT u.id, u.full_name, u.first_name, u.last_name, COALESCE(SUM(d.correct), 0)::int AS points
+      `SELECT u.id, u.full_name, u.first_name, u.last_name, u.profile_photo, COALESCE(SUM(d.correct), 0)::int AS points
        FROM users u
        LEFT JOIN daily_activity d ON d.user_id = u.id AND d.day >= $1
        WHERE u.disabled_at IS NULL
@@ -350,7 +386,9 @@ router.get('/leaderboard', async (req, res, next) => {
     let rank = 0;
     const ranked = rows.map((r, i) => {
       if (i === 0 || r.points !== rows[i - 1].points) rank = i + 1;
-      return { rank, name: adminName(r) || 'Student', points: r.points, isMe: r.id === req.userId };
+      // Profile photo the student uploaded (only our https Cloudinary links), else the page shows initials
+      const photo = /^https:\/\//.test(r.profile_photo || '') ? r.profile_photo : null;
+      return { rank, name: adminName(r) || 'Student', photo, points: r.points, isMe: r.id === req.userId };
     });
     // ?all=1 (the "See all" pop-up) lists everyone, 0 points included
     if (req.query.all === '1') {

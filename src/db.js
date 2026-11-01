@@ -789,8 +789,9 @@ async function init() {
         );
 
 
-        /* Practice questions each student got right today: a question earns a
-           leaderboard point once per day (rows from earlier days are cleared). */
+        /* Things each student did today that count once per item per day: practice
+           questions right (source case_study / study_card), topics read, videos watched,
+           mistakes cleared, decks done without a mistake. Older days are cleared. */
         CREATE TABLE IF NOT EXISTS daily_correct (
 
             user_id

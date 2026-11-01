@@ -8,7 +8,7 @@
     <link rel="icon" href="favicon-32.png?v=4" type="image/png" sizes="32x32">
     <link rel="apple-touch-icon" href="apple-touch-icon.png?v=4">
     <meta name="theme-color" content="#023047">
-    <link rel="stylesheet" href="style.css?v=120">
+    <link rel="stylesheet" href="style.css?v=121">
     <link rel="stylesheet" href="dark.css?v=72">
     <script src="js/theme.js?v=3"></script>
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.2/css/all.min.css">
@@ -20,7 +20,7 @@
 
     <script src="js/api.js?v=18"></script>
     <script src="js/notifications.js?v=2"></script>
-    <script src="js/gamify.js?v=4"></script>
+    <script src="js/gamify.js?v=5"></script>
     <script src="js/search.js?v=3"></script>
     <script src="js/sfx.js?v=8"></script>
     <script>
@@ -738,7 +738,7 @@
             if (examMode) return finishExam();
             if (reviewMode) return finishReview();
             // "Flawless" badge: whole deck without a single mistake (or time-out)
-            if (missedThisRound.size === 0) HCIGamify.record('perfect');
+            const flawless = missedThisRound.size === 0;
             document.getElementById('doneTitle').textContent = 'Deck mastered!';
             const lessonId = currentLessonId;
             const nextId = nextDeckAfter(lessonId);
@@ -766,8 +766,9 @@
                     applyLessonLockState();
                 })
                 .catch(err => console.error('Could not save quiz card progress:', err))
-                // Badges (hal. Deck Master) pagkatapos ma-save ang deck
-                .then(() => HCIGamify.check());
+                // Badges (hal. Deck Master) pagkatapos ma-save ang deck; "perfect" only
+                // counts once the server has the deck as mastered
+                .then(() => flawless ? HCIGamify.record('perfect', null, { itemKey: lessonId }) : HCIGamify.check());
             applyLessonLockState();
         }
 

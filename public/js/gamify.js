@@ -4,9 +4,10 @@
 //   HCIGamify.record('answer', true, { source: 'study_card', itemKey: '3-7' });
 //                                       // answered a question (right/wrong); a right answer
 //                                       // needs the question, and counts once per day
-//   HCIGamify.record('perfect');        // finished a deck without a mistake
-//   HCIGamify.record('video');          // finished a video
-//   HCIGamify.record('read');           // opened a lesson topic
+//   HCIGamify.record('perfect', null, { itemKey: deckKey });  // finished a deck without a mistake
+//   HCIGamify.record('video', null, { itemKey: videoId });    // finished a video
+//   HCIGamify.record('read', null, { itemKey: topicKey });    // read a lesson topic
+//   (the server only counts these for things it saw done, once per item per day)
 //   HCIGamify.record('cleared');        // cleared a mistake in review
 //   HCIGamify.check();                  // after saving other progress (solved, mastered, notes)
 //   HCIGamify.celebrate(newBadges);     // show pop-ups for badges from /gamify/summary
@@ -49,8 +50,8 @@ const HCIGamify = (function () {
     if (type === 'answer') {
       body.correct = !!correct;
       body.combo = nextCombo(!!correct);
-      if (question) { body.source = question.source; body.itemKey = String(question.itemKey); }
     }
+    if (question) { body.source = question.source; body.itemKey = String(question.itemKey); }
     return api.post('/gamify/activity', body).then(handle).catch(() => null);
   }
 

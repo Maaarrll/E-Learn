@@ -8,7 +8,7 @@
     <link rel="icon" href="favicon-32.png?v=4" type="image/png" sizes="32x32">
     <link rel="apple-touch-icon" href="apple-touch-icon.png?v=4">
     <meta name="theme-color" content="#023047">
-    <link rel="stylesheet" href="style.css?v=120">
+    <link rel="stylesheet" href="style.css?v=121">
     <link rel="stylesheet" href="dark.css?v=72">
     <script src="js/theme.js?v=3"></script>
     <!-- FontAwesome for the input icons -->
@@ -280,7 +280,7 @@
     <script src="js/api.js?v=18"></script>
     <script src="js/notifications.js?v=2"></script>
     <script src="js/sfx.js?v=8"></script>
-    <script src="js/gamify.js?v=4"></script>
+    <script src="js/gamify.js?v=5"></script>
     <script src="js/search.js?v=3"></script>
     <script>
         const ACTIVITY_ICONS = {
@@ -473,7 +473,10 @@
         // Medals only for top 3 with points (a 0-point tie isn't a podium)
         // Same name always gets the same avatar colour
         const avatarColor = (name) => [...name].reduce((h, c) => (h * 31 + c.charCodeAt(0)) % 997, 7) % 6;
-        const lbAvatar = (e) => `<span class="lb-avatar lb-av-${avatarColor(e.name)}" aria-hidden="true">${escapeHtml(e.name.replace(/[^A-Za-zÀ-ÿ ]/g, '').split(' ').filter(Boolean).map(w => w[0]).join('').slice(0, 2).toUpperCase() || '?')}</span>`;
+        // Their profile photo if they have one, else coloured initials
+        const lbAvatar = (e) => `<span class="lb-avatar lb-av-${avatarColor(e.name)}" aria-hidden="true">${/^https:\/\//.test(e.photo || '')
+            ? `<img src="${escapeHtml(e.photo)}" alt="" loading="lazy">`
+            : escapeHtml(e.name.replace(/[^A-Za-zÀ-ÿ ]/g, '').split(' ').filter(Boolean).map(w => w[0]).join('').slice(0, 2).toUpperCase() || '?')}</span>`;
 
         const lbRow = (e, i = 0) => `
             <li class="lb-row${e.isMe ? ' is-me' : ''}${e.points && e.rank <= 3 ? ` is-top${e.rank}` : ''}" style="--i:${Math.min(i, 15)}">
