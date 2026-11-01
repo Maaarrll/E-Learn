@@ -7,6 +7,7 @@ const { pool } = require('../db');
 const { requireAuth } = require('../middleware/authGuard');
 const { getContent } = require('../contentStore');
 const { todayLocal, addDays, toYmd, weekdayLabel, computeStreaks } = require('../utils/dates');
+const { adminName } = require('../utils/names');
 
 const router = express.Router();
 router.use(requireAuth);
@@ -306,16 +307,9 @@ router.put('/goal', async (req, res, next) => {
 // ---------- Leaderboards ----------
 // Ranks every student by correct answers in the last 7 days. Students with
 // no points are left off the top list (you always see your own rank).
-// Names are shortened to "Juan D." and no ids are sent.
+// Names show as "Ordonia, Marl June S." (same as the admin) and no ids are sent.
 const LEADERBOARD_TOP = 10;
 const LEADERBOARD_ALL_MAX = 2000; // shortcut: whole list in one response, add paging if students ever exceed this
-
-function shortName(row) {
-  const parts = row.full_name.split(' ').filter(Boolean);
-  const first = row.first_name || parts[0] || 'Student';
-  const last = row.last_name || (parts.length > 1 ? parts[parts.length - 1] : '');
-  return last ? `${first} ${last[0].toUpperCase()}.` : first;
-}
 
 // GET /api/gamify/leaderboard
 router.get('/leaderboard', async (req, res, next) => {
@@ -326,14 +320,14 @@ router.get('/leaderboard', async (req, res, next) => {
        LEFT JOIN daily_activity d ON d.user_id = u.id AND d.day >= $1
        WHERE u.disabled_at IS NULL
        GROUP BY u.id
-       ORDER BY points DESC, u.full_name`,
+       ORDER BY points DESC, u.last_name, u.first_name`,
       [addDays(todayLocal(), -6)]
     );
     // Same points = same rank
     let rank = 0;
     const ranked = rows.map((r, i) => {
       if (i === 0 || r.points !== rows[i - 1].points) rank = i + 1;
-      return { rank, name: shortName(r), points: r.points, isMe: r.id === req.userId };
+      return { rank, name: adminName(r) || 'Student', points: r.points, isMe: r.id === req.userId };
     });
     // ?all=1 (the "See all" pop-up) lists everyone, 0 points included
     if (req.query.all === '1') {

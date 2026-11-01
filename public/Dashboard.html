@@ -569,7 +569,8 @@
                 const q = search.value.trim().toLowerCase();
                 // Podium only for the plain list; a search shows matches as rows
                 const top = q ? [] : entries.slice(0, 3).filter(e => e.points > 0 && e.rank <= 3);
-                const rest = q ? entries.filter(e => e.name.toLowerCase().includes(q)) : entries.slice(top.length);
+                // Every typed word must match, so "Marl Ordonia" finds "Ordonia, Marl June S."
+                const rest = q ? entries.filter(e => q.split(/\s+/).every(w => e.name.toLowerCase().includes(w))) : entries.slice(top.length);
                 podium.innerHTML = top.length ? lbPodium(top) : '';
                 list.innerHTML = rest.map(lbRow).join('') || (top.length ? '' : '<li class="lb-note">No one matches that name. 🔍</li>');
             };
