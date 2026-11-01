@@ -2868,6 +2868,14 @@
 :root[data-theme="dark"] .admin-list-text small {
     color: hsl(222 12% 75%);
 }
+:root[data-theme="dark"] .online-faces .admin-avatar,
+:root[data-theme="dark"] .online-more {
+    border: 2px solid hsl(222 14% 17%);
+}
+:root[data-theme="dark"] .online-more {
+    background: hsl(222 44% 22%);
+    color: hsl(220 29% 81%);
+}
 :root[data-theme="dark"] .admin-drop-arrow {
     color: hsl(222 12% 73%);
 }

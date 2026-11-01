@@ -8,8 +8,8 @@
     <link rel="icon" href="favicon-32.png?v=4" type="image/png" sizes="32x32">
     <link rel="apple-touch-icon" href="apple-touch-icon.png?v=4">
     <meta name="theme-color" content="#023047">
-    <link rel="stylesheet" href="style.css?v=124">
-    <link rel="stylesheet" href="dark.css?v=76">
+    <link rel="stylesheet" href="style.css?v=125">
+    <link rel="stylesheet" href="dark.css?v=77">
     <script src="js/theme.js?v=3"></script>
     <!-- FontAwesome para sa icons -->
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
@@ -149,7 +149,15 @@
                                 <div class="admin-card">
                                     <h3><i class="fa-solid fa-signal"></i> Online now</h3>
                                     <p class="admin-card-note">Students with the site open in the last few minutes. Updates every minute.</p>
-                                    <div class="admin-list" id="onlineList"></div>
+                                    <!-- One row with faces + count; opens to the full list so a busy class doesn't fill the page -->
+                                    <details class="admin-drop online-drop">
+                                        <summary class="admin-list-item">
+                                            <span class="online-faces" id="onlineFaces"></span>
+                                            <span class="admin-list-text"><strong id="onlineSummary">Nobody is online right now</strong></span>
+                                            <i class="fa-solid fa-chevron-down admin-drop-arrow"></i>
+                                        </summary>
+                                        <div class="admin-list online-list" id="onlineList"></div>
+                                    </details>
                                 </div>
                                 <div class="admin-card">
                                     <h3><i class="fa-solid fa-triangle-exclamation"></i> At-risk students</h3>
@@ -461,6 +469,11 @@
             try { ({ ids } = await api.get('/admin/online')); } catch (err) { return; }
             const online = students.filter(s => ids.includes(s.id));
             $('statOnline').textContent = online.length;
+            $('onlineSummary').textContent = online.length
+                ? `${online.length} student${online.length === 1 ? '' : 's'} online`
+                : 'Nobody is online right now';
+            $('onlineFaces').innerHTML = online.slice(0, 5).map(s => avatar(s)).join('')
+                + (online.length > 5 ? `<span class="online-more">+${online.length - 5}</span>` : '');
             $('onlineList').innerHTML = online.length ? online.map(s => `
                 <button type="button" class="admin-list-item" data-student="${s.id}">
                     ${avatar(s)}
