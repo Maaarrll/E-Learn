@@ -103,7 +103,13 @@ app.use('/api/admin/quizzes', adminQuizRoutes);
 app.use('/api/admin', adminRoutes);
 
 // ----- Static front-end -----
-app.use(express.static(path.join(__dirname, 'public')));
+// CSS/JS are loaded with ?v=N (bumped on every change), so browsers and the CDN
+// can keep them for a week; pages and images still check for updates each time
+app.use(express.static(path.join(__dirname, 'public'), {
+  setHeaders(res, filePath) {
+    if (/\.(css|js)$/.test(filePath)) res.set('Cache-Control', 'public, max-age=604800');
+  },
+}));
 
 // Anything not matched by the API or a static file falls back to the login page.
 app.get('*', (req, res) => {

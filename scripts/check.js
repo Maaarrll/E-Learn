@@ -4,7 +4,8 @@
 // extra packages needed:
 //   1. every .js file in the project parses
 //   2. every inline <script> in public/*.html parses
-//   3. public/dark.css is up to date with style.css
+//   3. local CSS/JS in the pages load with ?v=N (they are cached for a week)
+//   4. public/dark.css is up to date with style.css
 
 const fs = require('fs');
 const path = require('path');
@@ -54,7 +55,15 @@ for (const file of htmlFiles) {
 }
 console.log(`Checked ${inlineCount} inline scripts in ${htmlFiles.length} pages.`);
 
-// 3. Generated dark mode CSS is up to date
+// 3. Local CSS/JS must load with ?v=N: the server lets browsers cache them for a week
+for (const file of htmlFiles) {
+  const html = fs.readFileSync(file, 'utf8');
+  for (const [, url] of html.matchAll(/(?:href|src)="([^"]+\.(?:css|js)(?:\?[^"]*)?)"/g)) {
+    if (!/^(https?:)?\/\//.test(url) && !/\?v=\d+$/.test(url)) fail(`${path.relative(ROOT, file)} loads ${url} without ?v=N`);
+  }
+}
+
+// 4. Generated dark mode CSS is up to date
 for (const script of ['build-dark-css.js']) {
   const result = spawnSync(process.execPath, [path.join(__dirname, script), '--check'], { encoding: 'utf8' });
   if (result.status !== 0) fail(result.stderr.trim() || `${script} --check failed`);
