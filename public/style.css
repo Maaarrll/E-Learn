@@ -835,6 +835,13 @@ p {
     gap: 20px; /* Nagdagdag ng tamang espasyo sa pagitan ng title at listahan */
 }
 
+.activity-items {
+    display: flex;
+    flex-direction: column;
+    gap: 12px;
+    margin-bottom: 0; /* Tinanggal ang margin-auto para hindi itulak pababa nang sobra */
+}
+
 .act-item {
     display: flex;
     align-items: center;
@@ -845,6 +852,7 @@ p {
 }
 
 .act-item:last-child {
+    border-bottom: none; /* Tinanggal ang border sa pinaka-huling item para malapit sa View All */
 }
 .act-item {
     display: flex;
@@ -1882,7 +1890,6 @@ p {
     /* --- ETO ANG FIX PARA SA PAGKAKASUNOD-SUNOD --- */
     /* I-adjust ang class names kung iba ang ginamit mo sa HTML */
     .welcome-card { order: 1 !important; } /* O kung ano man ang class ng Overall Progress */
-
     .activities-card { order: 3 !important; } /* O .activities-container */
     .recent-card { order: 4 !important; }
     /* ---------------------------------------------- */
@@ -1899,7 +1906,8 @@ p {
     }
 
     /* Fix para tanggalin ang sobrang space sa loob ng Activities at ang scrollbar */
-    .scrollable-activities {
+    .scrollable-activities, 
+    .activity-items {
         height: auto !important;
         min-height: 0 !important;
         max-height: none !important;
@@ -6506,7 +6514,6 @@ body {
 .dashboard-page .activities-card     { --fun-stripe: linear-gradient(90deg, var(--fun-sky), var(--fun-mint)); }
 .dashboard-page .recent-card         { --fun-stripe: linear-gradient(90deg, var(--fun-sun), var(--fun-coral)); }
 .dashboard-page .quick-actions-card  { --fun-stripe: linear-gradient(90deg, var(--fun-mint), var(--fun-sky)); }
-
 .account-page .acct-card:nth-of-type(odd)  { --fun-stripe: linear-gradient(90deg, var(--fun-grape), var(--fun-pink)); }
 .account-page .acct-card:nth-of-type(even) { --fun-stripe: linear-gradient(90deg, var(--fun-sky), var(--fun-mint)); }
 
@@ -9449,6 +9456,49 @@ div.qs-result {
     color: #626262;
 }
 
+.admin-table-wrap {
+    overflow-x: auto;
+    border-radius: 20px;
+    border: 2px solid #dfe3f0;
+    background: #fff;
+}
+
+.admin-table {
+    width: 100%;
+    border-collapse: collapse;
+    font-size: 14px;
+}
+
+.admin-table th {
+    padding: 12px 14px;
+    background: #eff1f9;
+    color: #525c79;
+    font-size: 12px;
+    font-weight: 800;
+    letter-spacing: 0.5px;
+    text-align: left;
+    text-transform: uppercase;
+    white-space: nowrap;
+}
+
+.admin-table td {
+    padding: 12px 14px;
+    border-top: 1px solid #eaecf2;
+    color: #333;
+    vertical-align: middle;
+}
+
+.admin-table tbody tr {
+    cursor: pointer;
+    transition: background-color 0.2s;
+}
+
+.admin-table tbody tr:hover,
+.admin-table tbody tr:focus-visible {
+    background: #f3f5fb;
+    outline: none;
+}
+
 .admin-student {
     display: flex;
     align-items: center;
@@ -9697,6 +9747,50 @@ div.qs-result {
     }
 
     /* Table becomes cards on phones */
+    .admin-table-wrap {
+        border: none;
+        background: none;
+        overflow: visible;
+    }
+
+    .admin-table thead {
+        display: none;
+    }
+
+    .admin-table,
+    .admin-table tbody,
+    .admin-table tr,
+    .admin-table td {
+        display: block;
+    }
+
+    .admin-table tbody tr {
+        margin-bottom: 12px;
+        padding: 12px 14px;
+        border-radius: 18px;
+        border: 2px solid #dfe3f0;
+        background: #fff;
+    }
+
+    .admin-table td {
+        display: flex;
+        justify-content: space-between;
+        align-items: center;
+        gap: 10px;
+        padding: 6px 0;
+        border-top: none;
+    }
+
+    .admin-table td::before {
+        content: attr(data-label);
+        font-size: 12px;
+        font-weight: 700;
+        color: #888da1;
+    }
+
+    .admin-table td[data-label="Student"]::before {
+        display: none;
+    }
 
     .student-stats {
         grid-template-columns: repeat(2, minmax(0, 1fr));
