@@ -21,10 +21,15 @@ const {
 
 const {
     LRN_REGEX,
+    normalizeName,
     findByName,
     nameTaken,
     lrnProblem
 } = require('../utils/students');
+
+// Rate-limit key for a typed name: spacing/case variants count as the same
+// name (login matches them all), and very long input can't bloat memory
+const nameKey = (req) => normalizeName(req.body && req.body.name).slice(0, 130);
 
 const RESET_TOKEN_MINUTES = 30;
 
@@ -47,7 +52,7 @@ const MINUTE = 60 * 1000;
 const loginLimiter = rateLimit({
     windowMs: 15 * MINUTE,
     max: 10,
-    keyFn: (req) => `login:${req.ip}:${String((req.body && req.body.name) || '').trim().toLowerCase()}`,
+    keyFn: (req) => `login:${req.ip}:${nameKey(req)}`,
     message: 'Too many login attempts. Please wait 15 minutes and try again.'
 });
 
@@ -71,6 +76,14 @@ const forgotLimiter = rateLimit({
     max: 30,
     keyFn: (req) => `forgot:${req.ip}`,
     message: 'Too many reset requests. Please wait 15 minutes and try again.'
+});
+
+// Per name from any IP, so an LRN can't be guessed by switching networks
+const forgotNameLimiter = rateLimit({
+    windowMs: 60 * MINUTE,
+    max: 10,
+    keyFn: (req) => `forgot-name:${nameKey(req)}`,
+    message: 'Too many reset attempts for this name. Please wait an hour or ask your teacher.'
 });
 
 const resetLimiter = rateLimit({
@@ -639,6 +652,7 @@ router.post(
 router.post(
     '/forgot-password',
     forgotLimiter,
+    forgotNameLimiter,
     async (req, res, next) => {
 
         try {
