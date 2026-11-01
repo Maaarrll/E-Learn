@@ -10935,6 +10935,24 @@ div.qs-result {
     .student-stats {
         grid-template-columns: repeat(2, minmax(0, 1fr));
     }
+
+    /* Rows with buttons (instructors): text keeps the full width, pill + buttons wrap below it */
+    .admin-list-item:has(.ce-actions) {
+        flex-wrap: wrap;
+    }
+
+    .admin-list-item:has(.ce-actions) .admin-list-text {
+        flex-basis: calc(100% - 48px);
+    }
+
+    .admin-list-item:has(.ce-actions) .admin-pill {
+        margin-left: 48px;
+    }
+
+    .admin-list-item:has(.ce-actions) .ce-actions {
+        width: auto;
+        margin-left: auto;
+    }
 }
 
 @media (prefers-reduced-motion: reduce) {
