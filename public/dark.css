@@ -4173,6 +4173,17 @@
 :root[data-theme="dark"] .admin-stat:nth-child(5) {
     --stat-color: var(--fun-grape);
 }
+:root[data-theme="dark"] .admin-stat.is-online {
+    --stat-color: #1f9d55;
+}
+:root[data-theme="dark"] .admin-stat.is-online i {
+    background: hsl(144 45% 22%);
+    color: hsl(146 71% 81%);
+}
+:root[data-theme="dark"] .admin-pill.is-online {
+    background: hsl(144 45% 22%);
+    color: hsl(146 69% 82%);
+}
 :root[data-theme="dark"] .admin-stat:nth-child(1) i {
     background: hsl(206 45% 20%);
     color: hsl(205 75% 72%);

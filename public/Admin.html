@@ -8,8 +8,8 @@
     <link rel="icon" href="favicon-32.png?v=4" type="image/png" sizes="32x32">
     <link rel="apple-touch-icon" href="apple-touch-icon.png?v=4">
     <meta name="theme-color" content="#023047">
-    <link rel="stylesheet" href="style.css?v=114">
-    <link rel="stylesheet" href="dark.css?v=68">
+    <link rel="stylesheet" href="style.css?v=115">
+    <link rel="stylesheet" href="dark.css?v=69">
     <script src="js/theme.js?v=3"></script>
     <!-- FontAwesome para sa icons -->
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
@@ -132,16 +132,21 @@
                             </div>
                         </div>
                         <div class="admin-stats">
-                            <div class="admin-stat"><i class="fa-solid fa-users"></i><strong id="statStudents">0</strong><span>Students</span></div>
-                            <div class="admin-stat"><i class="fa-solid fa-bolt"></i><strong id="statToday">0</strong><span>Active today</span></div>
+                            <div class="admin-stat"><i class="fa-solid fa-users"></i><strong id="statStudents">0</strong><span>Students</span></div>                            <div class="admin-stat"><i class="fa-solid fa-bolt"></i><strong id="statToday">0</strong><span>Active today</span></div>
                             <div class="admin-stat"><i class="fa-solid fa-calendar-week"></i><strong id="statWeek">0</strong><span>Active this week</span></div>
                             <div class="admin-stat is-warn"><i class="fa-solid fa-moon"></i><strong id="statInactive">0</strong><span>Inactive 7+ days</span></div>
                             <div class="admin-stat"><i class="fa-solid fa-chart-line"></i><strong id="statAvg">0%</strong><span>Average progress</span></div>
+                            <div class="admin-stat is-online"><i class="fa-solid fa-signal"></i><strong id="statOnline">0</strong><span>Online now</span></div>
                         </div>
 
                         <!-- Two columns that stack on their own, so a tall card never leaves a gap beside it -->
                         <div class="admin-grid overview-columns">
                             <div class="overview-col">
+                                <div class="admin-card">
+                                    <h3><i class="fa-solid fa-signal"></i> Online now</h3>
+                                    <p class="admin-card-note">Students with the site open in the last few minutes. Updates every minute.</p>
+                                    <div class="admin-list" id="onlineList"></div>
+                                </div>
                                 <div class="admin-card">
                                     <h3><i class="fa-solid fa-triangle-exclamation"></i> At-risk students</h3>
                                     <p class="admin-card-note">Inactive 7+ days, under 50% correct, or far behind the class.</p>
@@ -303,7 +308,7 @@
         </aside>
     </div>
 
-    <script src="js/api.js?v=14"></script>
+    <script src="js/api.js?v=15"></script>
     <script src="js/richtext.js?v=1"></script>
     <script src="js/admin-content.js?v=10"></script>
     <script src="js/quiz-import.js?v=1"></script>
@@ -413,6 +418,22 @@
 
         // A reminder can go out once a day, only to inactive students with an email on file
         const remindedRecently = (s) => s.remindedAt && Date.now() - Date.parse(s.remindedAt) < 24 * 3600 * 1000;
+
+        // ---------------- Online now ----------------
+        async function loadOnline() {
+            if (document.hidden) return;
+            let ids;
+            try { ({ ids } = await api.get('/admin/online')); } catch (err) { return; }
+            const online = students.filter(s => ids.includes(s.id));
+            $('statOnline').textContent = online.length;
+            $('onlineList').innerHTML = online.length ? online.map(s => `
+                <button type="button" class="admin-list-item" data-student="${s.id}">
+                    <span class="admin-avatar">${escapeHtml(initials(s.fullName))}</span>
+                    <span class="admin-list-text"><strong>${escapeHtml(s.fullName)}</strong><small>${escapeHtml(sectionOf(s))}</small></span>
+                    <span class="admin-pill is-online"><i class="fa-solid fa-circle"></i> Online</span>
+                </button>`).join('')
+                : '<p class="admin-empty">Nobody is online right now.</p>';
+        }
 
         // ---------------- Overview ----------------
         let lastInsights = null;
@@ -1218,6 +1239,8 @@
                 students = list.students;
                 today = list.today;
                 renderOverview(insights);
+                loadOnline();
+                setInterval(loadOnline, 60000);
                 fillFilters();
                 renderStudents();
                 loadAudit();

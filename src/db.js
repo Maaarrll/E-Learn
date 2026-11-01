@@ -858,6 +858,11 @@ async function init() {
             'ALTER TABLE public.users ADD COLUMN IF NOT EXISTS session_version INTEGER NOT NULL DEFAULT 0'
         );
 
+        /* Last request from the student, for "Online now" on the admin dashboard. */
+        await client.query(
+            'ALTER TABLE public.users ADD COLUMN IF NOT EXISTS last_seen_at TIMESTAMPTZ'
+        );
+
         /* Daily goal: how many questions the user wants to answer per day. */
         await client.query(
             'ALTER TABLE public.users ADD COLUMN IF NOT EXISTS daily_goal INTEGER NOT NULL DEFAULT 10'
