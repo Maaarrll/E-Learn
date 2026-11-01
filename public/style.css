@@ -16629,3 +16629,68 @@ button.cs-node:hover .cs-node-card {
         font-size: 17px;
     }
 }
+
+/* ---------- Admin editor: preview slides look like Read Lesson ---------- */
+.ls-preview {
+    display: grid;
+    gap: 6px;
+}
+
+.ls-preview .ce-slide-label {
+    margin-top: 6px;
+    font-size: 11px;
+    font-weight: 800;
+    letter-spacing: 0.5px;
+    text-transform: uppercase;
+    color: #888da1;
+}
+
+/* Small slides that grow with their text (on phones students see them the same way) */
+.ls-preview .ls-show {
+    border-radius: 12px;
+    box-shadow: 4px 4px 0 var(--ls-ink);
+}
+
+.ls-preview .ls-stage {
+    aspect-ratio: auto;
+    min-height: 150px;
+    padding: 16px 18px 20px;
+    border-top-width: 6px;
+}
+
+.ls-preview .ls-section-icon {
+    width: 34px;
+    height: 34px;
+    font-size: 15px;
+}
+
+.ls-preview .ls-section h3 {
+    margin: 8px 0 8px;
+    font-size: 22px;
+}
+
+.ls-preview .ls-section p,
+.ls-preview .ls-section li {
+    font-size: 13px;
+    line-height: 1.5;
+}
+
+.ls-preview .ls-section-body {
+    padding: 9px 12px;
+    border-radius: 14px;
+    box-shadow: 3px 3px 0 var(--ls-ink);
+}
+
+.ls-preview .ls-section-body::after {
+    bottom: -10px;
+    left: 22px;
+    width: 15px;
+    height: 15px;
+}
+
+/* No animations: the preview redraws on every keystroke */
+.ls-preview *,
+.ls-preview *::before,
+.ls-preview *::after {
+    animation: none !important;
+}

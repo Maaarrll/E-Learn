@@ -5220,6 +5220,15 @@
         box-shadow: 5px 5px 0 var(--ls-ink);
     }
 }
+:root[data-theme="dark"] .ls-preview .ce-slide-label {
+    color: hsl(228 12% 64%);
+}
+:root[data-theme="dark"] .ls-preview .ls-show {
+    box-shadow: 4px 4px 0 var(--ls-ink);
+}
+:root[data-theme="dark"] .ls-preview .ls-section-body {
+    box-shadow: 3px 3px 0 var(--ls-ink);
+}
 
 /* ---------- from update-password.html ---------- */
 :root[data-theme="dark"] body.update-password-page {

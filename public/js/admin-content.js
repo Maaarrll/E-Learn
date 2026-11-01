@@ -389,7 +389,7 @@ const HCIContentEditor = (function () {
           + `<div class="ce-topic-layout">
               <div class="ce-sections">${(d.sections || []).map(sectionEditor).join('')}
                 <button type="button" class="tool-btn" data-sec="add"><i class="fa-solid fa-plus"></i> Add slide</button></div>
-              <div class="ce-preview"><b>Preview</b><div class="ce-preview-body accordion-content"></div></div>
+              <div class="ce-preview"><b>Preview: what students see</b><div class="ce-preview-body lesson-page ls-preview"></div></div>
             </div>`;
       default:
         return '';
@@ -421,6 +421,15 @@ const HCIContentEditor = (function () {
       case 'topic': return { title: v('title'), sections: readSections(form) };
       default: return {};
     }
+  }
+
+  // One slide as students see it on Read Lesson (same markup as ReadLesson.html)
+  function previewSlide(s, i) {
+    return `<span class="ce-slide-label">Slide ${i + 1}</span>
+      <div class="ls-show"><div class="ls-stage"><div class="ls-slide"><div class="ls-section">
+        ${s.heading ? `<span class="ls-section-icon"><i class="fa-solid ${HCIRichText.safeIcon(s.icon)}"></i></span><h3>${esc(s.heading)}</h3>` : ''}
+        <div class="ls-section-body">${HCIRichText.render(s.body)}</div>
+      </div></div></div></div>`;
   }
 
   function readSections(form) {
@@ -477,7 +486,13 @@ const HCIContentEditor = (function () {
         box.querySelector('i').className = `fa-solid ${HCIRichText.safeIcon(box.querySelector('input').value.trim())}`;
       });
       const preview = form.querySelector('.ce-preview-body');
-      if (preview) preview.innerHTML = readSections(form).map(HCIRichText.renderSection).join('');
+      if (preview) {
+        // Same colour as the student slides: one per lesson, by its place in the list
+        const lessonKey = item ? item.parentKey : parentKey;
+        const lessonIndex = Math.max(0, ofKind('module').filter(m => m.draft).findIndex(m => m.key === lessonKey));
+        preview.style.setProperty('--ls-color', `var(--ls-c${lessonIndex % 4})`);
+        preview.innerHTML = readSections(form).map(previewSlide).join('');
+      }
     };
     form.addEventListener('input', refreshPreview);
     refreshPreview();
