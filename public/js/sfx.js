@@ -248,7 +248,7 @@
   function mountButton() {
     if (document.getElementById('sfxToggle')) return;
     // Other pages load this file only for the confetti (badge pop-ups)
-    if (!document.body.matches('.case-page, .study-page, .quiz-page')) return;
+    if (!document.body.matches('.case-page, .study-page, .quiz-page, .lesson-page')) return;
 
     var btn = document.createElement('button');
     btn.id = 'sfxToggle';

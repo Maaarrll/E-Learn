@@ -4980,6 +4980,30 @@
 :root[data-theme="dark"] .ls-flip-back b {
     color: var(--ls-color);
 }
+:root[data-theme="dark"] .ls-stage::before {
+    background: radial-gradient(circle, var(--fun-sun) 0 6px, transparent 7px) 94% 10% / 16px 16px no-repeat,
+        radial-gradient(circle, var(--fun-coral) 0 4px, transparent 5px) 88% 22% / 12px 12px no-repeat,
+        radial-gradient(circle, var(--fun-sky) 0 5px, transparent 6px) 97% 30% / 14px 14px no-repeat,
+        radial-gradient(circle, var(--fun-mint) 0 4px, transparent 5px) 4% 88% / 12px 12px no-repeat,
+        radial-gradient(circle, var(--fun-sun) 0 3px, transparent 4px) 9% 78% / 10px 10px no-repeat;
+}
+:root[data-theme="dark"] .ls-bar div {
+    background: var(--fun-rainbow);
+    background-size: 200% 100%;
+}
+:root[data-theme="dark"] .ls-read-msg .fa-trophy,
+:root[data-theme="dark"] .ls-read-msg .fa-star {
+    color: var(--fun-sun);
+}
+:root[data-theme="dark"] .lesson-page .ls-thumb::before {
+    background: radial-gradient(circle, var(--fun-sun) 0 4px, transparent 5px) 12% 18% / 10px 10px no-repeat,
+        radial-gradient(circle, hsl(165 14% 17% / 0.7) 0 3px, transparent 4px) 86% 24% / 8px 8px no-repeat,
+        radial-gradient(circle, var(--fun-coral) 0 3px, transparent 4px) 80% 70% / 8px 8px no-repeat,
+        radial-gradient(circle, hsl(165 14% 17% / 0.5) 0 2px, transparent 3px) 20% 76% / 6px 6px no-repeat;
+}
+:root[data-theme="dark"] .lesson-page .ls-thumb:has(.watched-badge) .ls-thumb-icon {
+    box-shadow: 0 0 0 3px var(--fun-sun);
+}
 
 /* ---------- from update-password.html ---------- */
 :root[data-theme="dark"] body.update-password-page {
