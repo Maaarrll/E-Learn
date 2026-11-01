@@ -46,37 +46,29 @@ async function requireAuth() {
   }
 }
 
-// Refreshes the page after a deploy, and (students: withData) after a teacher
-// publishes something. A 15-second countdown with "Later" so nobody loses work.
+// Quietly refreshes the page after a deploy, and (students: withData) after a
+// teacher publishes something. Waits while someone is typing or has an editor
+// open, so nobody loses what they wrote.
 function watchForUpdates(withData) {
   let seen = null;
+  let stale = false;
+  const busy = () => {
+    const el = document.activeElement;
+    return !!(el && (el.matches('input, textarea, select') || el.isContentEditable))
+      || !!document.querySelector('.ce-overlay');
+  };
   const check = async () => {
-    if (document.hidden || document.querySelector('.update-toast')) return;
+    if (stale) { if (!busy()) location.reload(); return; }
+    if (document.hidden) return;
     let v;
     try { v = await api.get('/version'); } catch (e) { return; }
     const key = withData ? `${v.app}:${v.data}` : String(v.app);
-    if (seen !== null && key !== seen) showUpdateToast();
+    if (seen !== null && key !== seen) { stale = true; if (!busy()) location.reload(); }
     seen = key;
   };
   check();
   setInterval(check, 60000);
   document.addEventListener('visibilitychange', check);
-}
-
-function showUpdateToast() {
-  let left = 15;
-  const el = document.createElement('div');
-  el.className = 'update-toast';
-  el.setAttribute('role', 'status');
-  el.innerHTML = '<i class="fa-solid fa-rotate"></i><span></span>'
-    + '<button type="button" data-now>Refresh now</button><button type="button" data-later>Later</button>';
-  const text = el.querySelector('span');
-  const tick = () => { text.textContent = `ALLEARN was updated. Refreshing in ${left}s`; };
-  tick();
-  const timer = setInterval(() => { left -= 1; if (left <= 0) location.reload(); else tick(); }, 1000);
-  el.querySelector('[data-now]').addEventListener('click', () => location.reload());
-  el.querySelector('[data-later]').addEventListener('click', () => { clearInterval(timer); el.remove(); });
-  document.body.appendChild(el);
 }
 
 async function logout() {
