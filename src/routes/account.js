@@ -33,9 +33,6 @@ const {
 } = require('../utils/students');
 const { splitName } = require('../utils/names');
 
-// Same sections as signup: Grade 7, Section A to Z
-const YEAR_SECTION_REGEX = /^Grade 7 - Section [A-Z]$/;
-
 // Maximum lengths for text fields
 const MAX_FULL_NAME = 120;
 const MAX_YEAR_SECTION = 40;
@@ -305,9 +302,10 @@ router.put(
             }
 
 
-            // Unchanged keeps older free-typed sections; a new one must be from the list
-            if (newYearSection !== user.year_section && !YEAR_SECTION_REGEX.test(newYearSection)) {
-                return res.status(400).json({ error: 'Please pick your section from the list.' });
+            // The section decides which teacher sees the student and which quizzes
+            // they get, so only a teacher can change it (Admin → student → Change section)
+            if ((newYearSection || '') !== (user.year_section || '')) {
+                return res.status(403).json({ error: 'Only your teacher can change your section.' });
             }
 
             /*
