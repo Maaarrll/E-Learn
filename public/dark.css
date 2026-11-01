@@ -5229,6 +5229,44 @@
 :root[data-theme="dark"] .ls-preview .ls-section-body {
     box-shadow: 3px 3px 0 var(--ls-ink);
 }
+:root[data-theme="dark"] .ls-burst span {
+    background: var(--ls-pow, #ffe14d);
+    color: var(--ls-c1, #e8467c);
+}
+:root[data-theme="dark"] .ls-aralin {
+    border: 3px solid var(--ls-ink);
+    background: hsl(165 14% 17%);
+    box-shadow: 4px 4px 0 var(--ls-ink);
+    color: var(--ls-ink);
+}
+:root[data-theme="dark"] .ls-aralin:hover {
+    box-shadow: 6px 7px 0 var(--ls-ink);
+}
+:root[data-theme="dark"] .ls-aralin[aria-pressed="true"] {
+    background: var(--ls-pow);
+}
+:root[data-theme="dark"] .ls-aralin:focus-visible {
+    outline: 3px solid var(--ls-color);
+}
+:root[data-theme="dark"] .ls-aralin-icon {
+    border: 3px solid var(--ls-ink);
+    background: var(--ls-color);
+    color: #fff;
+}
+:root[data-theme="dark"] .ls-aralin.is-done .ls-aralin-icon {
+    background: var(--ls-pow);
+    color: var(--ls-ink);
+}
+:root[data-theme="dark"] .ls-aralin-text b {
+    color: var(--ls-color);
+}
+:root[data-theme="dark"] .ls-aralin-dots i {
+    border: 2px solid var(--ls-ink);
+    background: hsl(165 14% 17%);
+}
+:root[data-theme="dark"] .ls-aralin-dots i.is-read {
+    background: var(--ls-color);
+}
 
 /* ---------- from update-password.html ---------- */
 :root[data-theme="dark"] body.update-password-page {
@@ -5382,5 +5420,11 @@
 :root[data-theme="dark"] .lesson-page .ls-player #lsLesson,
 :root[data-theme="dark"] .lesson-page .ls-check-options button.is-right,
 :root[data-theme="dark"] .lesson-page .ls-check-options button.is-wrong {
+    color: #102430;
+}
+
+/* Read Lesson Aralin badges: dark text keeps on the light/yellow badge */
+:root[data-theme="dark"] .lesson-page .ls-aralin[aria-pressed="true"],
+:root[data-theme="dark"] .lesson-page .ls-aralin[aria-pressed="true"] .ls-aralin-count {
     color: #102430;
 }

@@ -110,3 +110,9 @@
 :root[data-theme="dark"] .lesson-page .ls-check-options button.is-wrong {
     color: #102430;
 }
+
+/* Read Lesson Aralin badges: dark text keeps on the light/yellow badge */
+:root[data-theme="dark"] .lesson-page .ls-aralin[aria-pressed="true"],
+:root[data-theme="dark"] .lesson-page .ls-aralin[aria-pressed="true"] .ls-aralin-count {
+    color: #102430;
+}
