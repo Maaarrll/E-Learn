@@ -116,3 +116,12 @@
 :root[data-theme="dark"] .lesson-page .ls-aralin[aria-pressed="true"] .ls-aralin-count {
     color: #102430;
 }
+
+/* Selected (yellow) Aralin badge: unread dots stay hollow, outlines stay dark */
+:root[data-theme="dark"] .lesson-page .ls-aralin[aria-pressed="true"] .ls-aralin-dots i {
+    border-color: #102430;
+}
+
+:root[data-theme="dark"] .lesson-page .ls-aralin[aria-pressed="true"] .ls-aralin-dots i:not(.is-read) {
+    background: transparent;
+}
