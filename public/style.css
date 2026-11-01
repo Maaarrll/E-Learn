@@ -16046,3 +16046,139 @@ button.cs-node:hover .cs-node-card {
         transition: none;
     }
 }
+
+/* ---------- Read Lesson: the fun layer ---------- */
+
+/* Confetti dots floating in the slide's corners */
+.ls-stage::before {
+    content: "";
+    position: absolute;
+    inset: 0;
+    pointer-events: none;
+    background:
+        radial-gradient(circle, var(--fun-sun) 0 6px, transparent 7px) 94% 10% / 16px 16px no-repeat,
+        radial-gradient(circle, var(--fun-coral) 0 4px, transparent 5px) 88% 22% / 12px 12px no-repeat,
+        radial-gradient(circle, var(--fun-sky) 0 5px, transparent 6px) 97% 30% / 14px 14px no-repeat,
+        radial-gradient(circle, var(--fun-mint) 0 4px, transparent 5px) 4% 88% / 12px 12px no-repeat,
+        radial-gradient(circle, var(--fun-sun) 0 3px, transparent 4px) 9% 78% / 10px 10px no-repeat;
+    opacity: 0.55;
+    animation: funFloat 5s ease-in-out infinite;
+}
+
+.ls-slide {
+    position: relative;
+}
+
+/* Each slide bounces in: icon pops, heading and text slide up after it */
+.ls-slide.is-from-right { animation: lsSlideRight 0.45s var(--fun-bounce); }
+.ls-slide.is-from-left  { animation: lsSlideLeft 0.45s var(--fun-bounce); }
+
+.ls-section-icon {
+    animation: funPop 0.5s var(--fun-bounce) both;
+}
+
+.ls-section h3 {
+    animation: fadeUp 0.4s ease 0.1s both;
+}
+
+.ls-section-body {
+    animation: fadeUp 0.4s ease 0.2s both;
+}
+
+.ls-section-icon:hover {
+    animation: funJiggle 0.6s ease;
+}
+
+/* Rainbow progress bar, like the banners */
+.ls-bar div {
+    background: var(--fun-rainbow);
+    background-size: 200% 100%;
+    animation: funSlide 4s linear infinite;
+}
+
+/* "Next topic" bobs to invite the next tap */
+.ls-nav.is-next.is-topic {
+    animation: funBob 1.6s ease-in-out infinite;
+}
+
+.ls-nav:active:not(:disabled) {
+    transform: scale(0.92);
+}
+
+/* Celebration message pops in */
+.ls-read-msg {
+    animation: funPop 0.45s var(--fun-bounce) both;
+}
+
+.ls-read-msg .fa-trophy,
+.ls-read-msg .fa-star {
+    color: var(--fun-sun);
+    animation: funJiggle 0.8s ease 0.3s 2;
+}
+
+/* Quick check: answers bounce on hover, the right one celebrates */
+.ls-check-title i {
+    animation: funBob 2s ease-in-out infinite;
+}
+
+.ls-check-options button {
+    transition: border-color 0.2s, transform 0.3s var(--fun-bounce);
+}
+
+.ls-check-options button.is-right {
+    animation: funPop 0.4s var(--fun-bounce);
+}
+
+/* Flip cards lift a little on hover */
+.ls-flip {
+    transition: transform 0.3s var(--fun-bounce);
+}
+
+.ls-flip:hover {
+    transform: translateY(-4px) rotate(-1deg);
+}
+
+/* Topic cards: confetti dots on the thumbnail, icon jiggles on hover */
+.lesson-page .ls-thumb::before {
+    content: "";
+    position: absolute;
+    inset: 0;
+    pointer-events: none;
+    background:
+        radial-gradient(circle, var(--fun-sun) 0 4px, transparent 5px) 12% 18% / 10px 10px no-repeat,
+        radial-gradient(circle, rgba(255, 255, 255, 0.7) 0 3px, transparent 4px) 86% 24% / 8px 8px no-repeat,
+        radial-gradient(circle, var(--fun-coral) 0 3px, transparent 4px) 80% 70% / 8px 8px no-repeat,
+        radial-gradient(circle, rgba(255, 255, 255, 0.5) 0 2px, transparent 3px) 20% 76% / 6px 6px no-repeat;
+}
+
+.lesson-page .video-card:hover .ls-thumb-icon {
+    animation: funJiggle 0.6s ease;
+}
+
+/* Read topics get a gold ring around their icon */
+.lesson-page .ls-thumb:has(.watched-badge) .ls-thumb-icon {
+    box-shadow: 0 0 0 3px var(--fun-sun);
+}
+
+@media (prefers-reduced-motion: reduce) {
+    .ls-stage::before,
+    .ls-section-icon,
+    .ls-section h3,
+    .ls-section-body,
+    .ls-bar div,
+    .ls-nav.is-next.is-topic,
+    .ls-read-msg,
+    .ls-read-msg i,
+    .ls-check-title i,
+    .ls-check-options button.is-right,
+    .lesson-page .video-card:hover .ls-thumb-icon {
+        animation: none;
+    }
+}
+
+/* Laptops: leave room for the sound button in the top-right corner */
+@media screen and (min-width: 769px) {
+    .lesson-page:has(#sfxToggle) .main-content {
+        padding-right: 76px;
+    }
+}

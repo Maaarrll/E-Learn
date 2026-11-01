@@ -8,7 +8,7 @@
     <link rel="icon" href="favicon-32.png?v=3" type="image/png" sizes="32x32">
     <link rel="apple-touch-icon" href="apple-touch-icon.png?v=3">
     <meta name="theme-color" content="#023047">
-    <link rel="stylesheet" href="style.css?v=105">
+    <link rel="stylesheet" href="style.css?v=106">
     <link rel="stylesheet" href="dark.css?v=64">
     <script src="js/theme.js?v=3"></script>
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
@@ -22,7 +22,7 @@
     <script src="js/notifications.js?v=2"></script>
     <script src="js/richtext.js?v=1"></script>
     <script src="js/bookmarks.js?v=2"></script>
-    <script src="js/sfx.js?v=8"></script>
+    <script src="js/sfx.js?v=9"></script>
     <script src="js/gamify.js?v=3"></script>
     <script src="js/search.js?v=3"></script>
     <script>
@@ -370,7 +370,9 @@
                 const total = topics.length;
                 const done = topics.filter(t => read.has(t.key)).length;
                 const allDone = total > 0 && done === total;
-                $('readText').textContent = allDone ? `🏆 All ${total} read!` : `📖 ${done} of ${total} read`;
+                $('readText').textContent = allDone ? `🏆 All ${total} read! Ang galing mo!`
+                    : done === 0 ? `📖 0 of ${total} read · Let's start!`
+                    : `${done >= total / 2 ? '🔥' : '📖'} ${done} of ${total} read · ${total - done} to go!`;
                 $('readBar').style.width = `${total ? (done / total) * 100 : 0}%`;
                 document.querySelector('.video-toolbar').classList.toggle('is-complete', allDone);
                 applyFilters();
@@ -408,6 +410,7 @@
             let slides = [];
             let openedFromList = false;     // Back can then use the browser's history
             const countedThisVisit = new Set();
+            const PRAISE = ['Ang galing!', 'Astig!', 'Nice one!', 'Panalo!', 'Keep it up!'];
 
             function markRead(t) {
                 if (!countedThisVisit.has(t.key)) {
@@ -417,8 +420,13 @@
                 if (read.has(t.key)) return;
                 read.add(t.key);
                 saveRead([t.key]).catch(() => {});
+                // Finishing every topic of an Aralin gets the big fanfare
+                const aralinDone = bookPages(t.lesson).every(p => read.has(p.key));
+                $('lsReadMsg').innerHTML = aralinDone
+                    ? `<i class="fa-solid fa-trophy"></i> Galing! You finished Aralin ${t.lesson + 1}!`
+                    : `<i class="fa-solid fa-star"></i> ${PRAISE[read.size % PRAISE.length]} Marked as read.`;
                 $('lsReadMsg').hidden = false;
-                HCISfx.confetti(90);
+                HCISfx.play(aralinDone ? 'mastered' : 'levelUp');
             }
 
             // startSlide -1 = the topic's last slide (going back)
@@ -435,6 +443,7 @@
                 $('lsTitle').textContent = t.title;
                 $('lsLesson').textContent = `Aralin ${t.lesson + 1} · ${t.lessonTitle}`;
                 document.title = `${t.title} · ALLEARN`;
+                $('lsReadMsg').innerHTML = '<i class="fa-solid fa-circle-check"></i> Already read';
                 $('lsReadMsg').hidden = !read.has(t.key);
                 renderSlide(0);
                 renderBookmark();
@@ -452,7 +461,7 @@
                 if (dir) { void box.offsetWidth; box.classList.add(dir > 0 ? 'is-from-right' : 'is-from-left'); }
                 $('lsStage').scrollTop = 0;
                 $('lsBar').style.width = `${((slide + 1) / slides.length) * 100}%`;
-                $('lsCounter').textContent = `Slide ${slide + 1} of ${slides.length}`;
+                $('lsCounter').textContent = last && slides.length > 1 ? `Last slide! 🎯` : `Slide ${slide + 1} of ${slides.length}`;
                 $('lsPrev').disabled = current === 0 && slide === 0;
                 $('lsPrev').setAttribute('aria-label', slide > 0 ? 'Previous slide' : 'Previous topic');
                 $('lsNext').disabled = last && !next;
