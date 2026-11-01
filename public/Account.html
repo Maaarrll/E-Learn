@@ -259,12 +259,12 @@
                                 <small class="acct-hint">Only your teacher can change your section.</small>
                             </div>
 
-                            <!-- Program -->
+                            <!-- Program: read-only, a typo would hide the student from their teacher -->
                             <div class="acct-field">
                                 <label for="program">School</label>
                                 <div class="acct-input">
                                     <i class="fa-solid fa-graduation-cap"></i>
-                                    <input type="text" id="program" maxlength="80" required>
+                                    <input type="text" id="program" maxlength="80" readonly>
                                 </div>
                             </div>
 
@@ -570,7 +570,8 @@
                 els.yearSection.add(new Option(user.yearSection, user.yearSection), 1);
             }
             els.yearSection.value = user.yearSection || '';
-            els.program.value = user.program || '';
+            // Read-only field: older accounts with no school get the school's name on their next save
+            els.program.value = user.program || 'Allen National High School';
             els.studentId.value = user.studentId || '';
             // One account per LRN, so it can't be edited once saved
             els.studentId.readOnly = !!user.studentId;
