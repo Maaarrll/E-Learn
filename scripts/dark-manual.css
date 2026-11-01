@@ -47,9 +47,15 @@
     transition: background-color 0.3s ease, color 0.3s ease, border-color 0.3s ease !important;
 }
 
-/* Dashboard progress ring: empty part of the track */
+/* Dashboard progress ring: empty part of the track, a brighter filled part and percent */
 :root[data-theme="dark"] {
     --ring-track: #1a2132;
+    --ring-fill: #4f8ff0;
+}
+:root[data-theme="dark"] .dashboard-page .inner-circle span {
+    background: linear-gradient(135deg, #8fbfff, var(--fun-pink));
+    -webkit-background-clip: text;
+    background-clip: text;
 }
 
 /* Quick search: keep highlighted words dark on the yellow highlight */
@@ -63,6 +69,20 @@
 }
 :root[data-theme="dark"] .theme-switch-knob {
     background: #ffffff;
+    color: #f5a524;
+}
+/* The knob stays white, so its icon keeps the light-mode colours */
+:root[data-theme="dark"] .is-on .theme-switch-knob,
+:root[data-theme="dark"] .class-switch.is-on .theme-switch-knob {
+    color: #013683;
+}
+:root[data-theme="dark"] .class-switch .theme-switch-knob {
+    color: #b42318;
+}
+
+/* Active sidebar icon: the dark "strong" shade vanished on the dark chip, use the light page colour */
+:root[data-theme="dark"] .sidebar .nav-item.active i {
+    color: var(--nav-c, #ffffff);
 }
 :root[data-theme="dark"] .is-on .theme-switch {
     box-shadow: inset 0 0 0 1.5px rgba(255, 255, 255, 0.4);
