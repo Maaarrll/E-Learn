@@ -30,9 +30,25 @@ const pool =
                 ? false
                 : {
                     rejectUnauthorized: false
-                }
+                },
+
+        // Keep opened connections instead of closing them after 10s idle, so a
+        // whole class starting a quiz together doesn't wait for new connections
+        max: 10,
+        min: 10
 
     });
+
+
+/*
+    A dropped idle connection (pooler restart, network blip) must not crash
+    the server; the pool replaces it on the next query.
+*/
+pool.on('error', (err) => {
+
+    console.error('Idle database connection lost:', err.message);
+
+});
 
 
 /*
