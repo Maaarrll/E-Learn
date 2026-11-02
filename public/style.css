@@ -4912,6 +4912,7 @@ p {
 
 .account-page .acct-chip-link {
     cursor: pointer;
+    color: inherit; /* the Remove photo <button> doesn't inherit it by default */
     transition: background 0.2s;
 }
 
