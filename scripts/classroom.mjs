@@ -25,7 +25,7 @@ const KEEP_BACKUPS = 7;
 // Opened twice (double-click while already running)? Just show the join page again;
 // starting a second copy would stop the running database below.
 const join = `http://localhost:${PORT}/join.html`;
-const openJoin = () => { if (!process.env.ALLEARN_NO_BROWSER) spawn('cmd', ['/c', 'start', '', join], { stdio: 'ignore', detached: true }).unref(); };
+const openJoin = () => { if (!process.env.ALLEARN_TEST) spawn('cmd', ['/c', 'start', '', join], { stdio: 'ignore', detached: true }).unref(); };
 const running = await new Promise((resolve) => {
   const sock = net.connect(PORT, '127.0.0.1', () => { sock.destroy(); resolve(true); });
   sock.on('error', () => resolve(false));
@@ -69,6 +69,15 @@ const pg = new EmbeddedPostgres({ databaseDir: dbDir, user: 'postgres', password
 if (firstRun) await pg.initialise();
 await pg.start();
 if (firstRun) await pg.createDatabase('valueslearn');
+
+// First start: put a "Start ALLEARN" icon on the desktop, so Setup is optional
+if (firstRun && !process.env.ALLEARN_TEST) {
+  const q = (s) => s.replace(/'/g, "''"); // PowerShell single-quote escaping
+  const bat = path.join(root, 'Start ALLEARN.bat');
+  spawnSync('powershell', ['-NoProfile', '-Command',
+    `$s=(New-Object -ComObject WScript.Shell).CreateShortcut([Environment]::GetFolderPath('Desktop')+'\\Start ALLEARN.lnk'); $s.TargetPath='${q(bat)}'; $s.WorkingDirectory='${q(root)}'; $s.Save()`],
+  { stdio: 'ignore' });
+}
 
 let stopping = false;
 const stop = async () => {

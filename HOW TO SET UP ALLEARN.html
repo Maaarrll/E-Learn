@@ -1,0 +1,113 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Set Up ALLEARN</title>
+<style>
+  /* Setup guide for the portable classroom package; opens in any browser, prints on 2 pages */
+  :root { --ink: #1b2433; --muted: #5b6475; --line: #d9dee7; --accent: #1e407e; --soft: #eef3fb; --warn: #8a5a00; --warn-bg: #fff6e0; --bg: #fff; }
+  @media (prefers-color-scheme: dark) { :root:not([data-theme="light"]) { --ink: #e7ebf2; --muted: #a3acbb; --line: #39414f; --accent: #8db2f0; --soft: #1f2a3c; --warn: #f3c66b; --warn-bg: #3a2f17; --bg: #161b24; } }
+  :root[data-theme="dark"] { --ink: #e7ebf2; --muted: #a3acbb; --line: #39414f; --accent: #8db2f0; --soft: #1f2a3c; --warn: #f3c66b; --warn-bg: #3a2f17; --bg: #161b24; }
+  * { box-sizing: border-box; }
+  body { margin: 0; background: var(--bg); color: var(--ink); font: 17px/1.55 "Segoe UI", Arial, sans-serif; }
+  main { max-width: 780px; margin: 0 auto; padding: 28px 16px 48px; }
+  h1 { margin: 0 0 6px; font-size: 30px; color: var(--accent); }
+  .lead { margin: 0 0 22px; color: var(--muted); }
+  h2 { margin: 30px 0 12px; font-size: 21px; }
+  .step { display: flex; gap: 14px; border: 2px solid var(--line); border-radius: 14px; padding: 14px 16px; margin-bottom: 12px; }
+  .num { flex: 0 0 38px; height: 38px; border-radius: 50%; background: var(--accent); color: var(--bg); display: grid; place-items: center; font-weight: 800; font-size: 18px; }
+  .step h3 { margin: 4px 0 6px; font-size: 18px; }
+  .step p, .step ul { margin: 4px 0; }
+  .step ul { padding-left: 20px; }
+  code, .file { background: var(--soft); border-radius: 6px; padding: 1px 6px; font-family: Consolas, monospace; font-size: 15px; word-break: break-word; }
+  .note { background: var(--warn-bg); color: var(--warn); border-radius: 10px; padding: 10px 14px; margin: 8px 0 0; }
+  .need { background: var(--soft); border-radius: 14px; padding: 14px 18px; }
+  .need ul { margin: 6px 0 0; padding-left: 20px; }
+  table { width: 100%; border-collapse: collapse; }
+  td { border-top: 1px solid var(--line); padding: 10px 8px; vertical-align: top; }
+  td:first-child { font-weight: 700; width: 38%; }
+  .print { float: right; padding: 8px 14px; border: 2px solid var(--accent); border-radius: 8px; background: none; color: var(--accent); font: inherit; font-weight: 700; cursor: pointer; }
+  @media (max-width: 520px) { td { display: block; width: auto !important; } td:first-child { border-top: 1px solid var(--line); padding-bottom: 0; } td + td { border-top: 0; } }
+  @media print { :root { --ink: #000; --muted: #333; --line: #999; --accent: #000; --soft: #eee; --warn: #000; --warn-bg: #eee; --bg: #fff; } .print { display: none; } body { font-size: 14px; } }
+</style>
+</head>
+<body>
+<main>
+  <button class="print" onclick="print()">Print</button>
+  <h1>How to set up ALLEARN</h1>
+  <p class="lead">For the classroom laptop. No internet, no installing, about 5 minutes.</p>
+
+  <div class="need">
+    <b>You need:</b>
+    <ul>
+      <li>The file <span class="file">ALLEARN-Portable.zip</span> (on a USB drive).</li>
+      <li>A Windows laptop.</li>
+      <li>A Wi-Fi router for the classroom. It does <b>not</b> need internet.</li>
+    </ul>
+  </div>
+
+  <h2>Set up (only once)</h2>
+
+  <div class="step"><div class="num">1</div><div>
+    <h3>Copy the zip to the laptop</h3>
+    <p>Plug in the USB and copy <span class="file">ALLEARN-Portable.zip</span> to the laptop.</p>
+  </div></div>
+
+  <div class="step"><div class="num">2</div><div>
+    <h3>Unzip it to the C: drive</h3>
+    <ul>
+      <li>Right-click the zip → <b>Extract All...</b></li>
+      <li>Type <code>C:\</code> as the place to extract to, then click <b>Extract</b>.</li>
+      <li>You now have a folder <code>C:\ALLEARN</code>.</li>
+    </ul>
+    <p class="note">Don't extract to the Desktop or Documents. Those are often synced by OneDrive, which can break the database.</p>
+  </div></div>
+
+  <div class="step"><div class="num">3</div><div>
+    <h3>Start ALLEARN</h3>
+    <ul>
+      <li>Open <code>C:\ALLEARN</code> and double-click <b>Start ALLEARN</b>.</li>
+      <li>If a blue box says <i>"Windows protected your PC"</i>: click <b>More info</b> → <b>Run anyway</b>.</li>
+      <li>If Windows Firewall asks about <b>Node.js</b>: tick <b>both</b> boxes (Private and Public) and click <b>Allow</b>.</li>
+    </ul>
+  </div></div>
+
+  <div class="step"><div class="num">4</div><div>
+    <h3>Make the teacher account</h3>
+    <p>The black window asks for the teacher's <b>full name</b>, a <b>login ID</b> (for example <code>teacher1</code>) and a <b>password</b> (typed twice; the letters stay hidden). Write the ID and password down somewhere safe.</p>
+    <p>A <b>Start ALLEARN</b> icon is now on the desktop, and a page opens with the class address and a QR code.</p>
+  </div></div>
+
+  <div class="step"><div class="num">5</div><div>
+    <h3>Test with one phone</h3>
+    <ul>
+      <li>Connect the laptop and the phone to the same Wi-Fi. Turn the phone's <b>mobile data off</b>.</li>
+      <li>Scan the QR code. If the ALLEARN login page opens, setup is done.</li>
+    </ul>
+  </div></div>
+
+  <h2>Every class</h2>
+  <div class="step"><div class="num">✓</div><div>
+    <ul>
+      <li>Connect the laptop to the classroom Wi-Fi and double-click <b>Start ALLEARN</b> on the desktop.</li>
+      <li>Show the QR code page on the projector. Open the Admin page, log in and <b>open the class</b>.</li>
+      <li>After class: close the class, then close the black window.</li>
+    </ul>
+    <p>Print <span class="file">Teacher Card.html</span> (in the ALLEARN folder) and keep it next to the laptop.</p>
+  </div></div>
+
+  <h2>If something goes wrong</h2>
+  <table>
+    <tr><td>Phones can't open the page</td><td>Check they're on the same Wi-Fi with mobile data off. Then, in <code>C:\ALLEARN</code>, right-click <b>Setup ALLEARN</b> → <b>Run as administrator</b> (this fixes the firewall).</td></tr>
+    <tr><td>No icon on the desktop</td><td>Run <b>Setup ALLEARN</b> as administrator, or start from <code>C:\ALLEARN\Start ALLEARN</code>.</td></tr>
+    <tr><td>Teacher forgot the password</td><td>Another main admin resets it in Admin → Instructors. Add a second main admin early for this reason.</td></tr>
+    <tr><td>The black window shows an error</td><td>Take a photo of it and send it to support.</td></tr>
+  </table>
+
+  <h2>Keep the data safe</h2>
+  <p>Everything (accounts, progress, videos, photos) is in <code>C:\ALLEARN\classroom-data</code>. ALLEARN makes a daily backup inside it, but copy that folder to a USB drive <b>every week</b>. Never delete it.</p>
+  <p><b>Moving to another laptop:</b> close ALLEARN, copy the whole <code>C:\ALLEARN</code> folder (with <code>classroom-data</code> inside) to the new laptop's C: drive, and start it there.</p>
+</main>
+</body>
+</html>
