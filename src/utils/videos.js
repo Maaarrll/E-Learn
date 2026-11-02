@@ -27,6 +27,7 @@ function uploadVideo(req, res) {
   upload(req, res, (err) => {
     if (err) {
       const big = err.code === 'LIMIT_FILE_SIZE';
+      if (!big) console.error('Video upload failed:', err);
       return res.status(400).json({ error: big ? 'That video is over 2 GB. Please use a smaller file.' : 'Upload failed. Please try again.' });
     }
     if (!req.file) return res.status(400).json({ error: 'Please choose an MP4 video file.' });
