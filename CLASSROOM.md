@@ -9,14 +9,13 @@ their browser. No internet and no mobile data are used.
   (Windows "Mobile hotspot" works for a quick test but only allows 8 devices.)
 
 ## One-time setup
-With the **USB package** (`ALLEARN-classroom.zip`: includes Node.js and everything else) no internet is needed.
-Otherwise the setup needs internet once.
+Easiest: the **portable package** `ALLEARN-Portable.zip` (Node.js and everything else inside, no installing,
+no internet). Follow **HOW TO SET UP ALLEARN.html**: unzip to `C:\`, double-click **Start ALLEARN**, allow the firewall.
 
-1. Unzip / copy the ALLEARN folder to the laptop (for example `C:\ALLEARN`). Don't use a OneDrive folder.
-2. Install **Node.js**: double-click the file in `installers\` (USB package) or get the LTS version from https://nodejs.org.
-3. Right-click **Setup ALLEARN.bat** and choose **Run as administrator**.
-   It installs ALLEARN, puts a **Start ALLEARN** icon on the desktop and lets phones through the firewall.
-4. Double-click **Start ALLEARN**. The first time, it asks for the teacher's name, a login ID and a password.
+From the source code instead: install Node.js LTS, copy the folder (not into OneDrive), right-click
+**Setup ALLEARN.bat** → Run as administrator (needs internet once), then double-click **Start ALLEARN**.
+
+The first start asks for the teacher's name, a login ID and a password, and puts a **Start ALLEARN** icon on the desktop.
 
 ## Before the first class
 - [ ] In Admin → Instructors, add a **second main admin** (you), so a forgotten password can be reset.
