@@ -6,6 +6,7 @@
 import fs from 'fs';
 import path from 'path';
 import crypto from 'crypto';
+import net from 'net';
 import readline from 'readline';
 import { spawn, spawnSync } from 'child_process';
 import { createRequire } from 'module';
@@ -20,6 +21,20 @@ const backupDir = path.join(dataDir, 'backups');
 const PORT = 3000;
 const DB_PORT = 5434; // not 5433, so it never clashes with `npm run db`
 const KEEP_BACKUPS = 7;
+
+// Opened twice (double-click while already running)? Just show the join page again;
+// starting a second copy would stop the running database below.
+const join = `http://localhost:${PORT}/join.html`;
+const openJoin = () => { if (!process.env.ALLEARN_NO_BROWSER) spawn('cmd', ['/c', 'start', '', join], { stdio: 'ignore', detached: true }).unref(); };
+const running = await new Promise((resolve) => {
+  const sock = net.connect(PORT, '127.0.0.1', () => { sock.destroy(); resolve(true); });
+  sock.on('error', () => resolve(false));
+});
+if (running) {
+  console.log('ALLEARN is already running (another window is open). Opening the join page.');
+  openJoin();
+  process.exit(0);
+}
 
 fs.mkdirSync(backupDir, { recursive: true });
 const firstRun = !fs.existsSync(dbDir);
@@ -98,8 +113,7 @@ if (!rows[0].n) {
 
 require('../server.js');
 
-const join = `http://localhost:${PORT}/join.html`;
 console.log(`\n  ALLEARN is running. Keep this window open during class.`);
 console.log(`  Students' address and QR code: ${join}`);
 console.log('  To stop: close this window.\n');
-if (!process.env.ALLEARN_NO_BROWSER) spawn('cmd', ['/c', 'start', '', join], { stdio: 'ignore', detached: true }).unref();
+openJoin();

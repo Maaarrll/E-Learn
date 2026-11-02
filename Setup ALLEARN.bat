@@ -7,6 +7,11 @@ where node >nul 2>nul || (
   pause
   exit /b 1
 )
+node -e "process.exit(+process.versions.node.split('.')[0] < 20)" || (
+  echo Node.js is too old. Install the LTS version from https://nodejs.org then run this again.
+  pause
+  exit /b 1
+)
 echo Installing ALLEARN... (needs internet, this happens only once)
 call npm install --omit=dev || (pause & exit /b 1)
 echo Adding the "Start ALLEARN" icon to the desktop...

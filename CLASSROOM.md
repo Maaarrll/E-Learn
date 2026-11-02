@@ -15,6 +15,14 @@ their browser. No internet and no mobile data are used.
    It installs ALLEARN, puts a **Start ALLEARN** icon on the desktop and lets phones through the firewall.
 4. Double-click **Start ALLEARN**. The first time, it asks for the teacher's name, a login ID and a password.
 
+## Before the first class
+- [ ] In Admin → Instructors, add a **second main admin** (you), so a forgotten password can be reset.
+- [ ] Add every student's LRN (Admin → Allowed LRNs).
+- [ ] Upload the videos (Admin → Content → Videos). Phones play 480p fine and it keeps the Wi-Fi fast.
+- [ ] Check the laptop's date and time are right (streaks and quiz deadlines use them).
+- [ ] Power settings: **Sleep: Never** when plugged in.
+- [ ] Dry run: a few phones join, sign up, watch a video and take a quiz.
+
 ## Every class (teacher)
 1. Connect the laptop to the classroom Wi-Fi.
 2. Double-click **Start ALLEARN** on the desktop. A page opens with the address and a QR code: show it on the projector.
@@ -22,7 +30,15 @@ their browser. No internet and no mobile data are used.
 4. Students: connect to the Wi-Fi, turn off mobile data, scan the QR code.
 5. After class: close the ALLEARN window.
 
-In the laptop's power settings, set **Sleep: Never** while plugged in, so students aren't cut off mid-class.
+**If something goes wrong**
+- A phone can't open the page: check it's on the classroom Wi-Fi (not mobile data), then type the address instead of scanning.
+- Nobody can open it: close the ALLEARN window and double-click **Start ALLEARN** again.
+- The window shows an error: take a photo of it and send it to support.
+
+## Updating ALLEARN (support person)
+1. Close ALLEARN and copy `classroom-data` to a USB drive first.
+2. Replace every file and folder in the ALLEARN folder with the new version, **except `classroom-data`** (never delete it).
+3. Right-click **Setup ALLEARN.bat** → Run as administrator (needs internet), then start ALLEARN.
 
 ## Videos
 Admin page → Content → Videos → **Add video**, then pick an MP4 file from the laptop.
