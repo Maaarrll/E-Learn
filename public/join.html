@@ -1,0 +1,63 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Join the Class · ALLEARN</title>
+    <link rel="icon" href="favicon-32.png?v=4" type="image/png" sizes="32x32">
+    <link rel="stylesheet" href="style.css?v=127">
+    <link rel="stylesheet" href="dark.css?v=79">
+    <script src="js/theme.js?v=3"></script>
+    <link rel="stylesheet" href="vendor/fontawesome/css/all.min.css?v=1">
+    <style>
+        /* Shown on the classroom laptop (or projector) so students can connect */
+        .join-page { min-height: 100vh; display: grid; place-items: center; padding: 24px 16px; background: var(--bg, #f2f5f7); font-family: 'Nunito', sans-serif; }
+        .join-card { max-width: 720px; width: 100%; background: var(--card, #fff); border-radius: 18px; padding: 28px; box-shadow: 0 8px 30px rgba(0,0,0,.08); text-align: center; }
+        .join-card h1 { margin: 0 0 6px; font-size: 28px; }
+        .join-url { font-size: clamp(26px, 6vw, 46px); font-weight: 900; color: #1e407e; word-break: break-all; margin: 14px 0; }
+        .join-qr { display: inline-block; }
+        .join-qr img { display: block; width: 280px; height: 280px; border-radius: 12px; image-rendering: pixelated; }
+        .join-steps { text-align: left; max-width: 460px; margin: 20px auto 0; font-size: 18px; line-height: 1.7; }
+        .join-other { color: #888da1; font-size: 15px; margin-top: 10px; }
+    </style>
+</head>
+<body class="join-page">
+    <main class="join-card">
+        <h1><i class="fa-solid fa-wifi"></i> Join the class</h1>
+        <ol class="join-steps">
+            <li>Connect to the <b>classroom Wi-Fi</b>.</li>
+            <li>Turn <b>off mobile data</b> so it uses no load.</li>
+            <li>Scan the code or type the address in your browser.</li>
+        </ol>
+        <div class="join-url" id="joinUrl">Finding address...</div>
+        <div class="join-qr" id="joinQr" hidden></div>
+        <p class="join-other" id="joinOther" hidden></p>
+        <p class="join-other">Teacher: keep the ALLEARN window open during class. <a href="Admin.html">Open the Admin page</a></p>
+    </main>
+
+    <script src="vendor/qrcode/qrcode.min.js?v=1"></script>
+    <script>
+        fetch('/api/join-address').then(r => r.json()).then(({ urls }) => {
+            const main = urls[0];
+            if (!main) {
+                document.getElementById('joinUrl').textContent = 'Not on Wi-Fi yet. Connect this laptop to the classroom Wi-Fi, then reload.';
+                return;
+            }
+            document.getElementById('joinUrl').textContent = main.replace('http://', '');
+            const qr = qrcode(0, 'M');
+            qr.addData(main);
+            qr.make();
+            const box = document.getElementById('joinQr');
+            box.innerHTML = qr.createImgTag(8, 24, 'QR code for ' + main); // white border drawn in, so it scans in dark mode too
+            box.hidden = false;
+            if (urls.length > 1) {
+                const other = document.getElementById('joinOther');
+                other.textContent = 'If that does not open, try: ' + urls.slice(1).map(u => u.replace('http://', '')).join(' or ');
+                other.hidden = false;
+            }
+        }).catch(() => {
+            document.getElementById('joinUrl').textContent = 'Could not find the address.';
+        });
+    </script>
+</body>
+</html>

@@ -1463,6 +1463,9 @@
     background: rgba(255, 255, 255, 0.16);
     border: 1px solid rgba(255, 255, 255, 0.25);
 }
+:root[data-theme="dark"] .account-page .acct-chip-link {
+    color: inherit;
+}
 :root[data-theme="dark"] .account-page .acct-chip-link:hover {
     background: rgba(255, 255, 255, 0.28);
 }
@@ -3093,6 +3096,12 @@
 }
 :root[data-theme="dark"] .ce-num {
     color: hsl(228 12% 64%);
+}
+:root[data-theme="dark"] .ce-thumb {
+    background: #000;
+}
+:root[data-theme="dark"] .ce-video {
+    background: #000;
 }
 :root[data-theme="dark"] .ce-main strong {
     color: hsl(221 75% 92%);
@@ -4931,6 +4940,21 @@
 }
 :root[data-theme="dark"] .ls-aralin-dots i.is-read {
     background: var(--ls-color);
+}
+
+/* ---------- from join.html ---------- */
+:root[data-theme="dark"] .join-page {
+    background: var(--bg, hsl(204 24% 19%));
+}
+:root[data-theme="dark"] .join-card {
+    background: var(--card, hsl(222 14% 17%));
+    box-shadow: 0 8px 30px rgba(0,0,0,.08);
+}
+:root[data-theme="dark"] .join-url {
+    color: hsl(219 62% 79%);
+}
+:root[data-theme="dark"] .join-other {
+    color: hsl(228 12% 64%);
 }
 
 /* ---------- from update-password.html ---------- */

@@ -8,13 +8,12 @@
     <link rel="icon" href="favicon-32.png?v=4" type="image/png" sizes="32x32">
     <link rel="apple-touch-icon" href="apple-touch-icon.png?v=4">
     <meta name="theme-color" content="#023047">
-    <link rel="stylesheet" href="style.css?v=125">
-    <link rel="stylesheet" href="dark.css?v=77">
+    <link rel="stylesheet" href="style.css?v=127">
+    <link rel="stylesheet" href="dark.css?v=79">
     <script src="js/theme.js?v=3"></script>
     <!-- FontAwesome para sa icons -->
-    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <link rel="stylesheet" href="vendor/fontawesome/css/all.min.css?v=1">
     <!-- Comic lettering for the lesson slide preview -->
-    <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Bangers&display=swap">
 </head>
 <body class="admin-page">
     <noscript>
@@ -347,8 +346,8 @@
 
     <script src="js/api.js?v=18"></script>
     <script src="js/richtext.js?v=1"></script>
-    <script src="js/admin-content.js?v=10"></script>
-    <script src="js/quiz-import.js?v=1"></script>
+    <script src="js/admin-content.js?v=11"></script>
+    <script src="js/quiz-import.js?v=2"></script>
     <script src="js/admin-quizzes.js?v=8"></script>
     <script src="js/admin-tour.js?v=2"></script>
     <script>
@@ -406,7 +405,7 @@
         const escapeHtml = (text) => String(text).replace(/[&<>"']/g, c => ({ '&': '&amp;', '<': '&lt;', '>': '&gt;', '"': '&quot;', "'": '&#39;' }[c]));
         const initials = (name) => name.split(' ').filter(Boolean).slice(0, 2).map(n => n[0].toUpperCase()).join('');
         // Profile photo if they have one (only https links from our uploads), else initials
-        const hasPhoto = (p) => /^https:\/\//.test(p.profilePhoto || '');
+        const hasPhoto = (p) => /^(https:\/\/|\/photos\/)/.test(p.profilePhoto || '');
         const avatar = (p, big) => `<span class="admin-avatar${big ? ' is-big' : ''}">${hasPhoto(p)
             ? `<img src="${escapeHtml(p.profilePhoto)}" alt="" loading="lazy">` : escapeHtml(initials(p.fullName))}</span>`;
 

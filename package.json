@@ -10,13 +10,15 @@
     "instructor": "node scripts/instructor.js",
     "test": "node scripts/check.js",
     "lint": "eslint .",
-    "db": "node scripts/local-db.mjs"
+    "db": "node scripts/local-db.mjs",
+    "classroom": "node scripts/classroom.mjs"
   },
   "dependencies": {
     "bcryptjs": "^2.4.3",
     "cloudinary": "^2.5.1",
     "cookie-parser": "^1.4.6",
     "dotenv": "^16.4.5",
+    "embedded-postgres": "^17.5.0-beta.15",
     "express": "^4.19.2",
     "jsonwebtoken": "^9.0.2",
     "multer": "^2.5.0",
@@ -29,7 +31,6 @@
   },
   "devDependencies": {
     "@eslint/js": "^9.39.5",
-    "embedded-postgres": "^17.5.0-beta.15",
     "eslint": "^9.39.5",
     "globals": "^17.13.0"
   }

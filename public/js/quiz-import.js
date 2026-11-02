@@ -16,7 +16,7 @@ const HCIQuizImport = (function () {
   const DEFAULT_SECONDS = 30;
   const MAX_CHOICES = 6;
   const MAX_QUESTIONS = 50;
-  const PDFJS = 'https://cdnjs.cloudflare.com/ajax/libs/pdf.js/3.11.174/';
+  const PDFJS = '/vendor/pdfjs/';
 
   const SAMPLE = `Quiz: Pagtitipid ng Tubig at Enerhiya
 

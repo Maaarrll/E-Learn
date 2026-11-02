@@ -1,6 +1,7 @@
 // server.js
 require('dotenv').config();
 
+const os = require('os');
 const path = require('path');
 const express = require('express');
 const cookieParser = require('cookie-parser');
@@ -22,6 +23,8 @@ const adminRoutes = require('./src/routes/admin');
 const quizRoutes = require('./src/routes/quizzes');
 const adminQuizRoutes = require('./src/routes/adminQuizzes');
 const { isClassOpen, requireClassOpen } = require('./src/middleware/classOpen');
+const { VIDEO_DIR } = require('./src/utils/videos');
+const { PHOTO_DIR } = require('./src/utils/photos');
 
 const app = express();
 const PORT = process.env.PORT || 3000;
@@ -83,6 +86,16 @@ app.get('/api/class-status', async (req, res, next) => {
   }
 });
 
+// The classroom laptop's Wi-Fi addresses, shown on join.html so students can connect
+app.get('/api/join-address', (req, res) => {
+  // Skip virtual adapters (VMware, Hyper-V...) that phones can't reach; Wi-Fi first
+  const ips = Object.entries(os.networkInterfaces())
+    .filter(([name]) => !/vmware|virtualbox|vethernet|hyper-v|docker|wsl|bluetooth/i.test(name))
+    .sort(([a], [b]) => /wi-?fi|wlan|wireless/i.test(b) - /wi-?fi|wlan|wireless/i.test(a))
+    .flatMap(([, addrs]) => addrs.filter(a => a.family === 'IPv4' && !a.internal).map(a => a.address));
+  res.json({ urls: ips.map(ip => `http://${ip}:${PORT}`) });
+});
+
 // Student APIs only work while a teacher has the class open (logout always works).
 // /api/content stays open: it's public course text and the Admin Dashboard uses it.
 const studentApi = ['/api/auth', '/api/account', '/api/progress', '/api/bookmarks', '/api/gamify', '/api/announcements', '/api/quizzes'];
@@ -110,6 +123,11 @@ app.use(express.static(path.join(__dirname, 'public'), {
     if (/\.(css|js)$/.test(filePath)) res.set('Cache-Control', 'public, max-age=604800');
   },
 }));
+
+// Uploaded lesson videos (express.static handles seeking with Range requests)
+app.use('/videos', express.static(VIDEO_DIR, { maxAge: '7d' }));
+// Profile photos saved on this computer (no Cloudinary); a new upload gets a new ?v= address
+app.use('/photos', express.static(PHOTO_DIR, { maxAge: '7d' }));
 
 // Anything not matched by the API or a static file falls back to the login page.
 app.get('*', (req, res) => {

@@ -7,9 +7,11 @@ This file provides guidance to Claude Code (claude.ai/code) when working with co
 - `npm run dev` — server with `node --watch`. Needs `DATABASE_URL`; the server only listens after `db.ready` resolves.
 - `npm test` — NOT a test suite. `scripts/check.js` only checks that every `.js` file and every inline `<script>` in the HTML pages parses, and that `public/dark.css` is up to date. There are no unit tests; verify behavior by running the app.
 - `node scripts/quiz-import-check.js` — assert-based self-check for the quiz file importer (`public/js/quiz-import.js`).
+- `node scripts/photo-type-check.js` — self-check that local photo uploads (no Cloudinary) only accept real JPG/PNG/GIF/WEBP files.
 - `npm run lint` — ESLint on `.js` files (not inline HTML scripts). `public/js` globals are shared across files, so `no-undef` is off there.
 - `npm run build:dark` — regenerate `public/dark.css` from `public/style.css`. Run after any `style.css` change (a hook does this automatically). Never edit `dark.css` by hand; manual dark-mode fixes go in `scripts/dark-manual.css`.
 - `npm run instructor -- <add|set-role|reset-password|rename|remove|list> ...` — manage instructor accounts.
+- `npm run classroom` (or `Start ALLEARN.bat`) — offline classroom mode: embedded Postgres + server on port 3000, data in `classroom-data/` (db, videos, daily backups, generated secrets). See `CLASSROOM.md`.
 
 ## Architecture
 
@@ -28,6 +30,7 @@ This file provides guidance to Claude Code (claude.ai/code) when working with co
 
 - Students sign up with an LRN from `allowed_lrns` (Admin page → Allowed LRNs), one account per LRN, and log in with their full name, so names are unique (case/space-insensitive, `src/utils/students.js`). Forgot password = name + LRN.
 - `EMAIL_HASH_SECRET` must not change: older accounts still have an `email_hash` and an AES-GCM `email_enc` (used for inactive reminders) keyed from it. New accounts have no email.
+- Videos are uploaded MP4 files (not YouTube): the content key is the file id (`v` + 12 hex), stored as `<VIDEO_DIR>/<key>.mp4` and served at `/videos/`. Pages must not load anything from the internet (fonts/icons/pdf.js live in `public/vendor/`).
 - Rate limiting is in-memory and resets on restart.
 - Request bodies are capped at 20kb.
 

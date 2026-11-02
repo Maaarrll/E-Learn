@@ -8,11 +8,11 @@
     <link rel="icon" href="favicon-32.png?v=4" type="image/png" sizes="32x32">
     <link rel="apple-touch-icon" href="apple-touch-icon.png?v=4">
     <meta name="theme-color" content="#023047">
-    <link rel="stylesheet" href="style.css?v=125">
-    <link rel="stylesheet" href="dark.css?v=77">
+    <link rel="stylesheet" href="style.css?v=127">
+    <link rel="stylesheet" href="dark.css?v=79">
     <script src="js/theme.js?v=3"></script>
     <!-- FontAwesome para sa icons -->
-    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <link rel="stylesheet" href="vendor/fontawesome/css/all.min.css?v=1">
     <script src="js/api.js?v=18"></script>
     <script src="js/notifications.js?v=2"></script>
     <script src="js/bookmarks.js?v=2"></script>
@@ -103,8 +103,7 @@
 
                 <!-- Video Element -->
                 <div class="video-container" id="videoContainer">
-                    <!-- DITO PAPASOK ANG YOUTUBE API -->
-                    <div id="youtubePlayer"></div>
+                    <video id="videoPlayer" controls playsinline preload="metadata"></video>
                 </div>
 
                 <!-- Resume notice + bookmark / note -->
@@ -154,7 +153,7 @@
         requireAuth();
 
         const urlParams = new URLSearchParams(window.location.search);
-        const videoId = urlParams.get('video') || 'Yb0ZGvccOAY';
+        const videoId = urlParams.get('video') || '';
         const videoTitle = urlParams.get('title') || videoId;
 
         let watchLogged = false;
@@ -183,7 +182,8 @@
         let watchedBefore = 0;      // seconds played on earlier visits (from the server)
         let playedHere = 0;         // seconds played on this visit
         let playedUnsaved = 0;      // not sent to the server yet
-        const videoLength = () => (player && typeof player.getDuration === 'function' && player.getDuration()) || 0;
+        const videoLength = () => (player && player.duration) || 0;
+        const isPlaying = () => !!(player && !player.paused && !player.ended);
         const secondsLeft = () => Math.max(0, Math.ceil(videoLength() * WATCH_SHARE - watchedBefore - playedHere));
         const enoughWatched = () => alreadyWatched || (videoLength() > 0 && secondsLeft() === 0);
 
@@ -196,7 +196,7 @@
         }
 
         setInterval(() => {
-            if (document.hidden || !player || !player.getPlayerState || player.getPlayerState() !== YT.PlayerState.PLAYING) return;
+            if (document.hidden || !isPlaying()) return;
             playedHere++;
             playedUnsaved++;
             renderWatchBtn();
@@ -215,9 +215,9 @@
         let player = null;
         let lastSavedPosition = -1;
         // No auto-refresh (js/api.js) while the video is playing
-        window.HCIBusy = () => !!(player && player.getPlayerState && player.getPlayerState() === YT.PlayerState.PLAYING);
+        window.HCIBusy = isPlaying;
 
-        // Kunin agad ang naka-save na oras habang naglo-load ang YouTube API
+        // Kunin agad ang naka-save na oras habang naglo-load ang video
         const progressPromise = api.get('/progress/videos').catch(() => null);
 
         function formatTime(totalSeconds) {
@@ -242,16 +242,16 @@
         }
 
         function savePosition(leavingPage) {
-            if (!player || typeof player.getCurrentTime !== 'function') return Promise.resolve();
-            const position = Math.floor(player.getCurrentTime());
-            const duration = Math.floor(player.getDuration());
+            if (!player) return Promise.resolve();
+            const position = Math.floor(player.currentTime);
+            const duration = Math.floor(player.duration || 0);
             if (!duration || (position === lastSavedPosition && !playedUnsaved)) return Promise.resolve();
             lastSavedPosition = position;
             return sendPosition(position, duration, leavingPage);
         }
 
         setInterval(() => {
-            if (player && player.getPlayerState && player.getPlayerState() === YT.PlayerState.PLAYING) {
+            if (isPlaying()) {
                 savePosition(false);
             }
         }, 10000);
@@ -262,16 +262,12 @@
         });
 
         document.getElementById('startOverBtn').addEventListener('click', () => {
-            if (player) player.seekTo(0, true);
+            if (player) player.currentTime = 0;
             document.getElementById('resumeNote').hidden = true;
         });
 
-        // Load the YouTube IFrame API so we can detect when the video actually ends.
-        const ytScript = document.createElement('script');
-        ytScript.src = 'https://www.youtube.com/iframe_api';
-        document.head.appendChild(ytScript);
-
-        window.onYouTubeIframeAPIReady = async function () {
+        // The video file is on this computer (uploaded by the teacher), so no internet is needed
+        (async function startPlayer() {
             const progress = await progressPromise;
             const saved = progress && (progress.positions || []).find(p => p.video_id === videoId);
             alreadyWatched = !!(progress && (progress.watched || []).some(w => w.video_id === videoId));
@@ -281,40 +277,31 @@
                 saved.position_seconds < saved.duration_seconds - RESUME_END_MARGIN
                 ? saved.position_seconds : 0;
 
-            const playerVars = { autoplay: 1, rel: 0 };
-            if (resumeAt) playerVars.start = resumeAt;
-
-            player = new YT.Player('youtubePlayer', {
-                height: '500',
-                width: '100%',
-                videoId: videoId,
-                playerVars,
-                events: {
-                    onReady: renderWatchBtn,
-                    onStateChange: function (event) {
-                        if (event.data === YT.PlayerState.PAUSED) {
-                            savePosition(false);
-                        }
-                        // Kapag tapos na ang video (State 0 = ENDED)
-                        if (event.data === YT.PlayerState.ENDED) {
-                            // Tapos na: sa umpisa na ulit magsisimula sa susunod
-                            // (after the watch is saved, so the last seconds count)
-                            logWatched().then(() => {
-                                const duration = Math.floor(player.getDuration());
-                                if (duration) sendPosition(0, duration, false);
-                                lastSavedPosition = 0;
-                            });
-                        }
-                        renderWatchBtn();
-                    },
-                },
+            player = document.getElementById('videoPlayer');
+            player.addEventListener('loadedmetadata', () => {
+                if (resumeAt) player.currentTime = resumeAt;
+                renderWatchBtn();
             });
+            player.addEventListener('pause', () => { if (!player.ended) savePosition(false); renderWatchBtn(); });
+            player.addEventListener('play', renderWatchBtn);
+            player.addEventListener('ended', () => {
+                // Tapos na: sa umpisa na ulit magsisimula sa susunod
+                // (after the watch is saved, so the last seconds count)
+                logWatched().then(() => {
+                    const duration = Math.floor(player.duration || 0);
+                    if (duration) sendPosition(0, duration, false);
+                    lastSavedPosition = 0;
+                });
+                renderWatchBtn();
+            });
+            player.src = '/videos/' + encodeURIComponent(videoId) + '.mp4';
+            player.play().catch(() => {}); // phones may block autoplay; the play button still works
 
             if (resumeAt) {
                 document.getElementById('resumeText').textContent = `Resumed at ${formatTime(resumeAt)}`;
                 document.getElementById('resumeNote').hidden = false;
             }
-        };
+        })();
 
 
         // ========================================================

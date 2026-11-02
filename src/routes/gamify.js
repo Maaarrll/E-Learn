@@ -8,6 +8,7 @@ const { requireAuth } = require('../middleware/authGuard');
 const { getContent } = require('../contentStore');
 const { todayLocal, addDays, toYmd, weekdayLabel, computeStreaks } = require('../utils/dates');
 const { adminName } = require('../utils/names');
+const { isPhotoUrl } = require('../utils/photos');
 
 const router = express.Router();
 router.use(requireAuth);
@@ -401,8 +402,8 @@ router.get('/leaderboard', async (req, res, next) => {
     // One place each (ties are already ordered by who got there first); no points = no place yet
     const ranked = rows.map((r, i) => {
       const rank = r.points > 0 ? i + 1 : '–';
-      // Profile photo the student uploaded (only our https Cloudinary links), else the page shows initials
-      const photo = /^https:\/\//.test(r.profile_photo || '') ? r.profile_photo : null;
+      // Profile photo the student uploaded (Cloudinary or this computer), else the page shows initials
+      const photo = isPhotoUrl(r.profile_photo) ? r.profile_photo : null;
       return { rank, name: adminName(r) || 'Student', photo, points: r.points, isMe: r.id === req.userId };
     });
     // ?all=1 (the "See all" pop-up) lists everyone, 0 points included

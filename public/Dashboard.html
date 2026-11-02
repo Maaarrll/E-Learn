@@ -8,11 +8,11 @@
     <link rel="icon" href="favicon-32.png?v=4" type="image/png" sizes="32x32">
     <link rel="apple-touch-icon" href="apple-touch-icon.png?v=4">
     <meta name="theme-color" content="#023047">
-    <link rel="stylesheet" href="style.css?v=125">
-    <link rel="stylesheet" href="dark.css?v=77">
+    <link rel="stylesheet" href="style.css?v=127">
+    <link rel="stylesheet" href="dark.css?v=79">
     <script src="js/theme.js?v=3"></script>
     <!-- FontAwesome for the input icons -->
-    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <link rel="stylesheet" href="vendor/fontawesome/css/all.min.css?v=1">
 </head>
 <body class="dashboard-page">
     <noscript>
@@ -474,7 +474,7 @@
         // Same name always gets the same avatar colour
         const avatarColor = (name) => [...name].reduce((h, c) => (h * 31 + c.charCodeAt(0)) % 997, 7) % 6;
         // Their profile photo if they have one, else coloured initials
-        const lbAvatar = (e) => `<span class="lb-avatar lb-av-${avatarColor(e.name)}" aria-hidden="true">${/^https:\/\//.test(e.photo || '')
+        const lbAvatar = (e) => `<span class="lb-avatar lb-av-${avatarColor(e.name)}" aria-hidden="true">${/^(https:\/\/|\/photos\/)/.test(e.photo || '')
             ? `<img src="${escapeHtml(e.photo)}" alt="" loading="lazy">`
             : escapeHtml(e.name.replace(/[^A-Za-zÀ-ÿ ]/g, '').split(' ').filter(Boolean).map(w => w[0]).join('').slice(0, 2).toUpperCase() || '?')}</span>`;
 

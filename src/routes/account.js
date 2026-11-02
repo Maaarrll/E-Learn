@@ -653,6 +653,34 @@ router.post(
 
 
 /* =========================================================
+   REMOVE PROFILE PHOTO (back to initials)
+   ========================================================= */
+
+router.delete(
+    '/photo',
+    requireAuth,
+    async (req, res, next) => {
+
+        try {
+
+            await pool.query(
+                'UPDATE public.users SET profile_photo = NULL WHERE id = $1',
+                [req.userId]
+            );
+
+            deletePhoto('hcilearn/profile_photos', `user${req.userId}`);
+
+            res.json({ profilePhoto: null });
+
+        } catch (err) {
+
+            next(err);
+        }
+    }
+);
+
+
+/* =========================================================
    DELETE ACCOUNT
    ========================================================= */
 

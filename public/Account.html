@@ -9,13 +9,13 @@
     <link rel="icon" href="favicon-32.png?v=4" type="image/png" sizes="32x32">
     <link rel="apple-touch-icon" href="apple-touch-icon.png?v=4">
     <meta name="theme-color" content="#023047">
-    <link rel="stylesheet" href="style.css?v=125">
-    <link rel="stylesheet" href="dark.css?v=77">
+    <link rel="stylesheet" href="style.css?v=127">
+    <link rel="stylesheet" href="dark.css?v=79">
     <script src="js/theme.js?v=3"></script>
 
     <link
         rel="stylesheet"
-        href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css"
+        href="vendor/fontawesome/css/all.min.css?v=1"
     >
 </head>
 
@@ -142,6 +142,7 @@
                         <div class="acct-profile-chips">
                             <span class="acct-chip" id="profileIdChip" hidden><i class="fa-regular fa-id-card"></i> <span id="profileId"></span></span>
                             <label for="profile-upload" class="acct-chip acct-chip-link"><i class="fa-solid fa-image"></i> Change photo</label>
+                            <button type="button" class="acct-chip acct-chip-link" id="removePhotoBtn" hidden><i class="fa-solid fa-user"></i> Remove photo</button>
                         </div>
                     </div>
 
@@ -461,9 +462,32 @@
             img.onload = () => {
                 img.hidden = false;
                 document.getElementById('avatarInitials').hidden = true;
+                document.getElementById('removePhotoBtn').hidden = false;
             };
             img.src = url;
         }
+
+        document.getElementById('removePhotoBtn').addEventListener('click', () => confirmDialog({
+            title: 'Remove your photo?',
+            message: 'Your initials will show instead.',
+            confirmText: 'Remove photo',
+            cancelText: 'Cancel',
+            icon: 'fa-user',
+            danger: true,
+            onConfirm: async () => {
+                try {
+                    await api.del('/account/photo');
+                    const img = document.getElementById('currentPhoto');
+                    img.hidden = true;
+                    img.removeAttribute('src');
+                    document.getElementById('avatarInitials').hidden = false;
+                    document.getElementById('removePhotoBtn').hidden = true;
+                    showMessage('Profile photo removed.', false);
+                } catch (err) {
+                    showMessage(err.message, true);
+                }
+            },
+        }));
 
 
         /* =================================================
