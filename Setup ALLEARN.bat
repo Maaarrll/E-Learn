@@ -12,7 +12,7 @@ where node >nul 2>nul || (
   pause
   exit /b 1
 )
-node -e "process.exit(+process.versions.node.split('.')[0] < 20)" || (
+node -e "process.exit(+process.versions.node.split('.')[0] < 20 ? 1 : 0)" || (
   echo Node.js is too old. Install the LTS version from https://nodejs.org then run this again.
   pause
   exit /b 1
