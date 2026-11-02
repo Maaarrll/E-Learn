@@ -1,23 +1,16 @@
 @echo off
-rem One-time setup on the classroom laptop.
+rem Optional one-time setup: desktop icon + firewall rule (Start ALLEARN also makes the icon).
 rem Right-click this file and choose "Run as administrator".
 cd /d "%~dp0"
-where node >nul 2>nul || (
-  echo Node.js is not installed.
-  if exist "installers\node-*.msi" (
-    echo Double-click the file in the "installers" folder to install it, then run this again.
-  ) else (
-    echo Install the LTS version from https://nodejs.org then run this again.
-  )
+rem Use the Node.js inside this folder (portable package), else an installed one
+set "NODE=node"
+if exist "%~dp0node\node.exe" set "NODE=%~dp0node\node.exe"
+"%NODE%" -e "process.exit(+process.versions.node.split('.')[0] < 20 ? 1 : 0)" >nul 2>nul || (
+  echo Node.js is missing or too old. Install the LTS version from https://nodejs.org then run this again.
   pause
   exit /b 1
 )
-node -e "process.exit(+process.versions.node.split('.')[0] < 20 ? 1 : 0)" || (
-  echo Node.js is too old. Install the LTS version from https://nodejs.org then run this again.
-  pause
-  exit /b 1
-)
-rem The USB package already includes node_modules, so no internet is needed then
+rem The packaged folder already includes node_modules, so no internet is needed then
 if not exist "node_modules\embedded-postgres" (
   echo Installing ALLEARN... ^(needs internet, this happens only once^)
   call npm install --omit=dev || (pause & exit /b 1)
