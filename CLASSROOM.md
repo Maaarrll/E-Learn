@@ -29,11 +29,10 @@ Admin page → Content → Videos → **Add video**, then pick an MP4 file from 
 
 ## Backups
 Each time ALLEARN starts, it copies the database to `classroom-data\backups\<date>` (the last 7 are kept).
-Now and then, copy the whole `classroom-data` folder to a USB drive. It holds all accounts, progress and videos.
+Now and then, copy the whole `classroom-data` folder to a USB drive. It holds all accounts, progress, videos and profile photos.
 
 To restore: close ALLEARN, rename `classroom-data\db` to `db-old`, copy a backup folder in its place
 and rename it to `db`, then start ALLEARN.
 
 ## Not available offline
-- Profile photo uploads
 - Email reminders

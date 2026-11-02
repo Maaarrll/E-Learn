@@ -474,7 +474,7 @@
         // Same name always gets the same avatar colour
         const avatarColor = (name) => [...name].reduce((h, c) => (h * 31 + c.charCodeAt(0)) % 997, 7) % 6;
         // Their profile photo if they have one, else coloured initials
-        const lbAvatar = (e) => `<span class="lb-avatar lb-av-${avatarColor(e.name)}" aria-hidden="true">${/^https:\/\//.test(e.photo || '')
+        const lbAvatar = (e) => `<span class="lb-avatar lb-av-${avatarColor(e.name)}" aria-hidden="true">${/^(https:\/\/|\/photos\/)/.test(e.photo || '')
             ? `<img src="${escapeHtml(e.photo)}" alt="" loading="lazy">`
             : escapeHtml(e.name.replace(/[^A-Za-zÀ-ÿ ]/g, '').split(' ').filter(Boolean).map(w => w[0]).join('').slice(0, 2).toUpperCase() || '?')}</span>`;
 

@@ -24,6 +24,7 @@ const quizRoutes = require('./src/routes/quizzes');
 const adminQuizRoutes = require('./src/routes/adminQuizzes');
 const { isClassOpen, requireClassOpen } = require('./src/middleware/classOpen');
 const { VIDEO_DIR } = require('./src/utils/videos');
+const { PHOTO_DIR } = require('./src/utils/photos');
 
 const app = express();
 const PORT = process.env.PORT || 3000;
@@ -125,6 +126,8 @@ app.use(express.static(path.join(__dirname, 'public'), {
 
 // Uploaded lesson videos (express.static handles seeking with Range requests)
 app.use('/videos', express.static(VIDEO_DIR, { maxAge: '7d' }));
+// Profile photos saved on this computer (no Cloudinary); a new upload gets a new ?v= address
+app.use('/photos', express.static(PHOTO_DIR, { maxAge: '7d' }));
 
 // Anything not matched by the API or a static file falls back to the login page.
 app.get('*', (req, res) => {

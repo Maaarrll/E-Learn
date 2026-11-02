@@ -71,6 +71,7 @@ Object.assign(process.env, {
   DATABASE_URL: `postgresql://postgres:postgres@localhost:${DB_PORT}/valueslearn`,
   PORT: String(PORT),
   VIDEO_DIR: path.join(dataDir, 'videos'),
+  PHOTO_DIR: path.join(dataDir, 'photos'),
   ...secrets,
 });
 

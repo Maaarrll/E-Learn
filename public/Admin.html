@@ -405,7 +405,7 @@
         const escapeHtml = (text) => String(text).replace(/[&<>"']/g, c => ({ '&': '&amp;', '<': '&lt;', '>': '&gt;', '"': '&quot;', "'": '&#39;' }[c]));
         const initials = (name) => name.split(' ').filter(Boolean).slice(0, 2).map(n => n[0].toUpperCase()).join('');
         // Profile photo if they have one (only https links from our uploads), else initials
-        const hasPhoto = (p) => /^https:\/\//.test(p.profilePhoto || '');
+        const hasPhoto = (p) => /^(https:\/\/|\/photos\/)/.test(p.profilePhoto || '');
         const avatar = (p, big) => `<span class="admin-avatar${big ? ' is-big' : ''}">${hasPhoto(p)
             ? `<img src="${escapeHtml(p.profilePhoto)}" alt="" loading="lazy">` : escapeHtml(initials(p.fullName))}</span>`;
 
