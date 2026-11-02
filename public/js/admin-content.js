@@ -157,7 +157,7 @@ const HCIContentEditor = (function () {
     return `<button type="button" class="tool-btn ce-add" data-act="add" data-kind="video"><i class="fa-solid fa-plus"></i> Add video</button>
       <div class="ce-sortable">${list.map(v => row(v, list, next(v), view(v).title,
         `${esc(topics.get(view(v).topic) || '')}${view(v).duration ? ` · ${esc(view(v).duration)}` : ''} · ${esc(v.key)}`,
-        `<img class="ce-thumb" src="https://img.youtube.com/vi/${encodeURIComponent(v.key)}/default.jpg" alt="" loading="lazy">`)).join('')}</div>`;
+        `<video class="ce-thumb" src="/videos/${encodeURIComponent(v.key)}.mp4#t=1" preload="metadata" muted></video>`)).join('')}</div>`;
   }
 
   function renderCases() {
@@ -366,8 +366,8 @@ const HCIContentEditor = (function () {
   function formFor(kind, d, isNew, item) {
     switch (kind) {
       case 'video':
-        return (isNew ? field('YouTube link or video ID', inputBox('youtubeId', '', 'placeholder="https://www.youtube.com/watch?v=..." required'))
-                      : field('YouTube video', `<input type="text" value="${esc(item.key)}" disabled>`))
+        return (isNew ? field('Video file', '<input type="file" name="videoFile" accept="video/mp4,.mp4" required>', 'MP4 from your laptop, up to 2 GB')
+                      : field('Video', `<video class="ce-video" src="/videos/${encodeURIComponent(item.key)}.mp4" controls preload="metadata"></video>`))
           + field('Title', inputBox('title', d.title))
           + `<div class="ce-row2">${field('Topic', `<select name="topic">${data.videoTopics.map(t => `<option value="${esc(t.key)}" ${d.topic === t.key ? 'selected' : ''}>${esc(t.label)}</option>`).join('')}</select>`)}
              ${field('Duration', inputBox('duration', d.duration, 'placeholder="13:35"'), 'Optional, shown on the thumbnail')}</div>`;
@@ -409,7 +409,7 @@ const HCIContentEditor = (function () {
   function readForm(form, kind) {
     const v = (name) => (form.elements[name] ? form.elements[name].value : '');
     switch (kind) {
-      case 'video': return { youtubeId: v('youtubeId'), title: v('title'), topic: v('topic'), duration: v('duration') };
+      case 'video': return { title: v('title'), topic: v('topic'), duration: v('duration') };
       case 'module': return { title: v('title'), icon: v('icon') };
       case 'deck': return { title: v('title'), icon: v('icon'), color: v('color'), lesson: v('lesson') };
       case 'case':
@@ -552,6 +552,22 @@ const HCIContentEditor = (function () {
       refreshPreview();
     });
 
+    // Picking a video file fills an empty title and the duration from the file itself
+    form.addEventListener('change', (e) => {
+      const file = e.target.name === 'videoFile' && e.target.files[0];
+      if (!file) return;
+      if (!form.elements.title.value) form.elements.title.value = file.name.replace(/\.mp4$/i, '');
+      const probe = document.createElement('video');
+      probe.preload = 'metadata';
+      probe.onloadedmetadata = () => {
+        const s = Math.round(probe.duration);
+        const h = Math.floor(s / 3600), m = Math.floor(s % 3600 / 60), sec = String(s % 60).padStart(2, '0');
+        if (s && !form.elements.duration.value) form.elements.duration.value = h ? `${h}:${String(m).padStart(2, '0')}:${sec}` : `${m}:${sec}`;
+        URL.revokeObjectURL(probe.src);
+      };
+      probe.src = URL.createObjectURL(file);
+    });
+
     form.addEventListener('submit', async (e) => {
       e.preventDefault();
       const publishNow = !!(e.submitter && e.submitter.dataset.save === 'publish');
@@ -568,6 +584,19 @@ const HCIContentEditor = (function () {
       saveBtns.forEach(b => { b.disabled = true; });
       try {
         const body = readForm(form, kind);
+        const file = isNew && kind === 'video' && form.elements.videoFile.files[0];
+        if (file) {
+          const btn = e.submitter;
+          const label = btn && btn.innerHTML;
+          if (btn) btn.textContent = 'Uploading video...';
+          const fd = new FormData();
+          fd.append('video', file);
+          const res = await fetch('/api/admin/content/video-file', { method: 'POST', credentials: 'include', body: fd })
+            .finally(() => { if (btn) btn.innerHTML = label; });
+          const out = await res.json().catch(() => ({}));
+          if (!res.ok) throw new Error(out.error || 'Upload failed.');
+          body.videoFile = out.fileId;
+        }
         if (isNew) await api.post('/admin/content', { kind, parentKey, data: body });
         else await api.put(`/admin/content/${item.id}`, { data: body });
         close();

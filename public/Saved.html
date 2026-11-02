@@ -8,11 +8,11 @@
     <link rel="icon" href="favicon-32.png?v=4" type="image/png" sizes="32x32">
     <link rel="apple-touch-icon" href="apple-touch-icon.png?v=4">
     <meta name="theme-color" content="#023047">
-    <link rel="stylesheet" href="style.css?v=125">
-    <link rel="stylesheet" href="dark.css?v=77">
+    <link rel="stylesheet" href="style.css?v=126">
+    <link rel="stylesheet" href="dark.css?v=78">
     <script src="js/theme.js?v=3"></script>
     <!-- FontAwesome para sa icons -->
-    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <link rel="stylesheet" href="vendor/fontawesome/css/all.min.css?v=1">
 </head>
 <body class="saved-page">
     <noscript>
@@ -190,7 +190,7 @@
                 card.innerHTML = `
                     <div class="saved-card-icon">
                         ${b.kind === 'video'
-                            ? '<img alt="" loading="lazy">'
+                            ? '<video preload="metadata" muted playsinline aria-hidden="true"></video>'
                             : '<i class="fa-solid fa-book-open"></i>'}
                     </div>
                     <div class="saved-card-body">
@@ -222,8 +222,7 @@
                 card.querySelector('.saved-edit span').textContent = b.note ? 'Edit note' : 'Add note';
 
                 if (b.kind === 'video') {
-                    const img = card.querySelector('img');
-                    img.src = `https://img.youtube.com/vi/${encodeURIComponent(b.itemKey)}/mqdefault.jpg`;
+                    card.querySelector('.saved-card-icon video').src = `/videos/${encodeURIComponent(b.itemKey)}.mp4#t=2`;
                 }
 
                 card.querySelector('.saved-edit').addEventListener('click', async () => {

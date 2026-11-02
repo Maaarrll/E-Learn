@@ -6,7 +6,7 @@
 //   await HCIBookmarks.toggle('lesson', '12', 'Personas');
 //   await HCIBookmarks.editNote('lesson', '12', 'Personas');   // opens the note dialog
 //
-// kind is 'lesson' (itemKey = topic number) or 'video' (itemKey = YouTube id).
+// kind is 'lesson' (itemKey = topic number) or 'video' (itemKey = video file id).
 
 const HCIBookmarks = (function () {
   'use strict';

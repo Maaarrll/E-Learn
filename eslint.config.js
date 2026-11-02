@@ -2,6 +2,8 @@ const js = require('@eslint/js');
 const globals = require('globals');
 
 module.exports = [
+  // Downloaded libraries (kept locally for offline use), not our code
+  { ignores: ['public/vendor/'] },
   js.configs.recommended,
   {
     rules: {

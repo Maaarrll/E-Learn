@@ -8,11 +8,13 @@
 //   changed   both, different
 //   deleted   published only (removed in the draft)
 //   live      both, the same
+const fs = require('fs');
 const express = require('express');
 const { pool } = require('../db');
 const { requireInstructor, requireAdminRole } = require('../middleware/instructorGuard');
 const { invalidate, VIDEO_TOPICS } = require('../contentStore');
 const versions = require('../contentVersions');
+const { isVideoId, videoPath, uploadVideo } = require('../utils/videos');
 
 const router = express.Router();
 // Content is shared by every student, so only the main admin edits it
@@ -49,13 +51,10 @@ function choices(data) {
   return { options, answer };
 }
 
-// Accepts an 11-character id or any usual YouTube link
-function youtubeId(value) {
-  const v = typeof value === 'string' ? value.trim() : '';
-  const m = /^[A-Za-z0-9_-]{11}$/.exec(v)
-    || /(?:v=|youtu\.be\/|embed\/|shorts\/|live\/)([A-Za-z0-9_-]{11})/.exec(v);
-  if (!m) fail('Paste a YouTube link or video ID.');
-  return m[1] || m[0];
+// An uploaded video file (from POST /video-file) that is really on disk
+function videoFile(value) {
+  if (!isVideoId(value) || !fs.existsSync(videoPath(value))) fail('Please upload the video file first.');
+  return value;
 }
 
 // Lesson (module key) students must read first; '' = none
@@ -141,7 +140,7 @@ async function audit(instructorRowId, action, details) {
 // New permanent key. Numbers are never reused (deleted items keep theirs).
 async function newKey(kind, parentKey, data) {
   const { rows } = await pool.query('SELECT key FROM content_items WHERE kind = $1', [kind]);
-  if (kind === 'video') return data.youtubeId;
+  if (kind === 'video') return data.videoFile;
   if (kind === 'card') {
     const prefix = `${parentKey}-`;
     const used = rows.map(r => r.key).filter(k => k.startsWith(prefix)).map(k => Number(k.slice(prefix.length)));
@@ -184,6 +183,9 @@ router.get('/', handle(async (req, res) => {
   });
 }));
 
+// POST /api/admin/content/video-file  (multipart "video") -> { fileId }
+router.post('/video-file', uploadVideo);
+
 // POST /api/admin/content  { kind, parentKey?, data }
 router.post('/', handle(async (req, res) => {
   const { kind, parentKey = null, data } = req.body || {};
@@ -200,14 +202,14 @@ router.post('/', handle(async (req, res) => {
     parent = rows[0].key;
   }
 
-  const extra = kind === 'video' ? { youtubeId: youtubeId(data.youtubeId) } : {};
+  const extra = kind === 'video' ? { videoFile: videoFile(data.videoFile) } : {};
   const key = await newKey(kind, parent, extra);
   const draft = { ...clean, position: await nextPosition(kind, parent) };
 
   const existing = (await pool.query('SELECT * FROM content_items WHERE kind = $1 AND key = $2', [kind, key])).rows[0];
   let row;
   if (existing) {
-    // Only videos can collide (same YouTube video added again)
+    // Only videos can collide (same file added again)
     if (existing.draft) fail('This video is already in the list.');
     row = (await pool.query(
       'UPDATE content_items SET draft = $1::jsonb, updated_at = NOW() WHERE id = $2 RETURNING *',
