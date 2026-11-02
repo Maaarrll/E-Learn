@@ -1,0 +1,79 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>ALLEARN Teacher Card</title>
+<style>
+  /* One printed page to keep next to the classroom laptop */
+  :root { --ink: #1b2433; --muted: #5b6475; --line: #d9dee7; --accent: #1e407e; --bg: #fff; }
+  @media (prefers-color-scheme: dark) { :root:not([data-theme="light"]) { --ink: #e7ebf2; --muted: #a3acbb; --line: #39414f; --accent: #8db2f0; --bg: #161b24; } }
+  :root[data-theme="dark"] { --ink: #e7ebf2; --muted: #a3acbb; --line: #39414f; --accent: #8db2f0; --bg: #161b24; }
+  * { box-sizing: border-box; }
+  body { margin: 0; background: var(--bg); color: var(--ink); font: 16px/1.5 "Segoe UI", Arial, sans-serif; }
+  main { max-width: 760px; margin: 0 auto; padding: 28px 16px; }
+  h1 { margin: 0 0 4px; font-size: 28px; color: var(--accent); }
+  .sub { margin: 0 0 20px; color: var(--muted); }
+  section { border: 2px solid var(--line); border-radius: 12px; padding: 14px 18px; margin-bottom: 14px; }
+  h2 { margin: 0 0 8px; font-size: 19px; }
+  ol, ul { margin: 0; padding-left: 22px; }
+  li { margin: 4px 0; }
+  .fix li b { color: var(--accent); }
+  .print { float: right; padding: 8px 14px; border: 2px solid var(--accent); border-radius: 8px; background: none; color: var(--accent); font: inherit; font-weight: 700; cursor: pointer; }
+  @media print {
+    :root { --ink: #000; --muted: #333; --line: #999; --accent: #000; --bg: #fff; }
+    .print { display: none; }
+    main { padding: 0; }
+    body { font-size: 14px; }
+  }
+</style>
+</head>
+<body>
+<main>
+  <button class="print" onclick="print()">Print</button>
+  <h1>ALLEARN Teacher Card</h1>
+  <p class="sub">Keep this next to the classroom laptop.</p>
+
+  <section>
+    <h2>Before class</h2>
+    <ol>
+      <li>Plug in the laptop and turn on the Wi-Fi router.</li>
+      <li>Connect the laptop to the classroom Wi-Fi.</li>
+      <li>Double-click <b>Start ALLEARN</b> on the desktop. Keep the black window open.</li>
+      <li>Show the page with the <b>QR code</b> on the projector.</li>
+      <li>Click <b>Open the Admin page</b>, log in, and switch the class to <b>Open</b>.</li>
+    </ol>
+  </section>
+
+  <section>
+    <h2>Students</h2>
+    <ol>
+      <li>Connect to the classroom Wi-Fi.</li>
+      <li>Turn <b>off mobile data</b>.</li>
+      <li>Scan the QR code (or type the address shown under it).</li>
+      <li>First time: <b>Sign up</b> with their LRN. After that: log in with their username or full name.</li>
+    </ol>
+  </section>
+
+  <section>
+    <h2>After class</h2>
+    <ol>
+      <li>Switch the class to <b>Closed</b> in the Admin page.</li>
+      <li>Close the black ALLEARN window.</li>
+      <li>Every Friday: copy the <b>classroom-data</b> folder to the USB drive.</li>
+    </ol>
+  </section>
+
+  <section class="fix">
+    <h2>If something goes wrong</h2>
+    <ul>
+      <li><b>One phone can't open it:</b> check it's on the classroom Wi-Fi and mobile data is off. Type the address instead of scanning.</li>
+      <li><b>No phone can open it:</b> close the black window and double-click Start ALLEARN again.</li>
+      <li><b>"The class is closed":</b> open the class in the Admin page.</li>
+      <li><b>A student forgot their password:</b> they tap "Forgot password" and enter their name and LRN.</li>
+      <li><b>The black window shows an error:</b> take a photo of it and send it to support.</li>
+    </ul>
+  </section>
+</main>
+</body>
+</html>

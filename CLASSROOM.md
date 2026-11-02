@@ -8,9 +8,12 @@ their browser. No internet and no mobile data are used.
 - A Wi-Fi router. It does **not** need internet. The laptop and students' phones all connect to it.
   (Windows "Mobile hotspot" works for a quick test but only allows 8 devices.)
 
-## One-time setup (needs internet once)
-1. Install **Node.js LTS** from https://nodejs.org.
-2. Copy the whole ALLEARN folder to the laptop (for example `C:\ALLEARN`). Don't use a OneDrive folder.
+## One-time setup
+With the **USB package** (`ALLEARN-classroom.zip`: includes Node.js and everything else) no internet is needed.
+Otherwise the setup needs internet once.
+
+1. Unzip / copy the ALLEARN folder to the laptop (for example `C:\ALLEARN`). Don't use a OneDrive folder.
+2. Install **Node.js**: double-click the file in `installers\` (USB package) or get the LTS version from https://nodejs.org.
 3. Right-click **Setup ALLEARN.bat** and choose **Run as administrator**.
    It installs ALLEARN, puts a **Start ALLEARN** icon on the desktop and lets phones through the firewall.
 4. Double-click **Start ALLEARN**. The first time, it asks for the teacher's name, a login ID and a password.
@@ -22,6 +25,7 @@ their browser. No internet and no mobile data are used.
 - [ ] Check the laptop's date and time are right (streaks and quiz deadlines use them).
 - [ ] Power settings: **Sleep: Never** when plugged in.
 - [ ] Dry run: a few phones join, sign up, watch a video and take a quiz.
+- [ ] Print **Teacher Card.html** and keep it next to the laptop.
 
 ## Every class (teacher)
 1. Connect the laptop to the classroom Wi-Fi.
